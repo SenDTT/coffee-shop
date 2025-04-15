@@ -7,6 +7,7 @@ import category_routes from "./routes/categoryRoute";
 import product_routes from "./routes/productRoute";
 import admin_routes from "./routes/adminRoute";
 import account_routes from "./routes/accountRoute";
+import blog_routes from "./routes/blogRoute";
 
 // MongoDB Connection
 connectDB();
@@ -30,6 +31,9 @@ app.use(prefix + "/categories", category_routes);
 
 // Product api
 app.use(prefix + "/products", product_routes);
+
+// Blog api
+app.use(prefix + "/blogs", blog_routes);
 
 const error_handler: ErrorRequestHandler = (err, req, res, next) => {
   if (err instanceof Error) {

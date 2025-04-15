@@ -21,4 +21,7 @@ router.post("/orders", has_no_draft_order_validator, addNewOrderController);
 router.put("/orders/:id", order_is_existed_validator, updateOrderController);
 router.get("/orders/:id", order_is_existed_validator, getOrderDetailController);
 
+// checkout
+
+
 export default router;

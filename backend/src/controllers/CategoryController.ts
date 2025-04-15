@@ -42,10 +42,19 @@ export const updateCategoryController: RequestHandler<
 
 export const getAllCategoriesController: RequestHandler<
   unknown,
-  IResponseData | IErrorResponse
+  IResponseData | IErrorResponse,
+  { limit: number; skip: number; search?: string; type: "product" | "blog" }
 > = async (req, res, next) => {
   try {
-    const catetories = await getAllCategories();
+    const { skip, limit, search } = req.query;
+    const filter: Record<string, any> = {};
+    if (search) {
+      filter.name = { $regex: search, $options: "i" };
+    }
+    if (req.query.type) {
+      filter.type = req.query.type;
+    }
+    const catetories = await getAllCategories(filter, Number(skip) || 0, Number(limit) || 10);
     res.json({ success: true, data: catetories });
   } catch (err) {
     next(err);

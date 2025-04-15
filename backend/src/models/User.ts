@@ -8,6 +8,13 @@ const UserSchema = new Schema(
     password: { type: String, required: true },
     role: { type: String, enum: ["user", "admin"], default: "user" },
     profileImage: { type: String },
+    phone: { type: String },
+    address: { type: String },
+    city: { type: String },
+    state: { type: String },
+    country: { type: String },
+    zip: { type: String },
+    dateOfBirth: { type: Date },
     subcribedEmail: { type: Number, enum: [0, 1], default: 1 },
   },
   { timestamps: true }

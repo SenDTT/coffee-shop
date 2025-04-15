@@ -136,7 +136,7 @@ export const getProductController: RequestHandler<
 > = async (req, res, next) => {
   try {
     const { id } = req.params;
-    console.log(id);
+    
     const data = await getProductById(id);
     res.json({ success: true, data });
   } catch (err) {
