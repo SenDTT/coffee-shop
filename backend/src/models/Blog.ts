@@ -1,5 +1,10 @@
 import { InferSchemaType, model, Schema } from "mongoose";
-import { extractMetaDescription, extractMetaKeywords, extractMetaTitle, slugify } from "../utils/commonUtil";
+import {
+  extractMetaDescription,
+  extractMetaKeywords,
+  extractMetaTitle,
+  slugify,
+} from "../utils/commonUtil";
 
 const BlogSchema = new Schema(
   {
@@ -11,20 +16,20 @@ const BlogSchema = new Schema(
       required: true,
     },
     tags: [{ type: String }],
-    slug: { type: String, required: true },
+    slug: { type: String },
     metaTitle: { type: String },
     metaDescription: { type: String },
     metaKeywords: { type: String },
     metaImage: { type: String },
     metaUrl: { type: String },
     metaAuthor: { type: String },
-    metaPublishedAt: { type: Date, default: Date.now },
-    metaPublished: { type: Boolean, default: true },
+    metaPublishedAt: { type: Date, default: null },
+    metaPublished: { type: Boolean, default: false },
     metaRobots: { type: String, enum: ["index", "noindex"], default: "index" },
     metaCanonical: { type: String },
     author: { type: Schema.Types.ObjectId, ref: "users", required: true },
     image: { type: String },
-    publishedAt: { type: Date, default: Date.now },
+    publishedAt: { type: Date, default: null },
   },
   { timestamps: true }
 );
@@ -50,7 +55,7 @@ BlogSchema.pre("save", function (next) {
   if (!this.metaImage) {
     this.metaImage = this.image || "https://yourdomain.com/default-image.jpg"; // default image URL
   }
-  
+
   if (!this.metaCanonical) {
     this.metaCanonical = `https://yourdomain.com/blog/${this.slug}`;
   }
@@ -65,7 +70,6 @@ BlogSchema.pre("save", function (next) {
 
   next();
 });
-
 
 export type BlogSchemaType = InferSchemaType<typeof BlogSchema>;
 export type Blog = BlogSchemaType & { _id: Schema.Types.ObjectId };

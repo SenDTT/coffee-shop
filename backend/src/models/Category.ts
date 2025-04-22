@@ -6,7 +6,6 @@ const CategorySchema = new Schema({
     type: { type: String, enum: ["product", "blog"], required: true },
     parent: { type: Schema.Types.ObjectId, ref: "categories" },
     image: { type: String },
-    slug: { type: String, required: true },
     metaTitle: { type: String },
     metaDescription: { type: String },
     metaKeywords: { type: String },

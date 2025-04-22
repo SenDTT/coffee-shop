@@ -1,17 +1,22 @@
 import { Router } from "express";
-import { getAllBlogsController } from "../controllers/BlogController";
-import { is_existed_blog_validator } from "../middlewares/BlogMiddleware";
+import {
+  addBlogController,
+  getAllBlogsController,
+  getBlogByIdController,
+  updateBlogController,
+} from "../controllers/BlogController";
+import { add_blog_validator, is_existed_blog_validator } from "../middlewares/BlogMiddleware";
 import { authenticate, isAdminUser } from "../middlewares/AuthMiddleware";
 
 const routes = Router();
 
 routes.get("/", getAllBlogsController);
-routes.get("/:id", is_existed_blog_validator, getAllBlogsController);
+routes.get("/:id", is_existed_blog_validator, getBlogByIdController);
 
 routes.use(authenticate, isAdminUser);
 
-// routes.post("/", add_blog_validator, addBlogController);
-// routes.put("/:id", is_existed_blog_validator, updateBlogController);
+routes.post("/", add_blog_validator, addBlogController);
+routes.put("/:id", is_existed_blog_validator, updateBlogController);
 // routes.delete("/:id", is_existed_blog_validator, deleteBlogController);
 // routes.put("/:id/active", is_existed_blog_validator, activeOrDeactiveBlogController);
 // routes.put("/:id/upload-images", is_existed_blog_validator, upload.array('images', 5), addBlogImageController);

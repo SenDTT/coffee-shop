@@ -10,12 +10,16 @@ export const add_category_validator: RequestHandler<
   IResponseData | IErrorResponse,
   ICategory
 > = async (req, res, next) => {
-  const { name, description } = req.body;
+  const { name, description, type } = req.body;
 
-  if (validator.isEmpty(name) || validator.isEmpty(description)) {
+  if (
+    validator.isEmpty(name) ||
+    validator.isEmpty(description) ||
+    validator.isEmpty(type)
+  ) {
     res
       .status(400)
-      .json({ success: false, message: "Both fields must be requried" });
+      .json({ success: false, message: "The fields must be requried" });
     return;
   }
 

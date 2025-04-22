@@ -2,7 +2,7 @@ import { RequestHandler } from "express";
 import { IErrorResponse, IResponseData } from "../types/Common";
 import { ICategory } from "../types/CategoryTypes";
 import {
-    activeOrDeactiveCategory,
+  activeOrDeactiveCategory,
   addCatetory,
   deleteCatetory,
   getAllCategories,
@@ -54,33 +54,41 @@ export const getAllCategoriesController: RequestHandler<
     if (req.query.type) {
       filter.type = req.query.type;
     }
-    const catetories = await getAllCategories(filter, Number(skip) || 0, Number(limit) || 10);
+    const catetories = await getAllCategories(
+      filter,
+      Number(skip) || 0,
+      Number(limit) || 10
+    );
     res.json({ success: true, data: catetories });
   } catch (err) {
     next(err);
   }
 };
 
-export const activeOrDeactiveCategoryController: RequestHandler<{id: string}, IResponseData | IErrorResponse> = async (req, res, next) => {
-    const { id } = req.params;
-    try {
-        const newModel = await getCategoryById(id);
-        if (!newModel) {
-            res.status(404).json({ success: false, message: "Category is not existed." });
-            return;
-        }
-
-        await activeOrDeactiveCategory(id, newModel?.active ? 0 : 1);
-
-        res.json({
-          success: true,
-          data: null,
-          message: (newModel?.active ? "Active" : "Deactive") + " Category Successfully",
-        });
-    } catch (err) {
-
+export const activeOrDeactiveCategoryController: RequestHandler<
+  { id: string },
+  IResponseData | IErrorResponse
+> = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const newModel = await getCategoryById(id);
+    if (!newModel) {
+      res
+        .status(404)
+        .json({ success: false, message: "Category is not existed." });
+      return;
     }
-}
+
+    await activeOrDeactiveCategory(id, newModel?.active ? 0 : 1);
+
+    res.json({
+      success: true,
+      data: null,
+      message:
+        (newModel?.active ? "Active" : "Deactive") + " Category Successfully",
+    });
+  } catch (err) {}
+};
 
 export const deleteCategoryController: RequestHandler<
   { id: string },
@@ -108,7 +116,7 @@ export const getCategoryController: RequestHandler<
     const data = await getCategoryById(id);
     res.json({
       success: true,
-      data
+      data,
     });
   } catch (err) {
     next(err);
