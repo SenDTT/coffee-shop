@@ -3,7 +3,7 @@ import axios from "axios";
 import Cookie from "js-cookie";
 
 const api = axios.create({
-  baseURL: process.env.API_BASE_URL, // Replace with your API base URL
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL, // Replace with your API base URL
 });
 
 // Add a request interceptor to add the token to all requests
