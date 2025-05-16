@@ -31,13 +31,13 @@ export default function AuthNav({ user }: { user: any }) {
         <div className="flex items-center gap-3 ml-4">
             <Link
                 href="/auth/login"
-                className="text-sm text-gray-600 hover:text-blue-600 transition font-medium"
+                className="text-sm text-latte-600 hover:text-cabin-600 transition font-bold"
             >
                 Login
             </Link>
             <Link
                 href="/auth/register"
-                className="text-sm bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition"
+                className="text-sm bg-cabin-600 text-white px-4 py-2 rounded-full hover:bg-cabin-700 transition font-medium"
             >
                 Sign Up
             </Link>

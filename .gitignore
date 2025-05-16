@@ -25,3 +25,6 @@ out/
 
 # MacOS system files
 .DS_Store
+
+#storage
+backend/uploads/*
