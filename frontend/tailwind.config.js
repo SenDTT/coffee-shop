@@ -84,6 +84,33 @@ module.exports = {
         copper: "#b87333",
         blush: "#f4d9c6",
         burnt: "#cc5500",
+
+        "coastal-light": {
+          bg: "#E6F5FA",
+          text: "#234E52",
+          logo: "#2C7A7B",
+          accent: "#F55655",
+          border: "#BEE7F8",
+          "toggle-bg": "#CFE7F2",
+          "toggle-indicator": "#FDF5C2",
+        },
+        "coastal-dark": {
+          bg: "#003C41",
+          text: "#E6FFFA",
+          logo: "#4FD1C5",
+          accent: "#FC8181",
+          border: "#4A6A6D",
+          "toggle-bg": "#0F2B2F",
+          "toggle-indicator": "#FDF5C2",
+        },
+        "coastal-additional": {
+          info: "#38B2AC",
+          warning: "#F6AD55",
+          success: "#68D391",
+          error: "#E53E3E",
+          "hover-accent-light": "#FF7F7F",
+          "hover-accent-dark": "#E57373",
+        },
       },
       animation: {
         wiggle: "wiggle 1s ease-in-out infinite",

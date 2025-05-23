@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
-import Hero from "@/components/Hero";
-import Layout from "@/components/Layout";
-import MenuPreview from "@/components/Home/MenuPreview";
+import Hero from "../components/Hero";
+import Layout from "../components/Layouts/MainLayout";
+import MenuPreview from "../components/Home/MenuPreview";
 // _app.tsx or in the component that uses <Slider>
 
 const Home: NextPage = () => {

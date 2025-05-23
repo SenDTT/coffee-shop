@@ -1,21 +1,30 @@
 'use client';
 
-import api from '@/api';
+import api from '../../../api';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import InputField from '@/components/InputField';
-import { useAuth } from '@/context/AuthContext';
+import InputField from '../../../components/InputField';
+import { useAuth } from '../../../context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
 
 export default function LoginPage() {
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const { setAuth } = useAuth();
+    const { user, setAuth } = useAuth();
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (user) {
+            router.push('/');
+        }
+    }, [user]);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
+        setLoading(true);
 
         // Replace this with real login logic
         try {
@@ -28,14 +37,25 @@ export default function LoginPage() {
                     accToken: data.accessToken,
                     refToken: data.refreshToken,
                 });
-                router.push('/');
+
+                toast.success('Login successful!');
+
+                setTimeout(() => {
+                    router.push('/');
+                }, 2000);
             } else {
-                alert('Login failed. Please check your credentials.');
+                toast.error('Login failed. Please check your credentials.');
             }
-        } catch (error) {
-            console.error('Login failed:', error);
-            alert('Login failed. Please check your credentials.');
+        } catch (error: any) {
+            const res = error.response ?? null
+            if (res.status === 400 && res.data.message) {
+                toast.error(res.data.message);
+            } else {
+                toast.error('Login failed. Please check your credentials.');
+            }
             return;
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -75,10 +95,33 @@ export default function LoginPage() {
                     </div>
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-200"
+                        className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-200 inline-flex items-center justify-center gap-2"
                     >
-                        Sign In
+                        {loading ? (
+                            <svg
+                                className="animate-spin h-5 w-5 text-white mx-auto"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                            >
+                                <circle
+                                    className="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    strokeWidth="4"
+                                    fill="none"
+                                />
+                                <path
+                                    className="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 1 1 16 0A8 8 0 0 1 4 12zm2.5-1h9a2.5 2.5 0 1 1-9 0z"
+                                />
+                            </svg>
+                        ) : null}
+                        {loading ? 'Loading...' : 'Sign In'}
                     </button>
+                    <ToastContainer />
                 </form>
                 <p className="text-sm text-gray-500 mt-4 text-center">
                     Don’t have an account? <a href="/auth/register" className="text-blue-600 hover:underline">Register</a>

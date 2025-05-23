@@ -1,8 +1,10 @@
 'use client';
 
+import api from '../../../api';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import InputField from '@/components/InputField';
+import InputField from '../../../components/InputField';
+import { toast, ToastContainer } from 'react-toastify';
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -13,11 +15,11 @@ export default function RegisterPage() {
     const [username, setUsername] = useState('');
 
     // Handle form submission
-    const handleRegister = (e: React.FormEvent) => {
+    const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (password !== confirmPassword) {
-            alert('Passwords do not match');
+        if (password.localeCompare(confirmPassword) !== 0) {
+            toast.error('Passwords do not match');
             return;
         }
 
@@ -25,7 +27,31 @@ export default function RegisterPage() {
         console.log('Registering user:', { email, name, username, password });
 
         // Redirect to login after successful registration
-        router.push('/auth/login');
+        try {
+            const response = await api.post("/auth/signup", {
+                email,
+                name,
+                username,
+                password,
+            });
+
+            console.log('Registration response:', response);
+            if (response.status === 200 && response.data.success) {
+                toast.success('Registration successful! Please log in.');
+                router.push('/auth/login');
+            }
+            else {
+                toast.error('Registration failed. Please try again.');
+            }
+        } catch (error: any) {
+            const res = error.response ?? null
+            if (res.status === 400 && res.data.message) {
+                toast.error(res.data.message);
+            } else {
+                toast.error('Registration failed. Please try again.');
+            }
+            return;
+        }
     };
 
     return (
@@ -83,6 +109,7 @@ export default function RegisterPage() {
                 >
                     Register
                 </button>
+                <ToastContainer />
 
                 <p className="text-sm text-center mt-4 text-gray-600">
                     Already have an account?{' '}

@@ -65,6 +65,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = () => {
+    console.log("Logging out...");
     setAuth({ userData: null, accToken: null, refToken: null });
   };
 
