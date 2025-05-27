@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+import Cookie from "js-cookie";
 
 interface User {
   id: string;
@@ -38,6 +39,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(parsed.user);
       setAccessToken(parsed.accessToken);
       setRefreshToken(parsed.refreshToken);
+      Cookie.set('token', parsed.accessToken);
+      Cookie.set('refreshToken', parsed.refreshToken);
     }
   }, []);
 
@@ -54,13 +57,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setAccessToken(accToken);
     setRefreshToken(refToken);
 
-    if (accToken && userData) {
+    if (accToken && userData && refToken) {
+      Cookie.set('token', accToken);
+      Cookie.set('refreshToken', refToken);
       localStorage.setItem(
         'auth',
         JSON.stringify({ user: userData, accessToken: accToken, refreshToken: refToken }) // ✅ use direct args
       );
     } else {
       localStorage.removeItem('auth');
+      Cookie.remove('token');
+      Cookie.remove('refreshToken');
     }
   };
 

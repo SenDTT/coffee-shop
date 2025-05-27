@@ -1,18 +1,17 @@
 import { RequestHandler } from "express";
 import { IErrorResponse, IResponseData } from "../types/Common";
 import validator from "validator";
-import { IProductRequest } from "../types/ProductTypes";
-import { Product } from "../models/Product";
-import { getProductById } from "../services/ProductService";
 import { getCategoryById } from "../services/CategoryService";
+import { IIngredientRequest } from "../types/IngredientTypes";
+import { Ingredient } from "../models/Ingredient";
+import { getIngredientById } from "../services/IngredientService";
 
-export const add_product_validator: RequestHandler<
+export const add_ingredient_validator: RequestHandler<
   unknown,
   IResponseData | IErrorResponse,
-  IProductRequest
+  IIngredientRequest
 > = async (req, res, next) => {
-  const { name, price, description, stock, categoryId } =
-    req.body;
+  const { name, price, description, stock, categoryId } = req.body;
 
   if (validator.isEmpty(name) || validator.isEmpty(description)) {
     res
@@ -53,13 +52,13 @@ export const is_existed_validator: RequestHandler<
 > = async (req, res, next) => {
   const { id } = req.params;
 
-  const model: Product | null = await getProductById(id);
+  const model: Ingredient | null = await getIngredientById(id);
   if (model === null) {
     res
       .status(404)
       .json({
         success: false,
-        message: "is_existed_validator The Product is not existed",
+        message: "is_existed_validator The Ingredient is not existed",
       });
     return;
   }

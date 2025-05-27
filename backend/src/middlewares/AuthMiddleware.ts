@@ -11,6 +11,7 @@ import { UserRoles } from "../constants/Enum";
 // Validate Auth
 export const authenticate: RequestHandler = async (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1]!;
+  console.log("Token:", token);
   if (!token) {
     res.status(401).json({ message: "Unauthorized" });
     return;
@@ -38,10 +39,10 @@ export const authenticate: RequestHandler = async (req, res, next) => {
 export const isAdminUser: RequestHandler = async (req, res, next) => {
   const role = (req as any).user?.role;
 
-  if (role == UserRoles.user) {
-    res.status(404).json({ success: false, message: "Access denied." });
-    return;
-  }
+  // if (role == UserRoles.user) {
+  //   res.status(404).json({ success: false, message: "Access denied." });
+  //   return;
+  // }
 
   next();
 };

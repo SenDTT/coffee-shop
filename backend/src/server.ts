@@ -8,6 +8,7 @@ import product_routes from "./routes/productRoute";
 import admin_routes from "./routes/adminRoute";
 import account_routes from "./routes/accountRoute";
 import blog_routes from "./routes/blogRoute";
+import ingredient_routes from "./routes/ingredientRoute";
 import path from "path";
 
 // MongoDB Connection
@@ -35,6 +36,9 @@ app.use(prefix + "/products", product_routes);
 
 // Blog api
 app.use(prefix + "/blogs", blog_routes);
+
+// Ingredient api
+app.use(prefix + "/ingredients", ingredient_routes);
 
 // access to uploads folder
 app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));

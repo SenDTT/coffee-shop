@@ -23,7 +23,12 @@ router.get("/:id", is_existed_validator, getProductController);
 
 router.use(authenticate, isAdminUser);
 
-router.post("/", add_product_validator, addProductController);
+router.post(
+  "/",
+  add_product_validator,
+  upload.array("images"),
+  addProductController
+);
 
 router.put(
   "/:id",
@@ -40,13 +45,9 @@ router.put(
 router.put(
   "/:id/upload-images",
   is_existed_validator,
-  upload.array('images', 5),
+  upload.array("images"),
   addProductImageController
 );
-router.put(
-  "/:id/images",
-  is_existed_validator,
-  deleteProductImageController
-);
+router.put("/:id/images", is_existed_validator, deleteProductImageController);
 
 export default router;

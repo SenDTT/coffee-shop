@@ -40,3 +40,99 @@ body {
 .slick-track {
   @apply h-full !flex items-stretch justify-between gap-2;
 }
+
+.swal2-actions {
+  @apply flex flex-row gap-2 justify-center items-center;
+
+  .btn-primary {
+    @apply bg-coastal-light-text text-white;
+  }
+  .btn-secondary {
+    @apply bg-gray-300 text-gray-800;
+  }
+  .btn-danger {
+    @apply bg-red-500 text-white;
+  }
+  .btn {
+    @apply px-4 py-2 rounded;
+  }
+  .swal2-styled {
+    @apply px-4 py-2 rounded;
+  }
+  .swal2-confirm {
+    @apply bg-coastal-light-text text-white;
+  }
+  .swal2-cancel {
+    @apply bg-gray-300 text-gray-800;
+  }
+  .swal2-deny {
+    @apply bg-red-500 text-white;
+  }
+  .swal2-default {
+    @apply bg-gray-200 text-gray-800;
+  }
+  .swal2-input {
+    @apply border border-gray-300 rounded px-3 py-2;
+  }
+  .swal2-textarea {
+    @apply border border-gray-300 rounded px-3 py-2;
+  }
+  .swal2-file {
+    @apply border border-gray-300 rounded px-3 py-2;
+  }
+  .swal2-select {
+    @apply border border-gray-300 rounded px-3 py-2;
+  }
+  .swal2-radio {
+    @apply border border-gray-300 rounded px-3 py-2;
+  }
+  .swal2-checkbox {
+    @apply border border-gray-300 rounded px-3 py-2;
+  }
+  .swal2-input-label {
+    @apply text-gray-700;
+  }
+  .swal2-validation-message {
+    @apply text-red-500;
+  }
+  .swal2-popup {
+    @apply bg-white text-gray-800 rounded-lg shadow-lg p-6;
+  }
+  .swal2-title {
+    @apply text-xl font-bold mb-4;
+  }
+  .swal2-html-container {
+    @apply text-gray-700 mb-4;
+  }
+  .swal2-footer {
+    @apply text-gray-600 mt-4;
+  }
+  .swal2-loading {
+    @apply bg-gray-200 text-gray-800;
+  }
+  .swal2-close {
+    @apply absolute top-2 right-2 text-gray-500 hover:text-gray-700;
+  }
+  .swal2-icon {
+    @apply w-8 h-8 flex items-center justify-center rounded-full;
+  }
+  .swal2-success {
+    @apply bg-green-500 text-white;
+  }
+  .swal2-error {
+    @apply bg-red-500 text-white;
+  }
+  .swal2-warning {
+    @apply bg-yellow-500 text-white;
+  }
+  .swal2-info {
+    @apply bg-blue-500 text-white;
+  }
+  .swal2-question {
+    @apply bg-gray-500 text-white;
+  }
+}
+
+.swal2-icon-content {
+  @apply text-xl;
+}

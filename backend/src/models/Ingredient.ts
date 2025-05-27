@@ -1,6 +1,6 @@
 import { InferSchemaType, model, Schema } from "mongoose";
 
-const ProductSchema = new Schema(
+const IngredientSchema = new Schema(
   {
     name: { type: String, required: true },
     price: { type: Number, required: true },
@@ -11,7 +11,6 @@ const ProductSchema = new Schema(
       required: true,
     },
     sku: { type: String, required: true },
-    material: { type: String, required: true },
     stock: { type: Number, default: 10 },
     images: [{ type: String }],
     active: { type: Number, enum: [0, 1], default: 0 },
@@ -19,7 +18,7 @@ const ProductSchema = new Schema(
   { timestamps: true }
 );
 
-export type ProductSchemaType = InferSchemaType<typeof ProductSchema>;
-export type Product = ProductSchemaType & { _id: Schema.Types.ObjectId };
+export type IngredientSchemaType = InferSchemaType<typeof IngredientSchema>;
+export type Ingredient = IngredientSchemaType & { _id: Schema.Types.ObjectId };
 
-export const ProductModel = model<Product>("products", ProductSchema);
+export const IngredientModel = model<Ingredient>("Ingredients", IngredientSchema);

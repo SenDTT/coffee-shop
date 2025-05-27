@@ -1,23 +1,23 @@
 import { RequestHandler } from "express";
 import { IErrorResponse, IResponseData } from "../types/Common";
-import { IProductRequest } from "../types/ProductTypes";
-import {
-  activeOrDeactiveProduct,
-  addImagesProduct,
-  addProduct,
-  deleteProduct,
-  getAllProducts,
-  getProductById,
-  updateProduct,
-} from "../services/ProductService";
 import { getCategoryById } from "../services/CategoryService";
 import fs from "fs";
 import path from "path";
+import { IIngredientRequest } from "../types/IngredientTypes";
+import {
+  activeOrDeactiveIngredient,
+  addImagesIngredient,
+  addIngredient,
+  deleteIngredient,
+  getAllIngredients,
+  getIngredientById,
+  updateIngredient,
+} from "../services/IngredientService";
 
-export const addProductController: RequestHandler<
+export const addIngredientController: RequestHandler<
   unknown,
   IResponseData | IErrorResponse,
-  IProductRequest
+  IIngredientRequest
 > = async (req, res, next) => {
   try {
     const { categoryId } = req.body;
@@ -30,33 +30,22 @@ export const addProductController: RequestHandler<
       return;
     }
 
-    const newImages = req.files as Express.Multer.File[];
-    let imageUrls: string[] = [];
-    if (newImages) {
-      imageUrls = newImages.map((file) => file.path);
-    }
-
-    const product = await addProduct({
-      ...req.body,
-      images: imageUrls,
-      category,
-    });
-    res.json({ success: true, data: product });
+    const ingredient = await addIngredient({ ...req.body, category });
+    res.json({ success: true, data: ingredient });
   } catch (err) {
     next(err);
   }
 };
 
-export const updateProductController: RequestHandler<
+export const updateIngredientController: RequestHandler<
   { id: string },
   IResponseData | IErrorResponse,
-  IProductRequest
+  IIngredientRequest
 > = async (req, res, next) => {
   const { id } = req.params;
   const { categoryId } = req.body;
   try {
     const category = await getCategoryById(categoryId);
-    let model = await getProductById(id);
     if (category == null) {
       res
         .status(400)
@@ -64,27 +53,17 @@ export const updateProductController: RequestHandler<
       return;
     }
 
-    const newImages = req.files as Express.Multer.File[];
-    let imageUrls: string[] = [];
-    if (newImages) {
-      imageUrls = newImages.map((file) => file.path);
-    }
+    await updateIngredient(id, { ...req.body, category });
 
-    await updateProduct(id, {
-      ...req.body,
-      images: [...model.images, ...imageUrls],
-      category,
-    });
+    const newModel = await getIngredientById(id);
 
-    model = await getProductById(id); // refresh
-
-    res.json({ success: true, data: model });
+    res.json({ success: true, data: newModel });
   } catch (err) {
     next(err);
   }
 };
 
-export const getAllProductsController: RequestHandler<
+export const getAllIngredientsController: RequestHandler<
   unknown,
   IResponseData | IErrorResponse,
   { limit: number; skip: number; search?: string }
@@ -98,7 +77,7 @@ export const getAllProductsController: RequestHandler<
       filter.$or = [{ name: { $regex: search, $options: "i" } }];
     }
 
-    const data = await getAllProducts(
+    const data = await getAllIngredients(
       filter,
       Number(skip) || 0,
       Number(limit) || 10
@@ -109,73 +88,73 @@ export const getAllProductsController: RequestHandler<
   }
 };
 
-export const activeOrDeactiveProductController: RequestHandler<
+export const activeOrDeactiveIngredientController: RequestHandler<
   { id: string },
   IResponseData | IErrorResponse
 > = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const newModel = await getProductById(id);
+    const newModel = await getIngredientById(id);
     if (!newModel) {
       res
         .status(404)
-        .json({ success: false, message: "Product is not existed." });
+        .json({ success: false, message: "Ingredient is not existed." });
       return;
     }
 
-    await activeOrDeactiveProduct(id, newModel?.active ? 0 : 1);
+    await activeOrDeactiveIngredient(id, newModel?.active ? 0 : 1);
 
     res.json({
       success: true,
       data: null,
       message:
-        (newModel?.active ? "Active" : "Deactive") + " Product Successfully",
+        (newModel?.active ? "Active" : "Deactive") + " Ingredient Successfully",
     });
   } catch (err) {}
 };
 
-export const deleteProductController: RequestHandler<
+export const deleteIngredientController: RequestHandler<
   { id: string },
   IResponseData | IErrorResponse
 > = async (req, res, next) => {
   try {
     const { id } = req.params;
-    await deleteProduct(id);
+    await deleteIngredient(id);
     res.json({
       success: true,
       data: null,
-      message: "Deleted Product Successfully",
+      message: "Deleted Ingredient Successfully",
     });
   } catch (err) {
     next(err);
   }
 };
 
-export const getProductController: RequestHandler<
+export const getIngredientController: RequestHandler<
   { id: string },
   IResponseData | IErrorResponse
 > = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const data = await getProductById(id);
+    const data = await getIngredientById(id);
     res.json({ success: true, data });
   } catch (err) {
     next(err);
   }
 };
 
-export const addProductImageController: RequestHandler<
+export const addIngredientImageController: RequestHandler<
   { id: string },
   IResponseData | IErrorResponse
 > = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const newModel = await getProductById(id);
+    const newModel = await getIngredientById(id);
     if (!newModel) {
       res
         .status(404)
-        .json({ success: false, message: "Product is not existed." });
+        .json({ success: false, message: "Ingredient is not existed." });
       return;
     }
 
@@ -183,19 +162,19 @@ export const addProductImageController: RequestHandler<
     if (newImages) {
       const imageUrls = newImages.map((file) => file.path);
 
-      await addImagesProduct(id, {
+      await addImagesIngredient(id, {
         images: [...newModel.images, ...imageUrls],
       });
     }
-    const updatedProduct = await getProductById(id);
+    const updatedIngredient = await getIngredientById(id);
 
-    res.json({ success: true, data: updatedProduct });
+    res.json({ success: true, data: updatedIngredient });
   } catch (err) {
     next(err);
   }
 };
 
-export const deleteProductImageController: RequestHandler<
+export const deleteIngredientImageController: RequestHandler<
   { id: string },
   IResponseData | IErrorResponse,
   { image: string }
@@ -203,23 +182,24 @@ export const deleteProductImageController: RequestHandler<
   const { id } = req.params;
   const image_path = req.body?.image;
   try {
-    const product = await getProductById(id);
-    if (!product) {
+    const ingredient = await getIngredientById(id);
+    if (!ingredient) {
       res
         .status(404)
-        .json({ success: false, message: "Product is not existed." });
+        .json({ success: false, message: "Ingredient is not existed." });
       return;
     }
 
-    if (!product.images.includes(image_path)) {
-      res
-        .status(404)
-        .json({ success: false, message: "Image not found for this product." });
+    if (!ingredient.images.includes(image_path)) {
+      res.status(404).json({
+        success: false,
+        message: "Image not found for this ingredient.",
+      });
       return;
     }
 
-    const newImages = product.images.filter((item) => item !== image_path);
-    await addImagesProduct(id, {
+    const newImages = ingredient.images.filter((item) => item !== image_path);
+    await addImagesIngredient(id, {
       images: newImages,
     });
 
@@ -233,9 +213,9 @@ export const deleteProductImageController: RequestHandler<
         console.log(`Image ${image_path} has been deleted.`);
       }
     });
-    const updatedProduct = await getProductById(id);
+    const updatedIngredient = await getIngredientById(id);
 
-    res.json({ success: true, data: updatedProduct });
+    res.json({ success: true, data: updatedIngredient });
   } catch (err) {
     next(err);
   }

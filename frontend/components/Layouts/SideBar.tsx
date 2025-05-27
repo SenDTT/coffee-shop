@@ -1,11 +1,18 @@
 import Link from "next/link";
 import { useState } from "react";
-import { TbLayoutDashboardFilled, TbLayoutSidebarLeftCollapseFilled, TbLayoutSidebarRightCollapseFilled, TbMenu } from "react-icons/tb";
+import { TbLayoutDashboardFilled, TbLayoutSidebarLeftCollapseFilled, TbLayoutSidebarRightCollapseFilled, TbLogout, TbMenu } from "react-icons/tb";
 import { PiClipboardTextBold } from "react-icons/pi";
-import { FaBoxes, FaUsers } from "react-icons/fa";
+import { FaBoxes, FaNewspaper, FaUsers } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
+import { AiFillProduct } from "react-icons/ai";
+import { usePathname } from 'next/navigation';
 
 export default function SideBar() {
+    const pathname = usePathname();
+    // Function to determine if the current path is active
+    const isActive = (path: string) => pathname.startsWith(path) ? 'bg-gray-700 text-coastal-light-bg' : '';
+    // Special case for the dashboard to handle exact match
+    const isDashboardActive = (path: string) => pathname === path ? 'bg-gray-700 text-coastal-light-bg' : '';
     const [menuOpen, setMenuOpen] = useState(true);
     const toggleMenu = () => setMenuOpen(!menuOpen);
     return (
@@ -21,34 +28,52 @@ export default function SideBar() {
                 </div>
                 <nav className="mt-4">
                     <ul className="space-y-2">
-                        <li>
-                            <Link href="/admin" className="text-lg transition hover:bg-gray-700 hover:cursor-pointer px-4 py-2 inline-flex gap-2 items-center w-full">
+                        <li className={menuOpen ? 'px-4' : 'px-2'}>
+                            <Link href="/admin" className={`text-lg transition hover:bg-gray-700 hover:cursor-pointer ${menuOpen ? 'px-4' : 'px-2'} ${isDashboardActive('/admin')} py-2 inline-flex gap-2 items-center w-full rounded-md`}>
                                 <TbLayoutDashboardFilled className="text-2xl" />
                                 <p className={menuOpen ? 'block' : 'hidden'}>Dashboard</p>
                             </Link>
                         </li>
-                        <li>
-                            <Link href="/admin/menu" className="text-lg transition hover:bg-gray-700 hover:cursor-pointer px-4 py-2 inline-flex gap-2 items-center w-full">
+                        <li className={menuOpen ? 'px-4' : 'px-2'}>
+                            <Link href="/admin/menu" className={`text-lg transition hover:bg-gray-700 hover:cursor-pointer ${menuOpen ? 'px-4' : 'px-2'} ${isActive('/admin/menu')} py-2 inline-flex gap-2 items-center w-full rounded-md`}>
                                 <PiClipboardTextBold className="text-2xl" />
                                 <p className={menuOpen ? 'block' : 'hidden'}>Menu</p>
                             </Link>
                         </li>
-                        <li>
-                            <Link href="/admin/orders" className="text-lg transition hover:bg-gray-700 hover:cursor-pointer px-4 py-2 inline-flex gap-2 items-center w-full">
+                        <li className={menuOpen ? 'px-4' : 'px-2'}>
+                            <Link href="/admin/ingredients" className={`text-lg transition hover:bg-gray-700 hover:cursor-pointer ${menuOpen ? 'px-4' : 'px-2'} ${isActive('/admin/ingredients')} py-2 inline-flex gap-2 items-center w-full rounded-md`}>
+                                <AiFillProduct className="text-2xl" />
+                                <p className={menuOpen ? 'block' : 'hidden'}>Ingredients</p>
+                            </Link>
+                        </li>
+                        <li className={menuOpen ? 'px-4' : 'px-2'}>
+                            <Link href="/admin/orders" className={`text-lg transition hover:bg-gray-700 hover:cursor-pointer ${menuOpen ? 'px-4' : 'px-2'} ${isActive('/admin/orders')} py-2 inline-flex gap-2 items-center w-full rounded-md`}>
                                 <FaBoxes className="text-2xl" />
                                 <p className={menuOpen ? 'block' : 'hidden'}>Orders</p>
                             </Link>
                         </li>
-                        <li>
-                            <Link href="/admin/users" className="text-lg transition hover:bg-gray-700 hover:cursor-pointer px-4 py-2 inline-flex gap-2 items-center w-full">
+                        <li className={menuOpen ? 'px-4' : 'px-2'}>
+                            <Link href="/admin/blogs" className={`text-lg transition hover:bg-gray-700 hover:cursor-pointer ${menuOpen ? 'px-4' : 'px-2'} ${isActive('/admin/blogs')} py-2 inline-flex gap-2 items-center w-full rounded-md`}>
+                                <FaNewspaper className="text-2xl" />
+                                <p className={menuOpen ? 'block' : 'hidden'}>Blogs</p>
+                            </Link>
+                        </li>
+                        <li className={menuOpen ? 'px-4' : 'px-2'}>
+                            <Link href="/admin/users" className={`text-lg transition hover:bg-gray-700 hover:cursor-pointer ${menuOpen ? 'px-4' : 'px-2'} ${isActive('/admin/users')} py-2 inline-flex gap-2 items-center w-full rounded-md`}>
                                 <FaUsers className="text-2xl" />
                                 <p className={menuOpen ? 'block' : 'hidden'}>Users</p>
                             </Link>
                         </li>
-                        <li>
-                            <Link href="/admin/settings" className="text-lg transition hover:bg-gray-700 hover:cursor-pointer px-4 py-2 inline-flex gap-2 items-center w-full">
+                        <li className={menuOpen ? 'px-4' : 'px-2'}>
+                            <Link href="/admin/settings" className={`text-lg transition hover:bg-gray-700 hover:cursor-pointer ${menuOpen ? 'px-4' : 'px-2'} ${isActive('/admin/settings')} py-2 inline-flex gap-2 items-center w-full rounded-md`}>
                                 <IoMdSettings className="text-2xl" />
                                 <p className={menuOpen ? 'block' : 'hidden'}>Settings</p>
+                            </Link>
+                        </li>
+                        <li className={menuOpen ? 'px-4' : 'px-2'}>
+                            <Link href="/auth/logout" className={`text-lg transition hover:bg-gray-700 hover:cursor-pointer ${menuOpen ? 'px-4' : 'px-2'} py-2 inline-flex gap-2 items-center w-full rounded-md`}>
+                                <TbLogout className="text-2xl" />
+                                <p className={menuOpen ? 'block' : 'hidden'}>Logout</p>
                             </Link>
                         </li>
                     </ul>
