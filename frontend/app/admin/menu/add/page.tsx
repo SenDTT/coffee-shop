@@ -15,6 +15,7 @@ export default function AddProductPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [errors, setErrors] = useState<Record<string, string>>({});
     const [success, setSuccess] = useState<string | null>(null);
     const [skuPrefix, setSkuPrefix] = useState("");
     const initialData = {
@@ -54,12 +55,13 @@ export default function AddProductPage() {
 
     const handleInputChange = (e: InputEvent) => {
         const { name, value } = e.target;
+
         setFormData((prevData) => ({
             ...prevData,
             [name]: name === 'images'
-                ? typeof value === 'string'
-                    ? value.split(',').map((v) => v.trim()).filter(Boolean)
-                    : value
+                ? Array.isArray(value)
+                    ? value
+                    : []
                 : value,
         }));
     };
@@ -80,6 +82,22 @@ export default function AddProductPage() {
             delete data.category;
             const res = await api.post("/products", data);
 
+            // const formPayload = new FormData();
+
+            // Object.entries(formData).forEach(([key, value]) => {
+            //     if (key === "images" || key === "category") return;
+            //     formPayload.append(key, String(value));
+            // });
+
+            // formPayload.append("categoryId", formData.category);
+            // formPayload.append("sku", skuPrefix + formData.sku);
+
+            // formData.images.forEach((file: File) => {
+            //     formPayload.append("images", file);
+            // });
+
+            // const res = await api.post("/products", formPayload);
+
             const dataRes = res.data;
             if (dataRes.success) {
                 setSuccess('Product added successfully!');
@@ -87,7 +105,7 @@ export default function AddProductPage() {
 
                 setTimeout(() => {
                     router.push('/admin/menu');
-                }, 3000);
+                }, 2000);
             } else {
                 setError('Failed to add product. Please try again.');
                 toast.error('Failed to add product. Please try again.');
@@ -95,6 +113,11 @@ export default function AddProductPage() {
         } catch (err) {
             setError('Failed to add product. Please try again.');
             toast.error('Failed to add product. Please try again.');
+
+            if ((err as any)?.response?.data?.errors) {
+                const errors = (err as any)?.response?.data?.errors;
+                setErrors(errors);
+            }
         } finally {
             setLoading(false);
         }
@@ -119,6 +142,7 @@ export default function AddProductPage() {
                         required: true,
                         value: formData.name,
                         onChange: handleInputChange,
+                        error: errors.name ?? ''
                     },
                     {
                         name: 'sku',
@@ -129,6 +153,7 @@ export default function AddProductPage() {
                         required: true,
                         value: formData.sku,
                         onChange: handleInputChange,
+                        error: errors.sku ?? ''
                     },
                     {
                         name: 'price',
@@ -138,6 +163,8 @@ export default function AddProductPage() {
                         required: true,
                         value: formData.price,
                         onChange: handleInputChange,
+                        error: errors.price ?? '',
+                        validate: (value) => Number.isNaN(Number(value)) ? 'Price must be a number' : ''
                     },
                     {
                         name: 'category',
@@ -148,7 +175,8 @@ export default function AddProductPage() {
                         value: formData.category,
                         onChange: handleInputChange,
                         fetchOptionsAPI: getListCategories,
-                        onSelect: selectCategoryCallBack
+                        onSelect: selectCategoryCallBack,
+                        error: errors.category ?? errors.categoryId ?? ''
                     },
                     {
                         name: 'stock',
@@ -159,6 +187,7 @@ export default function AddProductPage() {
                         required: true,
                         value: formData.stock,
                         onChange: handleInputChange,
+                        error: errors.stock ?? ''
                     },
                     {
                         name: 'active',
@@ -168,6 +197,7 @@ export default function AddProductPage() {
                         required: true,
                         value: formData.active.toString(),
                         onChange: handleInputChange,
+                        error: errors.active ?? ''
                     },
                     {
                         name: 'description',
@@ -177,6 +207,7 @@ export default function AddProductPage() {
                         required: true,
                         value: formData.description,
                         onChange: handleInputChange,
+                        error: errors.description ?? ''
                     },
                     {
                         name: 'material',
@@ -186,6 +217,7 @@ export default function AddProductPage() {
                         required: true,
                         value: formData.material,
                         onChange: handleInputChange,
+                        error: errors.material ?? ''
                     },
                     {
                         name: 'images',
@@ -196,18 +228,10 @@ export default function AddProductPage() {
                         value: formData.images.join(','),
                         multiple: true,
                         accept: 'image/*',
-                        onChange: (e) => {
-                            const input = e.target as HTMLInputElement;
-                            const files = Array.from(input.files || []);
-                            handleInputChange({
-                                target: {
-                                    name: 'images',
-                                    value: files,
-                                },
-                            });
-                        },
+                        onChange: handleInputChange,
+                        error: errors.images ?? ''
                     },
-                ]} onSubmit={handleSubmit} submitText="Add Product" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl={'/admin/menu'} isShowButton={true}></AdminForm>
+                ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Add Product" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl={'/admin/menu'} isShowButton={true}></AdminForm>
             </div>
         </AdminLayout>
     );

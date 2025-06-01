@@ -19,7 +19,7 @@ export default function SideBar() {
         <div className={`flex flex-col ${menuOpen ? 'w-64' : 'w-16'} justify-between h-screen bg-gray-800 text-coastal-light-bg`}>
             <div className="flex flex-col items-left py-4 gap-4">
                 <div className={`inline-flex ${menuOpen ? 'justify-between' : 'justify-start'} items-center p-4 border-b border-slate-100`}>
-                    <h1 className={`text-2xl font-bold ${menuOpen ? 'block' : 'hidden'}`}>Coffee Shop</h1>
+                    <Link href="/"><h1 className={`text-2xl font-bold ${menuOpen ? 'block' : 'hidden'}`}>Coffee Shop</h1></Link>
                     {menuOpen ? (
                         <TbLayoutSidebarLeftCollapseFilled onClick={toggleMenu} className="text-2xl cursor-pointer text-coastal-light-bg" />
                     ) : (

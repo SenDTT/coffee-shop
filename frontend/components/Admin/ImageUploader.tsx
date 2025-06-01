@@ -1,20 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { AdminFormFieldWithValue } from "@/types/Product";
+import { useState, useEffect, useRef } from "react";
 import { IoMdRemove } from "react-icons/io";
+import { FaPlus } from "react-icons/fa";
+import { AdminFormFieldWithValue } from "@/types/Product";
 
-const ImageUploader = (props: AdminFormFieldWithValue) => {
+export default function ImageUploader(props: AdminFormFieldWithValue) {
     const [files, setFiles] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Handle new files (append, don't replace)
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFiles = Array.from(e.target.files || []);
-
         const updatedFiles = [...files, ...selectedFiles];
         setFiles(updatedFiles);
 
         if (props.onChange) {
-            // Send back only the updated files
             const syntheticEvent = {
                 target: {
                     name: props.name || "images",
@@ -23,9 +22,13 @@ const ImageUploader = (props: AdminFormFieldWithValue) => {
             };
             props.onChange(syntheticEvent as any);
         }
+
+        // Reset input so the same file can be re-uploaded
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
     };
 
-    // Generate previews
     useEffect(() => {
         const urls = files.map((file) => URL.createObjectURL(file));
         setPreviews(urls);
@@ -35,7 +38,6 @@ const ImageUploader = (props: AdminFormFieldWithValue) => {
         };
     }, [files]);
 
-    // Delete a file by index
     const handleDelete = (indexToRemove: number) => {
         const updatedFiles = files.filter((_, i) => i !== indexToRemove);
         setFiles(updatedFiles);
@@ -53,23 +55,13 @@ const ImageUploader = (props: AdminFormFieldWithValue) => {
 
     return (
         <div className="w-full flex flex-col gap-4">
-            <input
-                type="file"
-                placeholder={props.placeholder}
-                accept={props.accept || "image/*"}
-                name={props.name}
-                onChange={handleFileChange}
-                multiple={props.multiple || false}
-                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-300"
-            />
-
             <div className="flex flex-wrap gap-4">
                 {previews.map((src, index) => (
                     <div key={index} className="relative group">
                         <img
                             src={src}
                             alt={`Preview ${index}`}
-                            className="w-32 h-32 object-cover border rounded"
+                            className="w-12 h-12 sm:w-28 sm:h-28 object-cover border rounded"
                         />
                         <button
                             type="button"
@@ -81,9 +73,22 @@ const ImageUploader = (props: AdminFormFieldWithValue) => {
                         </button>
                     </div>
                 ))}
+
+                {/* Upload frame button */}
+                <label className="w-12 h-12 sm:w-28 sm:h-28 flex items-center justify-center border-2 border-dashed border-gray-300 rounded cursor-pointer hover:border-gray-500">
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        placeholder={props.placeholder}
+                        accept={props.accept || "image/*"}
+                        name={props.name}
+                        onChange={handleFileChange}
+                        multiple={props.multiple || false}
+                        className="hidden"
+                    />
+                    <FaPlus className="text-gray-400 text-md" />
+                </label>
             </div>
         </div>
     );
-};
-
-export default ImageUploader;
+}

@@ -7,6 +7,7 @@ export interface IResponseData {
 export interface IErrorResponse {
   success: boolean;
   message: string;
+  errors?: Record<string, string>
 }
 
 export interface IGetListQueries {

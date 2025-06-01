@@ -20,7 +20,7 @@ export const addProductController: RequestHandler<
   IProductRequest
 > = async (req, res, next) => {
   try {
-    const { categoryId } = req.body;
+    const { categoryId, images } = req.body;
 
     const category = await getCategoryById(categoryId);
     if (category == null) {
@@ -30,7 +30,7 @@ export const addProductController: RequestHandler<
       return;
     }
 
-    const newImages = req.files as Express.Multer.File[];
+    const newImages = images as Express.Multer.File[];
     let imageUrls: string[] = [];
     if (newImages) {
       imageUrls = newImages.map((file) => file.path);

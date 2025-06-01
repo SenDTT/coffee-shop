@@ -26,6 +26,7 @@ export type AdminFormProps = {
   className?: string;
   loading?: boolean;
   error?: string;
+  setErrors?: (e: Record<string, string>) => void;
   success?: string;
   successMessage?: string;
   errorMessage?: string;
@@ -77,6 +78,7 @@ export type AdminFormFieldWithValue = AdminFormField & {
   readOnly?: boolean;
   autoFocus?: boolean;
   onSelect?: (e: SelectOption) => void
+  validate?: (value: string | number | string[] | Date | boolean) => string 
 };
 
 export type FetchOptionsResponse = {

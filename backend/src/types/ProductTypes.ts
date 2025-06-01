@@ -8,6 +8,7 @@ export interface IProductRequest {
   stock: number;
   material: string;
   sku: string;
+  images: File[] | Express.Multer.File[];
 }
 
 export interface IProductImages {

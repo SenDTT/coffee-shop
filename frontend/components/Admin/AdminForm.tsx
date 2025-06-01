@@ -8,9 +8,38 @@ import InputText from "./InputText";
 export default function AdminForm(props: AdminFormProps) {
     const { fields, submitText, cancelText, cancelUrl, isShowButton, onSubmit } = props;
 
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const newErrors: Record<string, string> = {};
+
+        for (const field of fields) {
+            if (field.required && (field.value === "" || field.value === null || field.value === undefined)) {
+                newErrors[field.name] = `${field.label} is required`;
+                continue;
+            }
+
+            if (field.validate) {
+                const customError = field.validate(field.value);
+                if (customError) {
+                    newErrors[field.name] = customError;
+                }
+            }
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            props.setErrors?.(newErrors); // Call parent setErrors
+            return;
+        }
+
+        props.setErrors?.({}); // Clear errors if all good
+        props.onSubmit(e);
+    };
+
+
     return (
         <div className="flex flex-col w-full h-full">
-            <form onSubmit={onSubmit}>
+            <form onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full h-full p-6">
                     {fields.map((field, index) => (
                         <div key={index} className="flex flex-col">
@@ -18,7 +47,7 @@ export default function AdminForm(props: AdminFormProps) {
                                 {field.label}
                                 {field.required && <span className="text-red-600">*</span>}
                             </label>
-                            
+
                             {field.type === 'text' && <InputText {...field} />}
 
                             {field.type === "textarea" && typeof field.value === 'string' && (

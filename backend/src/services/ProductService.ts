@@ -43,6 +43,15 @@ export const getAllProducts = async (
   }
 };
 
+export const getProductBySKU = async (sku: string) => {
+  try {
+    return await ProductModel.findOne({ sku });
+  } catch (err) {
+    console.log("Fetching a Product by SKU failed: ", err);
+    throw err;
+  }
+};
+
 export const getProductById = async (id: string) => {
   try {
     const model = await ProductModel.findById(id);

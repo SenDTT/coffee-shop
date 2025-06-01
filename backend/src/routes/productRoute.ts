@@ -25,8 +25,8 @@ router.use(authenticate, isAdminUser);
 
 router.post(
   "/",
-  add_product_validator,
   upload.array("images"),
+  add_product_validator,
   addProductController
 );
 
