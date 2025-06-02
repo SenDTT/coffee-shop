@@ -78,27 +78,24 @@ export default function AddProductPage() {
         setSuccess(null);
         try {
             // Simulate API call
-            let data: Omit<typeof formData, 'category'> & { categoryId: string; category?: string } = { ...formData, categoryId: formData.category, sku: skuPrefix + formData.sku };
-            delete data.category;
-            const res = await api.post("/products", data);
+            const formPayload = new FormData();
 
-            // const formPayload = new FormData();
+            Object.entries(formData).forEach(([key, value]) => {
+                if (key === "sku" || key === "images" || key === "category") return;
+                formPayload.append(key, String(value));
+            });
 
-            // Object.entries(formData).forEach(([key, value]) => {
-            //     if (key === "images" || key === "category") return;
-            //     formPayload.append(key, String(value));
-            // });
+            formPayload.append("categoryId", formData.category);
+            formPayload.append("sku", skuPrefix + formData.sku);
 
-            // formPayload.append("categoryId", formData.category);
-            // formPayload.append("sku", skuPrefix + formData.sku);
+            formData.images.forEach((file: File) => {
+                formPayload.append("images", file);
+            });
 
-            // formData.images.forEach((file: File) => {
-            //     formPayload.append("images", file);
-            // });
-
-            // const res = await api.post("/products", formPayload);
+            const res = await api.post("/products", formPayload);
 
             const dataRes = res.data;
+
             if (dataRes.success) {
                 setSuccess('Product added successfully!');
                 toast.success('Product added successfully!');

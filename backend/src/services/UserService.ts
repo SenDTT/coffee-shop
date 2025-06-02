@@ -29,7 +29,7 @@ export const addUser = async (data: ISignupBody) => {
     const user: User | null = await UserModel.create({
       ...data,
       password: hash,
-      role: "user",
+      role: data.role ? data.role : "user",
       subcribedEmail: 1,
     });
 
@@ -59,7 +59,7 @@ export const getAllUsers = async (
   try {
     const data = await UserModel.find(filter).skip(skip).limit(limit);
     const total = await UserModel.countDocuments(filter);
-    return {data, total};
+    return { data, total };
   } catch (err) {
     console.log("Fetching users failed: ", err);
     throw err;
@@ -67,15 +67,15 @@ export const getAllUsers = async (
 };
 
 export const updateUserRole = async (id: string, role: "user" | "admin") => {
-    try {
-        const results = await UserModel.updateOne({_id: id}, {role});
+  try {
+    const results = await UserModel.updateOne({ _id: id }, { role });
 
-        return results;
-    } catch (err) {
-        console.log("Updating user role failed: ", err);
-        throw err;
-    }
-}
+    return results;
+  } catch (err) {
+    console.log("Updating user role failed: ", err);
+    throw err;
+  }
+};
 
 export const activeOrDeactiveSubcribedEmail = async (
   id: string,
@@ -92,15 +92,12 @@ export const activeOrDeactiveSubcribedEmail = async (
 };
 
 export const updateUserInfo = async (id: string, data: ISignupBody) => {
-    try {
-      const results = await UserModel.updateOne(
-        { _id: id },
-        data
-      );
+  try {
+    const results = await UserModel.updateOne({ _id: id }, data);
 
-      return results;
-    } catch (err) {
-      console.log("Updating user failed: ", err);
-      throw err;
-    }
-}
+    return results;
+  } catch (err) {
+    console.log("Updating user failed: ", err);
+    throw err;
+  }
+};

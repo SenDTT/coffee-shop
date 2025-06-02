@@ -22,11 +22,6 @@ export default function ImageUploader(props: AdminFormFieldWithValue) {
             };
             props.onChange(syntheticEvent as any);
         }
-
-        // Reset input so the same file can be re-uploaded
-        if (fileInputRef.current) {
-            fileInputRef.current.value = "";
-        }
     };
 
     useEffect(() => {

@@ -33,7 +33,7 @@ export default function AdminForm(props: AdminFormProps) {
         }
 
         props.setErrors?.({}); // Clear errors if all good
-        props.onSubmit(e);
+        onSubmit(e);
     };
 
 

@@ -61,7 +61,10 @@ export const getIngredientById = async (id: string) => {
 
 export const updateIngredient = async (id: string, data: IIngredient) => {
   try {
-    const results = await IngredientModel.updateOne({ _id: id }, data);
+    const results = await IngredientModel.updateOne(
+      { _id: id },
+      { $set: data }
+    );
     return results;
   } catch (err) {
     console.log("Updating Ingredient failed: ", err);
@@ -71,7 +74,10 @@ export const updateIngredient = async (id: string, data: IIngredient) => {
 
 export const activeOrDeactiveIngredient = async (id: string, active: Number) => {
   try {
-    const results = await IngredientModel.updateOne({ _id: id }, { active });
+    const results = await IngredientModel.updateOne(
+      { _id: id },
+      { $set: { active } }
+    );
     return results;
   } catch (err) {
     console.log("Active or Deactive Ingredient failed: ", err);
@@ -84,7 +90,10 @@ export const addImagesIngredient = async (
   data: { images: string[] }
 ) => {
   try {
-    const results = await IngredientModel.updateOne({ _id: id }, data);
+    const results = await IngredientModel.updateOne(
+      { _id: id },
+      { $set: data }
+    );
     return results;
   } catch (err) {
     console.log("Add Ingredient Images failed: ", err);

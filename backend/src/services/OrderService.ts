@@ -93,7 +93,7 @@ export const addOrUpdateProductOfOrder = async (
   data: Partial<IOrderBody>
 ) => {
   try {
-    const results = await OrderModel.updateOne({ _id: id }, data);
+    const results = await OrderModel.updateOne({ _id: id }, { $set: data });
 
     return results;
   } catch (err) {

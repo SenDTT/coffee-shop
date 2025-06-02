@@ -70,7 +70,7 @@ export const getProductById = async (id: string) => {
 
 export const updateProduct = async (id: string, data: IProduct) => {
   try {
-    const results = await ProductModel.updateOne({ _id: id }, data);
+    const results = await ProductModel.updateOne({ _id: id }, { $set: data });
     return results;
   } catch (err) {
     console.log("Updating Product failed: ", err);
@@ -80,7 +80,10 @@ export const updateProduct = async (id: string, data: IProduct) => {
 
 export const activeOrDeactiveProduct = async (id: string, active: Number) => {
   try {
-    const results = await ProductModel.updateOne({ _id: id }, { active });
+    const results = await ProductModel.updateOne(
+      { _id: id },
+      { $set: { active } }
+    );
     return results;
   } catch (err) {
     console.log("Active or Deactive Product failed: ", err);
@@ -93,7 +96,7 @@ export const addImagesProduct = async (
   data: { images: string[] }
 ) => {
   try {
-    const results = await ProductModel.updateOne({ _id: id }, data);
+    const results = await ProductModel.updateOne({ _id: id }, { $set: data });
     return results;
   } catch (err) {
     console.log("Add Product Images failed: ", err);

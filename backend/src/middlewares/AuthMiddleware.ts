@@ -39,10 +39,10 @@ export const authenticate: RequestHandler = async (req, res, next) => {
 export const isAdminUser: RequestHandler = async (req, res, next) => {
   const role = (req as any).user?.role;
 
-  // if (role == UserRoles.user) {
-  //   res.status(404).json({ success: false, message: "Access denied." });
-  //   return;
-  // }
+  if (role == UserRoles.user) {
+    res.status(404).json({ success: false, message: "Access denied." });
+    return;
+  }
 
   next();
 };

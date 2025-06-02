@@ -18,4 +18,5 @@ export interface ISignupBody {
   name: string;
   username: string;
   password: string;
+  role?: "admin" | "user"
 }

@@ -48,7 +48,7 @@ export const getCategoryById = async (id: string) => {
 
 export const updateCategory = async (id: string, data: ICategory) => {
   try {
-    const results = await CategoryModel.updateOne({ _id: id }, data);
+    const results = await CategoryModel.updateOne({ _id: id }, { $set: data });
     return results;
   } catch (err) {
     console.log("Updating category failed: ", err);
@@ -58,7 +58,10 @@ export const updateCategory = async (id: string, data: ICategory) => {
 
 export const activeOrDeactiveCategory = async (id: string, active: Number) => {
   try {
-    const results = await CategoryModel.updateOne({ _id: id }, { active });
+    const results = await CategoryModel.updateOne(
+      { _id: id },
+      { $set: { active } }
+    );
     return results;
   } catch (err) {
     console.log("Active or Deactive Category failed: ", err);
