@@ -1,10 +1,14 @@
 import { RequestHandler } from "express";
 import { IErrorResponse, IResponseData } from "../types/Common";
-import { IProductRequest } from "../types/ProductTypes";
+import {
+  IDeleteMultipleProductsRequest,
+  IProductRequest,
+} from "../types/ProductTypes";
 import {
   activeOrDeactiveProduct,
   addImagesProduct,
   addProduct,
+  deleteMutipleProducts,
   deleteProduct,
   getAllProducts,
   getProductById,
@@ -29,12 +33,14 @@ export const addProductController: RequestHandler<
         .json({ success: false, message: "Category is not found" });
       return;
     }
+    console.log(req.files);
 
-    const newImages = images as Express.Multer.File[];
+    const newImages = req.files as Express.Multer.File[];
     let imageUrls: string[] = [];
     if (newImages) {
       imageUrls = newImages.map((file) => file.path);
     }
+    console.log(imageUrls);
 
     const product = await addProduct({
       ...req.body,
@@ -141,6 +147,24 @@ export const deleteProductController: RequestHandler<
   try {
     const { id } = req.params;
     await deleteProduct(id);
+    res.json({
+      success: true,
+      data: null,
+      message: "Deleted Product Successfully",
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteMultiProductsController: RequestHandler<
+  unknown,
+  IResponseData | IErrorResponse,
+  IDeleteMultipleProductsRequest
+> = async (req, res, next) => {
+  try {
+    const { ids } = req.body;
+    await deleteMutipleProducts(ids);
     res.json({
       success: true,
       data: null,

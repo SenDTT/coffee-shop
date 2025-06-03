@@ -10,19 +10,19 @@ import Title from '../../../components/Admin/Title';
 import { GetListParams, Product } from '../../../types/Product';
 import api from '../../../api';
 import AdminTable from '../../../components/Admin/AdminTable';
+import { confirmThemeSwal } from '../../../utils/sweetalert';
 
 const LIMIT = 10;
 
 export default function MenuPage() {
     const [products, setProducts] = useState<Product[]>([]);
-    const [showDeleteBtn, setShowDeleteBtn] = useState(true);
-    const [selectedItems, setSelectedItems] = useState<string[]>([]);
-    const [selectedAll, setSelectedAll] = useState(false);
+    const [showDeleteBtn, setShowDeleteBtn] = useState(false);
+    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [params, setParams] = useState<GetListParams>({
         limit: LIMIT,
         skip: 0,
     });
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [total, setTotal] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -48,22 +48,32 @@ export default function MenuPage() {
         }
     };
 
-    const handleDelete = async (ids: string[]) => {
+    const deleteMultipleHandle = async () => {
         // Perform delete logic here
+        const ids = [...selectedIds.values()];
         console.log('Deleting items with IDs:', ids);
         // Reset deleteIds or perform any other necessary actions
+        try {
+            const response = await api.post("/products/delete-multiple", { ids });
+            const dataRes = response.data;
 
-        // Show success message
-        toast.success('Items deleted successfully!');
-
-        // Reset state
-        setShowDeleteBtn(false);
-        setSelectedItems([]);
-        setSelectedAll(false);
+            if (dataRes.success) {
+                // Show success message
+                toast.success(dataRes.message);
+            } else {
+                toast.error("Items deleted Failed");
+            }
+        } catch (err) {
+            toast.error("Failed");
+            console.log(err);
+        } finally {
+            // Reset state
+            resetParams();
+        }
     };
 
-    const toggleShowDeleteBtn = () => {
-        setShowDeleteBtn(!showDeleteBtn);
+    const toggleShowDeleteBtn = (value: boolean) => {
+        setShowDeleteBtn(value);
     };
 
     const onClickSearch = (searchTerm: string) => {
@@ -75,8 +85,40 @@ export default function MenuPage() {
         }
     }
 
+    const onRequestDeleteById = async (id: string) => {
+        try {
+            const response = await api.delete(`/products/${id}`);
+            const dataRes = response.data;
+
+            if (dataRes.success) {
+                // Show success message
+                toast.success(dataRes.message);
+            } else {
+                toast.error("Items deleted Failed");
+            }
+        } catch (err) {
+            toast.error("Failed");
+            console.log(err);
+        } finally {
+            // Reset state
+            resetParams();
+        }
+    }
+
     const deleteHandle = (id: string) => {
         console.log(id);
+        confirmThemeSwal.fire({
+            title: 'Are you sure?',
+            text: 'This action cannot be undone!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Perform delete logic here
+                onRequestDeleteById(id);
+            }
+        });
     }
 
     const editHandle = (id: string) => {
@@ -87,6 +129,15 @@ export default function MenuPage() {
         setCurrentPage(newPage);
         setParams({
             skip: (newPage - 1) * LIMIT,
+            limit: LIMIT
+        });
+    }
+
+    const resetParams = () => {
+        setShowDeleteBtn(false);
+        setSelectedIds(new Set());
+        setParams({
+            skip: 0,
             limit: LIMIT
         });
     }
@@ -105,7 +156,7 @@ export default function MenuPage() {
                     <SearchItem onSearchHanlde={onClickSearch} />
 
                     <div className="flex flex-row sm:justify-end items-center gap-2 sm:w-full">
-                        {showDeleteBtn && (<DeleteButton deleteIds={selectedItems} onDelete={handleDelete} />)}
+                        <DeleteButton onDelete={deleteMultipleHandle} disabled={!showDeleteBtn} />
 
                         <AddButton path="/admin/menu/add" />
                     </div>
@@ -114,6 +165,8 @@ export default function MenuPage() {
                 {/* table */}
                 <AdminTable
                     showCheckbox
+                    selectedIds={selectedIds}
+                    setSelectedIds={setSelectedIds}
                     headers={["Sku", "Name", "Description", "Price", "Stock", "Category"]}
                     columns={["sku", "name", "description", "price", "stock", "category.name"]}
                     rows={products}
@@ -125,6 +178,8 @@ export default function MenuPage() {
                     currentPage={currentPage}
                     pageSize={LIMIT}
                     onPageChange={onPageChange}
+                    loading={loading}
+                    onShowDeleteMultipleHandle={toggleShowDeleteBtn}
                 />
 
             </div>

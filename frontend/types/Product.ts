@@ -77,8 +77,8 @@ export type AdminFormFieldWithValue = AdminFormField & {
   cols?: number;
   readOnly?: boolean;
   autoFocus?: boolean;
-  onSelect?: (e: SelectOption) => void
-  validate?: (value: string | number | string[] | Date | boolean) => string 
+  onSelect?: (e: SelectOption) => void;
+  validate?: (value: string | number | string[] | Date | boolean) => string;
 };
 
 export type FetchOptionsResponse = {
@@ -87,13 +87,13 @@ export type FetchOptionsResponse = {
 };
 
 export interface GetListParams {
-  limit: number,
-  skip: number,
-  search?: string
+  limit: number;
+  skip: number;
+  search?: string;
 }
 
 export interface CategoryParams extends GetListParams {
-  type: 'product' | 'blog' | 'ingredient'
+  type: "product" | "blog" | "ingredient";
 }
 
 export type AdminTableProps<T extends object> = {
@@ -109,4 +109,8 @@ export type AdminTableProps<T extends object> = {
   currentPage: number;
   pageSize?: number; // default: 10
   onPageChange: (newPage: number) => void; // handler to trigger new fetch
+  onShowDeleteMultipleHandle: (value: boolean) => void;
+  loading: boolean;
+  selectedIds: Set<string>;
+  setSelectedIds: (ids: Set<string>) => void
 };

@@ -11,6 +11,10 @@ export interface IProductRequest {
   images: File[] | Express.Multer.File[];
 }
 
+export interface IDeleteMultipleProductsRequest {
+  ids: string[]
+}
+
 export interface IProductImages {
   images: string[];
 }

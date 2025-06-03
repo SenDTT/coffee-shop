@@ -1,10 +1,11 @@
 import { AdminTableProps } from "../../types/Product";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getNestedValue } from "../../utils/stringUtil";
-import { FaEye, FaPen, FaTrash } from "react-icons/fa";
+import { FaEye, FaPen, FaSpinner, FaTrash } from "react-icons/fa";
 import { MdOutlineNavigateNext } from "react-icons/md";
 import { GrFormPrevious } from "react-icons/gr";
 import Link from "next/link";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const AdminTable = <T extends { _id: string }>({
     columns,
@@ -18,9 +19,12 @@ const AdminTable = <T extends { _id: string }>({
     totalRecords,
     currentPage,
     pageSize = 10,
-    onPageChange
+    onPageChange,
+    onShowDeleteMultipleHandle,
+    loading,
+    selectedIds,
+    setSelectedIds
 }: AdminTableProps<T>) => {
-    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
     const totalPages = Math.ceil(totalRecords / pageSize);
 
@@ -31,8 +35,29 @@ const AdminTable = <T extends { _id: string }>({
     };
 
     const toggleAll = () => {
-        setSelectedIds(new Set());
+        if (selectedIds.size > 0) {
+            setSelectedIds(new Set());
+        } else {
+            setSelectedIds(new Set(rows.map(row => row._id)));
+        }
     };
+
+    useEffect(() => {
+        if (selectedIds.size > 0) {
+            onShowDeleteMultipleHandle(true);
+        } else {
+            onShowDeleteMultipleHandle(false)
+        }
+    }, [selectedIds.size]);
+
+    useEffect(() => {
+        setSelectedIds(new Set());
+    }, [currentPage, rows]);
+
+    const onPageChangeHandle = (newPage: number) => {
+        setSelectedIds(new Set());
+        onPageChange(newPage);
+    }
 
     return (
         <div className="flex flex-col w-full">
@@ -43,7 +68,7 @@ const AdminTable = <T extends { _id: string }>({
                             {showCheckbox && (
                                 <th className="p-3">
                                     <input
-                                        className="sm:-ml-4"
+                                        className="sm:-ml-3"
                                         aria-label="checkbox-all"
                                         type="checkbox"
                                         checked={selectedIds.size === rows.length && rows.length > 0}
@@ -62,6 +87,7 @@ const AdminTable = <T extends { _id: string }>({
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 bg-white">
+                        {loading && <tr className="bg-white"><td className="p-3 text-center" colSpan={columns.length + (showCheckbox ? 1 : 0) + (hasActionsCol ? 1 : 0)}><AiOutlineLoading3Quarters className="animate-spin mx-4" /></td></tr>}
                         {rows.map((row, index) => (
                             <tr key={row._id} className={(index % 2 === 0 ? "bg-white" : "bg-gray-100")}>
                                 {showCheckbox && (
@@ -100,7 +126,7 @@ const AdminTable = <T extends { _id: string }>({
                 </span>
                 <div className="flex gap-2">
                     <button
-                        onClick={() => onPageChange(currentPage - 1)}
+                        onClick={() => onPageChangeHandle(currentPage - 1)}
                         disabled={currentPage <= 1}
                         className="px-2 py-1 border rounded disabled:opacity-50"
                         aria-label="Previous Page"
@@ -109,7 +135,7 @@ const AdminTable = <T extends { _id: string }>({
                         <GrFormPrevious className="size-4 my-1" />
                     </button>
                     <button
-                        onClick={() => onPageChange(currentPage + 1)}
+                        onClick={() => onPageChangeHandle(currentPage + 1)}
                         disabled={currentPage >= totalPages}
                         className="px-2 py-1 border rounded disabled:opacity-50"
                         aria-label="Next Page"

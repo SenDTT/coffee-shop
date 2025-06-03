@@ -24,7 +24,7 @@ export default function SearchItem(props: { onSearchHanlde: (searchTerm: string)
                 value={searchTerm}
                 onKeyDown={handleKeyDown}
                 onChange={(value) => setSearchTerm(value.target.value)}
-                className="px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-300 w-full sm:w-auto"
+                className="px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-300 w-full sm:w-auto sm:min-w-80"
             />
             <button onClick={handleSearch} className="px-4 py-1 bg-coastal-light-text text-coastal-light-bg rounded-md transition-colors sm:w-auto">
                 Search

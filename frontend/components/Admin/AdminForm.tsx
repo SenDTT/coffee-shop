@@ -186,8 +186,8 @@ export default function AdminForm(props: AdminFormProps) {
                             disabled={props.loading}
                             className="px-4 py-2 bg-coastal-light-text text-coastal-light-bg rounded-md hover:bg-coastal-light-text/80 transition-colors inline-flex items-center gap-2"
                         >
-                            <AiOutlineLoading3Quarters className={`inline ${props.loading ? "animate-spin" : "hidden"}`} />
-                            {submitText || "Submit"}
+                            <AiOutlineLoading3Quarters className={`inline ${props.loading ? "animate-spin mx-6" : "hidden"}`} />
+                            <span className={`${props.loading && "hidden"}`}>{submitText || "Submit"}</span>
                         </button>
                     </div>
                 )}

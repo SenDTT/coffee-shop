@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { ProductModel } from "../models/Product";
 import { IProduct } from "../types/ProductTypes";
 
@@ -16,10 +17,23 @@ export const addProduct = async (data: IProduct) => {
 
 export const deleteProduct = async (id: string) => {
   try {
-    const result = await ProductModel.deleteOne({ _id: id });
+    const result = await ProductModel.deleteOne({
+      _id: new mongoose.Types.ObjectId(id),
+    });
     return result;
   } catch (err) {
-    console.log("Adding new Product failed: ", err);
+    console.log("Delete a Product failed: ", err);
+    throw err;
+  }
+};
+
+export const deleteMutipleProducts = async (ids: string[]) => {
+  try {
+    const objectIds = ids.map((id) => new mongoose.Types.ObjectId(id));
+    const result = await ProductModel.deleteMany({ _id: { $in: objectIds } });
+    return result;
+  } catch (err) {
+    console.log("Delete multiple Products failed: ", err);
     throw err;
   }
 };

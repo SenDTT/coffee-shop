@@ -4,6 +4,7 @@ import {
   activeOrDeactiveProductController,
   addProductController,
   addProductImageController,
+  deleteMultiProductsController,
   deleteProductController,
   deleteProductImageController,
   getAllProductsController,
@@ -37,6 +38,7 @@ router.put(
   updateProductController
 );
 router.delete("/:id", is_existed_validator, deleteProductController);
+router.post("/delete-multiple", deleteMultiProductsController);
 router.put(
   "/:id/active",
   is_existed_validator,
