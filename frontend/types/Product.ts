@@ -95,3 +95,18 @@ export interface GetListParams {
 export interface CategoryParams extends GetListParams {
   type: 'product' | 'blog' | 'ingredient'
 }
+
+export type AdminTableProps<T extends object> = {
+  columns: string[]; // supports dot notation like "category.name"
+  rows: T[];
+  headers: string[];
+  showCheckbox?: boolean;
+  hasActionsCol?: boolean;
+  deleteHandle?: (id: string) => void;
+  editHandle?: (id: string) => void;
+  viewUrl?: string;
+  totalRecords: number;
+  currentPage: number;
+  pageSize?: number; // default: 10
+  onPageChange: (newPage: number) => void; // handler to trigger new fetch
+};
