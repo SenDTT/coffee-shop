@@ -191,7 +191,7 @@ export default function MenuPage() {
 
             </div>
             <Sidebar
-                title="Product Detail"
+                title={selectedProduct ? selectedProduct.sku : "Product Detail"}
                 isOpen={isSidebarOpen}
                 onClose={() => setIsSidebarOpen(false)}
                 className="w-1/3"
@@ -219,23 +219,56 @@ export default function MenuPage() {
                         )}
 
                         {/* Product Info */}
-                        <div className="space-y-2 text-gray-700">
-                            <h3 className="text-xl font-semibold text-gray-900">{selectedProduct.name}</h3>
-                            <p className="text-sm text-gray-600">{selectedProduct.description}</p>
-                            <p className="text-base font-medium text-green-700">
-                                Price: ${selectedProduct.price}
-                            </p>
+                        <div className="w-full space-y-4 text-gray-800">
+                            {/* Title + Category Badge */}
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                                <h3 className="text-2xl font-bold text-gray-900">{selectedProduct.name}</h3>
+                                {selectedProduct.category?.name && (
+                                    <span className="inline-block bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">
+                                        {selectedProduct.category.name}
+                                    </span>
+                                )}
+                            </div>
 
-                            {selectedProduct.sku && (
-                                <p className="text-sm text-gray-500">SKU: {selectedProduct.sku}</p>
-                            )}
-                            {selectedProduct.category?.name && (
-                                <p className="text-sm text-gray-500">Category: {selectedProduct.category.name}</p>
-                            )}
-                            {selectedProduct.stock !== undefined && (
-                                <p className="text-sm text-gray-500">Stock: {selectedProduct.stock}</p>
-                            )}
+                            {/* Key Info Grid */}
+                            <div className="grid grid-cols-2 gap-4 text-sm border-b border-gray-200 pb-2">
+                                {/* Price */}
+                                <div className="flex items-center gap-2">
+                                    <span className="text-gray-500 font-medium">Price:</span>
+                                    <span className="text-green-600 font-semibold text-base">${selectedProduct.price}</span>
+                                </div>
+
+                                {/* Stock */}
+                                <div className="flex items-center gap-2">
+                                    <span className="text-gray-500 font-medium">Stock:</span>
+                                    <span
+                                        className={`text-xs font-bold px-2 py-1 rounded-full ${selectedProduct.stock > 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"
+                                            }`}
+                                    >
+                                        {selectedProduct.stock > 0 ? `${selectedProduct.stock} items` : "Out of stock"}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Description */}
+                            <div>
+                                <p className="text-sm text-gray-600 leading-relaxed">
+                                    {selectedProduct.description || "No description available."}
+                                </p>
+                            </div>
+
+                            {/* Materials */}
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm text-gray-500 font-medium">Materials:</span>
+                                <p className="text-sm text-gray-600 leading-relaxed">
+                                    {selectedProduct.material || "No description available."}
+                                </p>
+                            </div>
+
+                            {/* Optional: Timestamp or ID */}
+                            {/* <div className="text-xs text-gray-400">Product ID: {selectedProduct._id}</div> */}
                         </div>
+
                     </div>
                 ) : (
                     <p className="p-4 text-gray-500">No product selected</p>

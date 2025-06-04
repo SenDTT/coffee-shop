@@ -1,10 +1,9 @@
 import { AdminTableProps } from "../../types/Product";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { getNestedValue } from "../../utils/stringUtil";
-import { FaEye, FaPen, FaSpinner, FaTrash } from "react-icons/fa";
+import { FaEye, FaPen, FaTrash } from "react-icons/fa";
 import { MdOutlineNavigateNext } from "react-icons/md";
 import { GrFormPrevious } from "react-icons/gr";
-import Link from "next/link";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const AdminTable = <T extends { _id: string }>({
@@ -106,10 +105,12 @@ const AdminTable = <T extends { _id: string }>({
                                     </td>
                                 ))}
                                 {hasActionsCol && (deleteHandle || editHandle || viewHandle) && (
-                                    <td className="px-4 py-2 text-sm text-gray-700 gap-2 inline-flex">
-                                        {viewHandle && <FaEye className="text-coastal-dark-bg size-4 my-2 cursor-pointer" onClick={() => viewHandle(row._id)} />}
-                                        {editHandle && <FaPen className="text-coastal-additional-info my-2 cursor-pointer" onClick={() => editHandle(row._id)} />}
-                                        {deleteHandle && <FaTrash className="text-gray-400 my-2 cursor-pointer" onClick={() => deleteHandle(row._id)} />}
+                                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                                        <div className="flex justify-center items-center gap-2">
+                                            {viewHandle && <FaEye className="text-coastal-dark-bg size-4 cursor-pointer" onClick={() => viewHandle(row._id)} />}
+                                            {editHandle && <FaPen className="text-coastal-additional-info cursor-pointer" onClick={() => editHandle(row._id)} />}
+                                            {deleteHandle && <FaTrash className="text-gray-400 cursor-pointer" onClick={() => deleteHandle(row._id)} />}
+                                        </div>
                                     </td>
                                 )}
                             </tr>
@@ -119,7 +120,7 @@ const AdminTable = <T extends { _id: string }>({
             </div>
 
             {/* Pagination Controls */}
-            <div className="flex justify-between items-center text-sm text-gray-600 mt-4">
+            <div className="flex flex-col sm:flex-row justify-between items-center text-sm text-gray-600 mt-4 gap-2">
                 <span>
                     Page {currentPage} of {totalPages} — Showing{" "}
                     {rows.length ? (currentPage - 1) * pageSize + 1 : 0} – {(currentPage - 1) * pageSize + rows.length} of {totalRecords}

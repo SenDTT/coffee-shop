@@ -10,6 +10,7 @@ export interface Product {
   active: number;
   createdAt: string;
   updatedAt: string;
+  material: string;
   __v?: number;
 }
 

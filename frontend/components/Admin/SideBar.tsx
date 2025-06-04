@@ -1,21 +1,32 @@
 import { FaTimes } from "react-icons/fa";
-import { SidebarProps } from "../../types/Admin"
+import { SidebarProps } from "../../types/Admin";
 
 const Sidebar = ({ title, isOpen, onClose, children, className }: SidebarProps) => {
     return (
-        <>
+        <div className="relative">
             {/* Overlay */}
             <div
-                className={`fixed inset-0 bg-black bg-opacity-30 transition-opacity duration-300 z-40 ${isOpen ? "opacity-100 visible" : "opacity-0 invisible"
-                    }`}
+                className={`fixed inset-0 bg-black bg-opacity-30 transition-opacity duration-300 z-40 
+                    ${isOpen ? "opacity-100 visible" : "opacity-0 invisible"}`}
                 onClick={onClose}
-            ></div>
+            />
 
             {/* Sidebar */}
             <aside
-                className={`fixed top-0 right-0 h-full ${className} max-w-full rounded-l-lg bg-white z-50 shadow-lg transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"
-                    } flex flex-col`}
+                className={`
+                    fixed z-50 bg-white shadow-lg transform transition-transform duration-300
+                    flex flex-col
+                    h-[95vh] sm:h-full
+                    bottom-0 sm:top-0
+                    w-screen sm:w-[400px]
+                    rounded-t-2xl sm:rounded-none sm:rounded-l-xl
+                    ${isOpen
+                        ? "translate-y-0 sm:translate-x-0 sm:translate-y-0"
+                        : "translate-y-full sm:translate-x-full sm:translate-y-0"}
+                    sm:right-0 sm:left-auto left-0
+                `}
             >
+                {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b">
                     <h2 className="text-lg font-semibold">{title}</h2>
                     <button
@@ -27,9 +38,10 @@ const Sidebar = ({ title, isOpen, onClose, children, className }: SidebarProps) 
                     </button>
                 </div>
 
-                <div className="p-4 overflow-auto flex-1">{children}</div>
+                {/* Content */}
+                <div className="overflow-auto flex-1">{children}</div>
             </aside>
-        </>
+        </div>
     );
 };
 
