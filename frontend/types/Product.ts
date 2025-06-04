@@ -2,6 +2,7 @@ export interface Product {
   _id: string;
   name: string;
   price: number;
+  sku: string;
   description: string;
   category: Category;
   stock: number;
@@ -104,7 +105,7 @@ export type AdminTableProps<T extends object> = {
   hasActionsCol?: boolean;
   deleteHandle?: (id: string) => void;
   editHandle?: (id: string) => void;
-  viewUrl?: string;
+  viewHandle?: (id: string) => void;
   totalRecords: number;
   currentPage: number;
   pageSize?: number; // default: 10
@@ -112,5 +113,5 @@ export type AdminTableProps<T extends object> = {
   onShowDeleteMultipleHandle: (value: boolean) => void;
   loading: boolean;
   selectedIds: Set<string>;
-  setSelectedIds: (ids: Set<string>) => void
+  setSelectedIds: (ids: Set<string>) => void;
 };

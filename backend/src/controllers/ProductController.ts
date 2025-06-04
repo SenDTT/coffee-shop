@@ -17,6 +17,10 @@ import {
 import { getCategoryById } from "../services/CategoryService";
 import fs from "fs";
 import path from "path";
+import { ProductModel } from "../models/Product";
+import mongoose from "mongoose";
+
+const uploadsDir = path.join(process.cwd());
 
 export const addProductController: RequestHandler<
   unknown,
@@ -24,7 +28,7 @@ export const addProductController: RequestHandler<
   IProductRequest
 > = async (req, res, next) => {
   try {
-    const { categoryId, images } = req.body;
+    const { categoryId } = req.body;
 
     const category = await getCategoryById(categoryId);
     if (category == null) {
@@ -33,14 +37,12 @@ export const addProductController: RequestHandler<
         .json({ success: false, message: "Category is not found" });
       return;
     }
-    console.log(req.files);
 
     const newImages = req.files as Express.Multer.File[];
     let imageUrls: string[] = [];
     if (newImages) {
       imageUrls = newImages.map((file) => file.path);
     }
-    console.log(imageUrls);
 
     const product = await addProduct({
       ...req.body,
@@ -146,6 +148,20 @@ export const deleteProductController: RequestHandler<
 > = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const data = await getProductById(id);
+    if (data && data.images.length > 0) {
+      for (const image_path of data.images) {
+        const filePath = path.join(uploadsDir, image_path);
+        fs.unlink(filePath, (err) => {
+          if (err) {
+            console.error("Error deleting image:", err);
+          } else {
+            console.log(`Image ${filePath} has been deleted.`);
+          }
+        });
+      }
+    }
+
     await deleteProduct(id);
     res.json({
       success: true,
@@ -164,6 +180,27 @@ export const deleteMultiProductsController: RequestHandler<
 > = async (req, res, next) => {
   try {
     const { ids } = req.body;
+
+    // 1. Get products
+    const products = await ProductModel.find({
+      _id: { $in: ids.map((id) => new mongoose.Types.ObjectId(id)) },
+    });
+
+    // 2. Collect all image paths in a flat array
+    const imagePaths = products.flatMap((product) => product.images);
+
+    // 3. Delete all images
+    for (const image_path of imagePaths) {
+      const filePath = path.join(uploadsDir, image_path);
+      fs.unlink(filePath, (err) => {
+        if (err) {
+          console.error("Error deleting image:", err);
+        } else {
+          console.log(`Image ${filePath} has been deleted.`);
+        }
+      });
+    }
+
     await deleteMutipleProducts(ids);
     res.json({
       success: true,

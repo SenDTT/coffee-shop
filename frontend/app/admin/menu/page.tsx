@@ -11,6 +11,7 @@ import { GetListParams, Product } from '../../../types/Product';
 import api from '../../../api';
 import AdminTable from '../../../components/Admin/AdminTable';
 import { confirmThemeSwal } from '../../../utils/sweetalert';
+import Sidebar from '../../../components/Admin/SideBar';
 
 const LIMIT = 10;
 
@@ -25,6 +26,8 @@ export default function MenuPage() {
     const [loading, setLoading] = useState(true);
     const [total, setTotal] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
     useEffect(() => {
         fetchProducts();
@@ -51,7 +54,6 @@ export default function MenuPage() {
     const deleteMultipleHandle = async () => {
         // Perform delete logic here
         const ids = [...selectedIds.values()];
-        console.log('Deleting items with IDs:', ids);
         // Reset deleteIds or perform any other necessary actions
         try {
             const response = await api.post("/products/delete-multiple", { ids });
@@ -106,7 +108,6 @@ export default function MenuPage() {
     }
 
     const deleteHandle = (id: string) => {
-        console.log(id);
         confirmThemeSwal.fire({
             title: 'Are you sure?',
             text: 'This action cannot be undone!',
@@ -142,6 +143,12 @@ export default function MenuPage() {
         });
     }
 
+    const viewHandle = (id: string) => {
+        const product = products.find(p => p._id === id) || null;
+        setSelectedProduct(product);
+        setIsSidebarOpen(true);
+    }
+
     return (
         <AdminLayout>
             {/* Alert */}
@@ -171,7 +178,7 @@ export default function MenuPage() {
                     columns={["sku", "name", "description", "price", "stock", "category.name"]}
                     rows={products}
                     hasActionsCol={true}
-                    viewUrl="/admin/menu/"
+                    viewHandle={viewHandle}
                     deleteHandle={deleteHandle}
                     editHandle={editHandle}
                     totalRecords={total}
@@ -183,6 +190,57 @@ export default function MenuPage() {
                 />
 
             </div>
+            <Sidebar
+                title="Product Detail"
+                isOpen={isSidebarOpen}
+                onClose={() => setIsSidebarOpen(false)}
+                className="w-1/3"
+            >
+                {selectedProduct ? (
+                    <div className="flex flex-col gap-4 p-4">
+                        {/* Product Images */}
+                        {selectedProduct.images.length > 0 && (
+                            <div className="w-full overflow-x-auto">
+                                <div className="flex flex-row gap-4 py-2">
+                                    {selectedProduct.images.map((item, index) => (
+                                        <div
+                                            key={index}
+                                            className="flex-shrink-0 h-40 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center"
+                                        >
+                                            <img
+                                                src={process.env.NEXT_PUBLIC_DOMAIN + item}
+                                                alt={`Product Image ${index + 1}`}
+                                                className="h-full object-contain"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Product Info */}
+                        <div className="space-y-2 text-gray-700">
+                            <h3 className="text-xl font-semibold text-gray-900">{selectedProduct.name}</h3>
+                            <p className="text-sm text-gray-600">{selectedProduct.description}</p>
+                            <p className="text-base font-medium text-green-700">
+                                Price: ${selectedProduct.price}
+                            </p>
+
+                            {selectedProduct.sku && (
+                                <p className="text-sm text-gray-500">SKU: {selectedProduct.sku}</p>
+                            )}
+                            {selectedProduct.category?.name && (
+                                <p className="text-sm text-gray-500">Category: {selectedProduct.category.name}</p>
+                            )}
+                            {selectedProduct.stock !== undefined && (
+                                <p className="text-sm text-gray-500">Stock: {selectedProduct.stock}</p>
+                            )}
+                        </div>
+                    </div>
+                ) : (
+                    <p className="p-4 text-gray-500">No product selected</p>
+                )}
+            </Sidebar>
         </AdminLayout>
     );
 }

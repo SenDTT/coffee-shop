@@ -9,8 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tailwindcss/aspect-ratio": "^0.4.2",
     "axios": "^1.8.4",
     "chroma-js": "^3.1.2",
+    "jose": "^6.0.11",
     "js-cookie": "^3.0.5",
     "next": "15.2.3",
     "react": "^19.0.0",

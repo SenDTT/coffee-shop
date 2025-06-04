@@ -15,7 +15,7 @@ const AdminTable = <T extends { _id: string }>({
     hasActionsCol,
     deleteHandle,
     editHandle,
-    viewUrl,
+    viewHandle,
     totalRecords,
     currentPage,
     pageSize = 10,
@@ -81,7 +81,7 @@ const AdminTable = <T extends { _id: string }>({
                                     {name}
                                 </th>
                             ))}
-                            {hasActionsCol && (deleteHandle || editHandle || viewUrl) && (
+                            {hasActionsCol && (deleteHandle || editHandle || viewHandle) && (
                                 <th className="text-left px-4 py-3 text-sm font-bold text-gray-600">Actions</th>
                             )}
                         </tr>
@@ -105,9 +105,9 @@ const AdminTable = <T extends { _id: string }>({
                                         {String(getNestedValue(row, col))}
                                     </td>
                                 ))}
-                                {hasActionsCol && (deleteHandle || editHandle || viewUrl) && (
+                                {hasActionsCol && (deleteHandle || editHandle || viewHandle) && (
                                     <td className="px-4 py-2 text-sm text-gray-700 gap-2 inline-flex">
-                                        {viewUrl && <Link href={viewUrl + row._id}><FaEye className="text-coastal-dark-bg size-4 my-2" /></Link>}
+                                        {viewHandle && <FaEye className="text-coastal-dark-bg size-4 my-2 cursor-pointer" onClick={() => viewHandle(row._id)} />}
                                         {editHandle && <FaPen className="text-coastal-additional-info my-2 cursor-pointer" onClick={() => editHandle(row._id)} />}
                                         {deleteHandle && <FaTrash className="text-gray-400 my-2 cursor-pointer" onClick={() => deleteHandle(row._id)} />}
                                     </td>
