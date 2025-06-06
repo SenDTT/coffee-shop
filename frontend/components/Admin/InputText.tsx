@@ -6,7 +6,7 @@ export default function InputText(props: AdminFormFieldWithValue) {
             {props.type === "text" && typeof props.value === 'string' && (
                 typeof props.prefix !== "undefined" ? (
                     <div className="inline-flex items-center sm:w-full">
-                        <span className="px-3 py-2 bg-gray-100 border border-gray-300 rounded-s-md text-gray-700">
+                        <span className="inline px-3 py-2 bg-gray-100 border border-gray-300 rounded-s-md text-gray-700">
                             {props.prefix ? props.prefix : "EXAMPLE"}
                         </span>
                         <input

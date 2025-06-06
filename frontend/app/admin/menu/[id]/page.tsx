@@ -5,14 +5,16 @@ import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import Title from '../../../../components/Admin/Title';
 import AdminForm from '../../../../components/Admin/AdminForm';
-import { CategoryParams, InputEvent, SelectOption } from '../../../../types/Product';
+import { CategoryParams, InputEvent, Product, SelectOption } from '../../../../types/Product';
 import api from '../../../../api';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 const LIMIT = 50;
 
-export default function AddProductPage() {
+export default function EditProductPage() {
     const router = useRouter();
+    const params = useParams();
+    const id = params.id;
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -29,13 +31,54 @@ export default function AddProductPage() {
         images: [],
         active: 1,
     };
+    const [model, setModel] = useState<Product | undefined>(undefined);
+    const [deletedImages, setDeletedImages] = useState<string[]>([]);
 
     const [formData, setFormData] = useState(initialData);
     const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
 
     useEffect(() => {
-        return () => setFormData(initialData);
-    }, []);
+        if (id && typeof id === 'string') {
+            getProductById(id)
+        }
+        return () => {
+            setFormData(initialData);
+            setModel(undefined);
+        }
+    }, [id]);
+
+    const getProductById = async (id: string) => {
+        try {
+            const response = await api.get(`/products/${id}`);
+            const dataRes = response.data;
+
+            if (dataRes.success && dataRes.data) {
+                setModel(dataRes.data);
+                const skuSplit = dataRes.data.sku.split("-");
+                setSkuPrefix(skuSplit[0] + "-");
+                setCategoryOptions([{ value: dataRes.data.category._id, label: dataRes.data.category.name }])
+                setFormData({
+                    name: dataRes.data.name,
+                    sku: skuSplit[1],
+                    material: dataRes.data.material,
+                    price: dataRes.data.price + "",
+                    description: dataRes.data.description,
+                    category: dataRes.data.category._id,
+                    stock: dataRes.data.stock,
+                    images: dataRes.data.images,
+                    active: dataRes.data.active,
+                });
+            }
+        } catch (err) {
+            setError('Failed to get product. Please try again.');
+            toast.error('Failed to get product. Please try again.');
+
+            if ((err as any)?.response?.data?.errors) {
+                const errors = (err as any)?.response?.data?.errors;
+                setErrors(errors);
+            }
+        }
+    }
 
     const getListCategories = async (search: string, page: number = 0) => {
         let params: CategoryParams = { limit: LIMIT, skip: page * LIMIT, type: 'product' };
@@ -96,29 +139,33 @@ export default function AddProductPage() {
 
             formPayload.append("categoryId", formData.category);
             formPayload.append("sku", skuPrefix + formData.sku);
+            // add deleted images
+            if (deletedImages && deletedImages.length > 0) {
+                deletedImages.forEach(path => formPayload.append("deletedImages", path));
+            }
 
             formData.images.forEach((file: File) => {
                 formPayload.append("images", file);
             });
 
-            const res = await api.post("/products", formPayload);
+            const res = await api.put(`/products/${id}`, formPayload);
 
             const dataRes = res.data;
 
             if (dataRes.success) {
-                setSuccess('Product added successfully!');
-                toast.success('Product added successfully!');
+                setSuccess('Product updated successfully!');
+                toast.success('Product updated successfully!');
 
                 setTimeout(() => {
-                    router.push('/admin/menu');
+                    router.push(`/admin/menu?id=${id}&view=true`);
                 }, 2000);
             } else {
-                setError('Failed to add product. Please try again.');
-                toast.error('Failed to add product. Please try again.');
+                setError('Failed to update product. Please try again.');
+                toast.error('Failed to update product. Please try again.');
             }
         } catch (err) {
-            setError('Failed to add product. Please try again.');
-            toast.error('Failed to add product. Please try again.');
+            setError('Failed to update product. Please try again.');
+            toast.error('Failed to update product. Please try again.');
 
             if ((err as any)?.response?.data?.errors) {
                 const errors = (err as any)?.response?.data?.errors;
@@ -135,7 +182,7 @@ export default function AddProductPage() {
             <ToastContainer />
 
             {/* heading */}
-            <Title title="Add Product" parentPath="/admin/menu" />
+            <Title title="Edit Product" parentPath="/admin/menu" />
 
             <div className="w-full flex flex-col sm:flex-row items-center gap-2 my-4 text-xs sm:text-base bg-white/50 rounded-lg py-3 px-4 shadow-md mb-4">
                 {/* form */}
@@ -232,12 +279,14 @@ export default function AddProductPage() {
                         placeholder: 'upload images',
                         required: false,
                         value: formData.images.join(','),
+                        images: model ? model.images.join(",") : "",
                         multiple: true,
                         accept: 'image/*',
                         onChange: handleInputChange,
-                        error: errors.images ?? ''
+                        error: errors.images ?? '',
+                        setDeletedImagePaths: setDeletedImages
                     },
-                ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Add Product" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl={'/admin/menu'} isShowButton={true}></AdminForm>
+                ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Save" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl={'/admin/menu'} isShowButton={true}></AdminForm>
             </div>
         </AdminLayout>
     );

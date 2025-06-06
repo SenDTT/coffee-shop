@@ -4,7 +4,7 @@ import api from '../../../api';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import InputField from '../../../components/InputField';
 import { useAuth } from '../../../context/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 
@@ -13,7 +13,7 @@ export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const { user, setAuth } = useAuth();
+    const { user, setAuth, logout } = useAuth();
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {

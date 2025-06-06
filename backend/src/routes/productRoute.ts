@@ -34,6 +34,7 @@ router.post(
 router.put(
   "/:id",
   is_existed_validator,
+  upload.array("images"),
   add_product_validator,
   updateProductController
 );

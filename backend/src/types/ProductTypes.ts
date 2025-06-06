@@ -9,6 +9,7 @@ export interface IProductRequest {
   material: string;
   sku: string;
   images: File[] | Express.Multer.File[];
+  deletedImages?: string[];
 }
 
 export interface IDeleteMultipleProductsRequest {

@@ -22,6 +22,19 @@ import mongoose from "mongoose";
 
 const uploadsDir = path.join(process.cwd());
 
+const unlinkImages = (images: string[]) => {
+  for (const image_path of images) {
+    const filePath = path.join(uploadsDir, image_path);
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.error("Error deleting image:", err);
+      } else {
+        console.log(`Image ${filePath} has been deleted.`);
+      }
+    });
+  }
+};
+
 export const addProductController: RequestHandler<
   unknown,
   IResponseData | IErrorResponse,
@@ -61,7 +74,7 @@ export const updateProductController: RequestHandler<
   IProductRequest
 > = async (req, res, next) => {
   const { id } = req.params;
-  const { categoryId } = req.body;
+  const { categoryId, deletedImages } = req.body;
   try {
     const category = await getCategoryById(categoryId);
     let model = await getProductById(id);
@@ -78,9 +91,17 @@ export const updateProductController: RequestHandler<
       imageUrls = newImages.map((file) => file.path);
     }
 
+    // delete images
+    let images = model.images;
+    if (deletedImages && deletedImages.length > 0) {
+      unlinkImages(deletedImages);
+
+      images = images.filter((item) => !deletedImages.includes(item));
+    }
+
     await updateProduct(id, {
       ...req.body,
-      images: [...model.images, ...imageUrls],
+      images: [...images, ...imageUrls],
       category,
     });
 
@@ -150,16 +171,7 @@ export const deleteProductController: RequestHandler<
     const { id } = req.params;
     const data = await getProductById(id);
     if (data && data.images.length > 0) {
-      for (const image_path of data.images) {
-        const filePath = path.join(uploadsDir, image_path);
-        fs.unlink(filePath, (err) => {
-          if (err) {
-            console.error("Error deleting image:", err);
-          } else {
-            console.log(`Image ${filePath} has been deleted.`);
-          }
-        });
-      }
+      unlinkImages(data.images);
     }
 
     await deleteProduct(id);

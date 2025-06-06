@@ -81,6 +81,8 @@ export type AdminFormFieldWithValue = AdminFormField & {
   autoFocus?: boolean;
   onSelect?: (e: SelectOption) => void;
   validate?: (value: string | number | string[] | Date | boolean) => string;
+  images?: string,
+  setDeletedImagePaths?: (paths: string[]) => void
 };
 
 export type FetchOptionsResponse = {

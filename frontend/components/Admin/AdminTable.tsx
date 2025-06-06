@@ -2,9 +2,8 @@ import { AdminTableProps } from "../../types/Product";
 import React, { useEffect } from "react";
 import { getNestedValue } from "../../utils/stringUtil";
 import { FaEye, FaPen, FaTrash } from "react-icons/fa";
-import { MdOutlineNavigateNext } from "react-icons/md";
-import { GrFormPrevious } from "react-icons/gr";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import Pagination from "./Pagination";
 
 const AdminTable = <T extends { _id: string }>({
     columns,
@@ -120,32 +119,7 @@ const AdminTable = <T extends { _id: string }>({
             </div>
 
             {/* Pagination Controls */}
-            <div className="flex flex-col sm:flex-row justify-between items-center text-sm text-gray-600 mt-4 gap-2">
-                <span>
-                    Page {currentPage} of {totalPages} — Showing{" "}
-                    {rows.length ? (currentPage - 1) * pageSize + 1 : 0} – {(currentPage - 1) * pageSize + rows.length} of {totalRecords}
-                </span>
-                <div className="flex gap-2">
-                    <button
-                        onClick={() => onPageChangeHandle(currentPage - 1)}
-                        disabled={currentPage <= 1}
-                        className="px-2 py-1 border rounded disabled:opacity-50"
-                        aria-label="Previous Page"
-                        title="Previous Page"
-                    >
-                        <GrFormPrevious className="size-4 my-1" />
-                    </button>
-                    <button
-                        onClick={() => onPageChangeHandle(currentPage + 1)}
-                        disabled={currentPage >= totalPages}
-                        className="px-2 py-1 border rounded disabled:opacity-50"
-                        aria-label="Next Page"
-                        title="Next Page"
-                    >
-                        <MdOutlineNavigateNext className="size-4 my-1" />
-                    </button>
-                </div>
-            </div>
+            <Pagination pageSize={pageSize} rows={rows} onPageChangeHandle={onPageChangeHandle} totalPages={totalPages} currentPage={currentPage} totalRecords={totalRecords} />
         </div>
     );
 };

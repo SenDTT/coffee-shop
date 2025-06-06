@@ -7,6 +7,15 @@ export default function ImageUploader(props: AdminFormFieldWithValue) {
     const [files, setFiles] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [currentImages, setCurrentImages] = useState<string[]>([]);
+    const [deletedImages, setDeletedImages] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (props.images && typeof props.images === 'string') {
+            const data = props.images.split(",");
+            setCurrentImages(data);
+        }
+    }, [props.images]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFiles = Array.from(e.target.files || []);
@@ -25,7 +34,7 @@ export default function ImageUploader(props: AdminFormFieldWithValue) {
     };
 
     useEffect(() => {
-        const urls = files.map((file) => URL.createObjectURL(file));
+        let urls = files.map((file) => URL.createObjectURL(file));
         setPreviews(urls);
 
         return () => {
@@ -33,7 +42,16 @@ export default function ImageUploader(props: AdminFormFieldWithValue) {
         };
     }, [files]);
 
-    const handleDelete = (indexToRemove: number) => {
+    const handleDelete = (indexToRemove: number, isNew: boolean = true) => {
+        if (!isNew) {
+            const paths = [...deletedImages, currentImages[indexToRemove]]
+            setDeletedImages(paths);
+            delete currentImages[indexToRemove];
+            setCurrentImages(currentImages);
+            if (props.setDeletedImagePaths) props.setDeletedImagePaths(paths)
+            return;
+        }
+
         const updatedFiles = files.filter((_, i) => i !== indexToRemove);
         setFiles(updatedFiles);
 
@@ -51,6 +69,23 @@ export default function ImageUploader(props: AdminFormFieldWithValue) {
     return (
         <div className="w-full flex flex-col gap-4">
             <div className="flex flex-wrap gap-4">
+                {currentImages.map((path, index) => (
+                    <div key={'currentImages-' + index} className="relative group">
+                        <img
+                            src={process.env.NEXT_PUBLIC_DOMAIN + path}
+                            alt={`Preview ${index}`}
+                            className="w-12 h-12 sm:w-28 sm:h-28 object-cover border rounded"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => handleDelete(index, false)}
+                            className="absolute top-1 right-1 bg-gray-800/60 text-white rounded-full w-6 h-6 text-sm hidden group-hover:flex items-center justify-center"
+                            aria-label="Remove image"
+                        >
+                            <IoMdRemove className="text-lg" />
+                        </button>
+                    </div>
+                ))}
                 {previews.map((src, index) => (
                     <div key={index} className="relative group">
                         <img

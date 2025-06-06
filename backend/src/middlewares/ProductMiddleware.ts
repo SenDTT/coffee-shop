@@ -7,12 +7,13 @@ import { getProductById, getProductBySKU } from "../services/ProductService";
 import { getCategoryById } from "../services/CategoryService";
 
 export const add_product_validator: RequestHandler<
-  unknown,
+  { id?: string },
   IResponseData | IErrorResponse,
   IProductRequest
 > = async (req, res, next) => {
   const { name, price, description, stock, categoryId, material, sku } =
     req.body;
+  const { id } = req.params;
   const errors: Record<string, string> = {};
 
   if (validator.isEmpty(name)) {
@@ -43,9 +44,11 @@ export const add_product_validator: RequestHandler<
     errors.stock = "Stock must be a valid number";
   }
 
-  const existingProduct = await getProductBySKU(sku);
-  if (existingProduct) {
-    errors.sku = "SKU must be unique. This SKU already exists.";
+  if (typeof id === "undefined") {
+    const existingProduct = await getProductBySKU(sku);
+    if (existingProduct) {
+      errors.sku = "SKU must be unique. This SKU already exists.";
+    }
   }
 
   if (categoryId) {

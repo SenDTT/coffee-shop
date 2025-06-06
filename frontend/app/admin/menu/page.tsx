@@ -12,6 +12,7 @@ import api from '../../../api';
 import AdminTable from '../../../components/Admin/AdminTable';
 import { confirmThemeSwal } from '../../../utils/sweetalert';
 import Sidebar from '../../../components/Admin/SideBar';
+import { useRouter } from 'next/navigation';
 
 const LIMIT = 10;
 
@@ -28,6 +29,7 @@ export default function MenuPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+    const router = useRouter();
 
     useEffect(() => {
         fetchProducts();
@@ -124,6 +126,7 @@ export default function MenuPage() {
 
     const editHandle = (id: string) => {
         console.log(id);
+        router.push(`/admin/menu/${id}`);
     }
 
     const onPageChange = (newPage: number) => {
