@@ -13,7 +13,7 @@ import AdminTable from '../../../components/Admin/AdminTable';
 import { confirmThemeSwal } from '../../../utils/sweetalert';
 import Sidebar from '../../../components/Admin/SideBar';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FaEye, FaPen, FaTrash } from 'react-icons/fa';
+import { FaPen, FaTrash } from 'react-icons/fa';
 
 const LIMIT = 10;
 
@@ -38,13 +38,28 @@ export default function MenuPage() {
         const view = searchParams.get('view') ?? null;
 
         if (id && view === 'true') {
-            viewHandle(id);
+            getProductById(id);
         }
     }, [searchParams]);
 
     useEffect(() => {
         fetchProducts();
     }, [params]);
+
+    const getProductById = async (id: string) => {
+        try {
+            const response = await api.get(`/products/${id}`);
+            const dataRes = response.data;
+
+            if (dataRes.success && dataRes.data) {
+                console.log(dataRes.data);
+                setSelectedProduct(dataRes.data);
+                setIsSidebarOpen(true);
+            }
+        } catch (err) {
+            toast.error('Failed to get product. Please try again.');
+        }
+    }
 
     const fetchProducts = async () => {
         setLoading(true);
@@ -167,6 +182,8 @@ export default function MenuPage() {
         setIsSidebarOpen(false);
         setSelectedProduct(null);
     }
+
+    // TODO: add active column and call api
 
     return (
         <AdminLayout>

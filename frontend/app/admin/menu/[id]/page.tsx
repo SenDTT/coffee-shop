@@ -157,7 +157,7 @@ export default function EditProductPage() {
                 toast.success('Product updated successfully!');
 
                 setTimeout(() => {
-                    router.push("/admin/menu");
+                    router.push(`/admin/menu?id=${id}&view=true`);
                 }, 2000);
             } else {
                 setError('Failed to update product. Please try again.');
@@ -182,7 +182,7 @@ export default function EditProductPage() {
             <ToastContainer />
 
             {/* heading */}
-            <Title title="Edit Product" parentPath="/admin/menu" />
+            <Title title="Edit Product" parentPath={`/admin/menu?id=${id}&view=true`} />
 
             <div className="w-full flex flex-col sm:flex-row items-center gap-2 my-4 text-xs sm:text-base bg-white/50 rounded-lg py-3 px-4 shadow-md mb-4">
                 {/* form */}
@@ -286,7 +286,7 @@ export default function EditProductPage() {
                         error: errors.images ?? '',
                         setDeletedImagePaths: setDeletedImages
                     },
-                ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Save" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl="/admin/menu" isShowButton={true}></AdminForm>
+                ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Save" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl={`/admin/menu?id=${id}&view=true`} isShowButton={true}></AdminForm>
             </div>
         </AdminLayout>
     );
