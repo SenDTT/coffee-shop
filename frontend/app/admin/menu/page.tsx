@@ -12,7 +12,8 @@ import api from '../../../api';
 import AdminTable from '../../../components/Admin/AdminTable';
 import { confirmThemeSwal } from '../../../utils/sweetalert';
 import Sidebar from '../../../components/Admin/SideBar';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { FaEye, FaPen, FaTrash } from 'react-icons/fa';
 
 const LIMIT = 10;
 
@@ -30,6 +31,16 @@ export default function MenuPage() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const router = useRouter();
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        const id = searchParams.get('id') ?? null;
+        const view = searchParams.get('view') ?? null;
+
+        if (id && view === 'true') {
+            viewHandle(id);
+        }
+    }, [searchParams]);
 
     useEffect(() => {
         fetchProducts();
@@ -106,6 +117,7 @@ export default function MenuPage() {
         } finally {
             // Reset state
             resetParams();
+            closeSideBar();
         }
     }
 
@@ -125,7 +137,6 @@ export default function MenuPage() {
     }
 
     const editHandle = (id: string) => {
-        console.log(id);
         router.push(`/admin/menu/${id}`);
     }
 
@@ -150,6 +161,11 @@ export default function MenuPage() {
         const product = products.find(p => p._id === id) || null;
         setSelectedProduct(product);
         setIsSidebarOpen(true);
+    }
+
+    const closeSideBar = () => {
+        setIsSidebarOpen(false);
+        setSelectedProduct(null);
     }
 
     return (
@@ -196,7 +212,7 @@ export default function MenuPage() {
             <Sidebar
                 title={selectedProduct ? selectedProduct.sku : "Product Detail"}
                 isOpen={isSidebarOpen}
-                onClose={() => setIsSidebarOpen(false)}
+                onClose={closeSideBar}
                 className="w-1/3"
             >
                 {selectedProduct ? (
@@ -261,15 +277,36 @@ export default function MenuPage() {
                             </div>
 
                             {/* Materials */}
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 border-b border-gray-200 pb-2">
                                 <span className="text-sm text-gray-500 font-medium">Materials:</span>
                                 <p className="text-sm text-gray-600 leading-relaxed">
                                     {selectedProduct.material || "No description available."}
                                 </p>
                             </div>
 
-                            {/* Optional: Timestamp or ID */}
-                            {/* <div className="text-xs text-gray-400">Product ID: {selectedProduct._id}</div> */}
+                            {/* Actions */}
+                            <div className="flex flex-row flex-wrap items-center gap-2">
+                                {editHandle && (
+                                    <button
+                                        onClick={() => editHandle(selectedProduct._id)}
+                                        title="Edit product"
+                                        className='inline-flex gap-2 items-center px-4 py-2 rounded-md bg-coastal-additional-info'
+                                    >
+                                        <FaPen className="text-white cursor-pointer size-3" />
+                                        <span className="text-white">Edit</span>
+                                    </button>
+                                )}
+                                {deleteHandle && (
+                                    <button
+                                        onClick={() => deleteHandle(selectedProduct._id)}
+                                        title="Delete product"
+                                        className='inline-flex gap-2 px-4 py-2 rounded-md items-center bg-gray-400 text-white'
+                                    >
+                                        <FaTrash className="text-white cursor-pointer size-3" />
+                                        <span className="text-white">Delete</span>
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
                     </div>

@@ -157,7 +157,7 @@ export default function EditProductPage() {
                 toast.success('Product updated successfully!');
 
                 setTimeout(() => {
-                    router.push(`/admin/menu?id=${id}&view=true`);
+                    router.push("/admin/menu");
                 }, 2000);
             } else {
                 setError('Failed to update product. Please try again.');
@@ -286,7 +286,7 @@ export default function EditProductPage() {
                         error: errors.images ?? '',
                         setDeletedImagePaths: setDeletedImages
                     },
-                ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Save" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl={'/admin/menu'} isShowButton={true}></AdminForm>
+                ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Save" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl="/admin/menu" isShowButton={true}></AdminForm>
             </div>
         </AdminLayout>
     );
