@@ -172,7 +172,10 @@ export default function AdminIngredientsPage() {
             console.log(err);
         } finally {
             // Reset state
-            resetParams();
+            //resetParams();
+            const newData = ingredients.filter((item) => item._id !== id);
+            setIngredients(newData);
+
             closeSideBar();
         }
     }
@@ -211,6 +214,7 @@ export default function AdminIngredientsPage() {
             skip: 0,
             limit: LIMIT
         });
+        setCurrentPage(1);
     }
 
     const viewHandle = (id: string) => {
@@ -251,8 +255,8 @@ export default function AdminIngredientsPage() {
                     showCheckbox
                     selectedIds={selectedIds}
                     setSelectedIds={setSelectedIds}
-                    headers={["Sku", "Name", "Description", "Price", "Stock", "Category"]}
-                    columns={["sku", "name", "description", "price", "stock", "category.name"]}
+                    headers={["Sku", "Name", "Description", "Price", "Stock"]}
+                    columns={["sku", "name", "description", "price", "stock"]}
                     rows={ingredients}
                     hasActionsCol={true}
                     viewHandle={viewHandle}

@@ -148,7 +148,7 @@ export const activeOrDeactiveIngredientController: RequestHandler<
   } catch (err) {}
 };
 
-export const deleteMultiProductsController: RequestHandler<
+export const deleteMultiIngredientsController: RequestHandler<
   unknown,
   IResponseData | IErrorResponse,
   IDeleteMultipleIngredientsRequest
@@ -160,7 +160,7 @@ export const deleteMultiProductsController: RequestHandler<
     res.json({
       success: true,
       data: null,
-      message: "Deleted Product Successfully",
+      message: "Deleted Ingredient Successfully",
     });
   } catch (err) {
     next(err);

@@ -55,6 +55,16 @@ export const getAllIngredients = async (
   }
 };
 
+export const getProductBySKU = async (sku: string) => {
+  try {
+    return await IngredientModel.findOne({ sku });
+  } catch (err) {
+    console.log("Fetching a Ingredient by SKU failed: ", err);
+    throw err;
+  }
+};
+
+
 export const getIngredientById = async (id: string) => {
   try {
     const model = await IngredientModel.findById(id);

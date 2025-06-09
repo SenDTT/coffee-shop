@@ -11,6 +11,7 @@ import {
   addIngredientImageController,
   deleteIngredientController,
   deleteIngredientImageController,
+  deleteMultiIngredientsController,
   getAllIngredientsController,
   getIngredientController,
   updateIngredientController,
@@ -38,7 +39,7 @@ router.put(
   updateIngredientController
 );
 router.delete("/:id", is_existed_validator, deleteIngredientController);
-router.post("/delete-multiple");
+router.post("/delete-multiple", deleteMultiIngredientsController);
 router.put(
   "/:id/active",
   is_existed_validator,

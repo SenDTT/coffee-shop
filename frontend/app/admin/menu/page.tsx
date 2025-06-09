@@ -250,8 +250,8 @@ export default function MenuPage() {
                     showCheckbox
                     selectedIds={selectedIds}
                     setSelectedIds={setSelectedIds}
-                    headers={["Sku", "Name", "Description", "Price", "Stock", "Category"]}
-                    columns={["sku", "name", "description", "price", "stock", "category.name"]}
+                    headers={["Sku", "Name", "Description", "Price", "Stock"]}
+                    columns={["sku", "name", "description", "price", "stock"]}
                     rows={products}
                     hasActionsCol={true}
                     viewHandle={viewHandle}

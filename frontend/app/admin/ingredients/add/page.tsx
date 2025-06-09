@@ -24,7 +24,7 @@ export default function AddIngrdientPage() {
         price: '',
         description: '',
         category: '',
-        stock: 1,
+        stock: '1',
         images: [],
         active: 1,
     };
