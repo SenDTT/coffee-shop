@@ -35,6 +35,26 @@ export const updateUserInfoController: RequestHandler<
   }
 };
 
+export const getUserByIdController: RequestHandler<
+  unknown,
+  IResponseData | IErrorResponse
+> = async (req, res, next) => {
+  const id = (req as any).user?.id;
+  try {
+    const user = await getUserById(id);
+    if (!user) {
+      res
+        .status(404)
+        .json({ success: false, message: "Account is not existed." });
+      return;
+    }
+
+    res.json({ success: true, data: user });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const uploadProfileImageController: RequestHandler<
   unknown,
   IResponseData | IErrorResponse

@@ -42,10 +42,12 @@ const AdminTable = <T extends { _id: string }>({
     };
 
     useEffect(() => {
-        if (selectedIds.size > 0) {
-            onShowDeleteMultipleHandle(true);
-        } else {
-            onShowDeleteMultipleHandle(false)
+        if (onShowDeleteMultipleHandle) {
+            if (selectedIds.size > 0) {
+                onShowDeleteMultipleHandle(true);
+            } else {
+                onShowDeleteMultipleHandle(false)
+            }
         }
     }, [selectedIds.size]);
 
@@ -115,14 +117,27 @@ const AdminTable = <T extends { _id: string }>({
                                     <td className="px-4 py-2 text-sm text-gray-700 text-center">
                                         <div className="flex justify-start items-center gap-2">
                                             <div className="flex items-center">
-                                                <input
-                                                    type="checkbox"
-                                                    title="Toggle active"
-                                                    name={`active-${row._id}`}
-                                                    checked={typeof (row as any)?.active !== "undefined" ? (row as any).active === 1 : false}
-                                                    onChange={() => activeHandle(row._id)}
-                                                    className="mr-2 text-coastal-additional-info"
-                                                />
+                                                {typeof (row as any)?.active !== "undefined" && (
+                                                    <input
+                                                        type="checkbox"
+                                                        title="Toggle active"
+                                                        name={`active-${row._id}`}
+                                                        checked={typeof (row as any)?.active !== "undefined" ? (row as any).active === 1 : false}
+                                                        onChange={() => activeHandle(row._id)}
+                                                        className="mr-2 text-coastal-additional-info"
+                                                    />
+                                                )}
+                                                {typeof (row as any)?.role !== "undefined" && (
+                                                    <input
+                                                        type="checkbox"
+                                                        title="Toggle active"
+                                                        name={`active-${row._id}`}
+                                                        checked={typeof (row as any)?.role !== "undefined" ? (row as any).role === 'admin' : false}
+                                                        onChange={() => activeHandle(row._id)}
+                                                        className="mr-2 text-coastal-additional-info"
+                                                    />
+                                                )}
+
                                             </div>
                                         </div>
                                     </td>

@@ -113,7 +113,7 @@ export type AdminTableProps<T extends object> = {
   currentPage: number;
   pageSize?: number; // default: 10
   onPageChange: (newPage: number) => void; // handler to trigger new fetch
-  onShowDeleteMultipleHandle: (value: boolean) => void;
+  onShowDeleteMultipleHandle?: (value: boolean) => void;
   loading: boolean;
   selectedIds: Set<string>;
   setSelectedIds: (ids: Set<string>) => void;
