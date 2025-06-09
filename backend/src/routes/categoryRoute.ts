@@ -3,6 +3,7 @@ import {
   activeOrDeactiveCategoryController,
   addCategoryController,
   deleteCategoryController,
+  deleteMultiCategoriesController,
   getAllCategoriesController,
   getCategoryController,
   updateCategoryController,
@@ -30,6 +31,7 @@ router.put(
   updateCategoryController
 );
 router.delete("/:id", is_existed_validator, deleteCategoryController);
+router.post("/delete-multiple", deleteMultiCategoriesController);
 router.put(
   "/:id/active",
   is_existed_validator,

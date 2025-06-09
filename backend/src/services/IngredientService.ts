@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { IngredientModel } from "../models/Ingredient";
 import { IIngredient } from "../types/IngredientTypes";
 
@@ -20,6 +21,17 @@ export const deleteIngredient = async (id: string) => {
     return result;
   } catch (err) {
     console.log("Adding new Ingredient failed: ", err);
+    throw err;
+  }
+};
+
+export const deleteMutipleIngredients = async (ids: string[]) => {
+  try {
+    const objectIds = ids.map((id) => new mongoose.Types.ObjectId(id));
+    const result = await IngredientModel.deleteMany({ _id: { $in: objectIds } });
+    return result;
+  } catch (err) {
+    console.log("Delete multiple Categories failed: ", err);
     throw err;
   }
 };

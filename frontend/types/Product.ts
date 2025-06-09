@@ -117,4 +117,5 @@ export type AdminTableProps<T extends object> = {
   loading: boolean;
   selectedIds: Set<string>;
   setSelectedIds: (ids: Set<string>) => void;
+  activeHandle?: (id: string) => void
 };

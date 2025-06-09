@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { CategoryModel } from "../models/Category";
 import { ICategory } from "../types/CategoryTypes";
 
@@ -17,6 +18,17 @@ export const deleteCatetory = async (id: string) => {
     return result;
   } catch (err) {
     console.log("Adding new category failed: ", err);
+    throw err;
+  }
+};
+
+export const deleteMutipleCategories = async (ids: string[]) => {
+  try {
+    const objectIds = ids.map((id) => new mongoose.Types.ObjectId(id));
+    const result = await CategoryModel.deleteMany({ _id: { $in: objectIds } });
+    return result;
+  } catch (err) {
+    console.log("Delete multiple Categories failed: ", err);
     throw err;
   }
 };

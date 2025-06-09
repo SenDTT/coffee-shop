@@ -23,15 +23,22 @@ router.use(authenticate, isAdminUser);
 router.get("/", getAllIngredientsController);
 router.get("/:id", is_existed_validator, getIngredientController);
 
-router.post("/", add_ingredient_validator, addIngredientController);
+router.post(
+  "/",
+  upload.array("images"),
+  add_ingredient_validator,
+  addIngredientController
+);
 
 router.put(
   "/:id",
   is_existed_validator,
+  upload.array("images"),
   add_ingredient_validator,
   updateIngredientController
 );
 router.delete("/:id", is_existed_validator, deleteIngredientController);
+router.post("/delete-multiple");
 router.put(
   "/:id/active",
   is_existed_validator,

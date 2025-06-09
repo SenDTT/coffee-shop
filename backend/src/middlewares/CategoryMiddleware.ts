@@ -11,7 +11,7 @@ export const add_category_validator: RequestHandler<
   ICategory
 > = async (req, res, next) => {
   const { name, description, type } = req.body;
-
+  console.log(req.body);
   if (
     validator.isEmpty(name) ||
     validator.isEmpty(description) ||

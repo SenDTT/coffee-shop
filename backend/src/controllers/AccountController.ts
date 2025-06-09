@@ -11,14 +11,12 @@ import {
 import { UserRoles } from "../constants/Enum";
 import { ISignupBody } from "../types/AuthTypes";
 import {
-  addOrUpdateProductOfOrder,
   createNewOrder,
   getAllOrders,
   getOrderDetail,
 } from "../services/OrderService";
 import { IOrderRequest } from "../types/OrderTypes";
 import { getProductById } from "../services/ProductService";
-import mongoose, { Schema } from "mongoose";
 
 export const updateUserInfoController: RequestHandler<
   unknown,

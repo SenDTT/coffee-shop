@@ -66,7 +66,7 @@ export default function SideBar() {
                             </Link>
                         </li>
                         <li className={menuOpen ? 'px-2 sm:px-4' : 'px-2'}>
-                            <Link href="/admin/categories" className={`text-lg transition hover:bg-gray-700 hover:cursor-pointer ${menuOpen ? 'px-2 sm:px-4' : 'px-2'} ${isActive('/admin/ingredients')} py-2 inline-flex gap-2 items-center w-full rounded-md`}>
+                            <Link href="/admin/categories" className={`text-lg transition hover:bg-gray-700 hover:cursor-pointer ${menuOpen ? 'px-2 sm:px-4' : 'px-2'} ${isActive('/admin/categories')} py-2 inline-flex gap-2 items-center w-full rounded-md`}>
                                 <MdCategory className="text-2xl" />
                                 <p className={menuOpen ? 'hidden sm:block' : 'hidden'}>Categories</p>
                             </Link>

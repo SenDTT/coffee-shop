@@ -7,18 +7,19 @@ import { toast, ToastContainer } from 'react-toastify';
 import AddButton from '../../../components/Admin/AddButton';
 import SearchItem from '../../../components/Admin/SearchItem';
 import Title from '../../../components/Admin/Title';
-import { GetListParams, Product } from '../../../types/Product';
+import { GetListParams } from '../../../types/Product';
 import api from '../../../api';
 import AdminTable from '../../../components/Admin/AdminTable';
 import { confirmThemeSwal } from '../../../utils/sweetalert';
 import Sidebar from '../../../components/Admin/SideBar';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FaPen, FaTrash } from 'react-icons/fa';
+import { Ingredient } from '../../../types/Ingredient';
 
 const LIMIT = 10;
 
-export default function MenuPage() {
-    const [products, setProducts] = useState<Product[]>([]);
+export default function AdminIngredientsPage() {
+    const [ingredients, setIngredients] = useState<Ingredient[]>([]);
     const [showDeleteBtn, setShowDeleteBtn] = useState(false);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [params, setParams] = useState<GetListParams>({
@@ -29,7 +30,7 @@ export default function MenuPage() {
     const [total, setTotal] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+    const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
     const router = useRouter();
     const searchParams = useSearchParams();
     const [inProccessing, setInProccessing] = useState<Boolean>(false);
@@ -54,22 +55,22 @@ export default function MenuPage() {
 
             if (dataRes.success && dataRes.data) {
                 console.log(dataRes.data);
-                setSelectedProduct(dataRes.data);
+                setSelectedIngredient(dataRes.data);
                 setIsSidebarOpen(true);
             }
         } catch (err) {
-            toast.error('Failed to get product. Please try again.');
+            toast.error('Failed to get ingredients. Please try again.');
         }
     }
 
     const fetchProducts = async () => {
         setLoading(true);
         try {
-            const res = await api.get('/products', { params });
+            const res = await api.get('/ingredients', { params });
             const dataRes = res.data;
 
             if (dataRes.success && dataRes.data) {
-                setProducts(dataRes.data.data);
+                setIngredients(dataRes.data.data);
                 setTotal(dataRes.data.total);
             }
         } catch (err) {
@@ -80,12 +81,51 @@ export default function MenuPage() {
         }
     };
 
+    const resetDataWithoutApi = (id: string, data: Ingredient) => {
+        const newData = ingredients.map((item) => {
+            if (item._id === id) {
+                return data;
+            }
+
+            return item;
+        });
+        setIngredients(newData);
+    }
+
+    const activeHandle = async (id: string) => {
+        if (inProccessing) return;
+
+        setInProccessing(true);
+        try {
+            const response = await api.put(`/ingredients/${id}/active`);
+            const dataRes = response.data;
+
+            if (dataRes.success) {
+                // Show success message
+                toast.success(dataRes.message);
+            } else {
+                toast.error("Items deleted Failed");
+            }
+        } catch (err) {
+            toast.error("Failed");
+            console.log(err);
+        } finally {
+            // Reset state
+            const item = ingredients.find(item => item._id === id);
+
+            if (item && item._id) {
+                resetDataWithoutApi(id, { ...item, active: item.active === 0 ? 1 : 0 });
+            }
+            setInProccessing(false);
+        }
+    }
+
     const deleteMultipleHandle = async () => {
         // Perform delete logic here
         const ids = [...selectedIds.values()];
         // Reset deleteIds or perform any other necessary actions
         try {
-            const response = await api.post("/products/delete-multiple", { ids });
+            const response = await api.post("/ingredients/delete-multiple", { ids });
             const dataRes = response.data;
 
             if (dataRes.success) {
@@ -137,17 +177,6 @@ export default function MenuPage() {
         }
     }
 
-    const resetDataWithoutApi = (id: string, data: Product) => {
-        const newData = products.map((item) => {
-            if (item._id === id) {
-                return data;
-            }
-
-            return item;
-        });
-        setProducts(newData);
-    }
-
     const deleteHandle = (id: string) => {
         confirmThemeSwal.fire({
             title: 'Are you sure?',
@@ -164,35 +193,7 @@ export default function MenuPage() {
     }
 
     const editHandle = (id: string) => {
-        router.push(`/admin/menu/${id}`);
-    }
-
-    const activeHandle = async (id: string) => {
-        if (inProccessing) return;
-
-        setInProccessing(true);
-        try {
-            const response = await api.put(`/products/${id}/active`);
-            const dataRes = response.data;
-
-            if (dataRes.success) {
-                // Show success message
-                toast.success(dataRes.message);
-            } else {
-                toast.error("Items deleted Failed");
-            }
-        } catch (err) {
-            toast.error("Failed");
-            console.log(err);
-        } finally {
-            // Reset state
-            const item = products.find(item => item._id === id);
-
-            if (item && item._id) {
-                resetDataWithoutApi(id, { ...item, active: item.active === 0 ? 1 : 0 });
-            }
-            setInProccessing(false);
-        }
+        router.push(`/admin/ingredients/${id}`);
     }
 
     const onPageChange = (newPage: number) => {
@@ -213,14 +214,14 @@ export default function MenuPage() {
     }
 
     const viewHandle = (id: string) => {
-        const product = products.find(p => p._id === id) || null;
-        setSelectedProduct(product);
+        const product = ingredients.find(p => p._id === id) || null;
+        setSelectedIngredient(product);
         setIsSidebarOpen(true);
     }
 
     const closeSideBar = () => {
         setIsSidebarOpen(false);
-        setSelectedProduct(null);
+        setSelectedIngredient(null);
     }
 
     // TODO: add active column and call api
@@ -231,7 +232,7 @@ export default function MenuPage() {
             <ToastContainer />
 
             {/* heading */}
-            <Title title="Menu Management" />
+            <Title title="Ingredients Management" />
 
             {/* filter row and actions */}
             <div className="w-full flex flex-col items-start sm:items-center gap-2 my-4 text-xs sm:text-base bg-white/50 rounded-lg py-3 px-4 shadow-md mb-4">
@@ -241,7 +242,7 @@ export default function MenuPage() {
                     <div className="flex flex-row sm:justify-end items-center gap-2 sm:w-full">
                         <DeleteButton onDelete={deleteMultipleHandle} disabled={!showDeleteBtn} />
 
-                        <AddButton path="/admin/menu/add" />
+                        <AddButton path="/admin/ingredients/add" />
                     </div>
                 </div>
 
@@ -252,7 +253,7 @@ export default function MenuPage() {
                     setSelectedIds={setSelectedIds}
                     headers={["Sku", "Name", "Description", "Price", "Stock", "Category"]}
                     columns={["sku", "name", "description", "price", "stock", "category.name"]}
-                    rows={products}
+                    rows={ingredients}
                     hasActionsCol={true}
                     viewHandle={viewHandle}
                     deleteHandle={deleteHandle}
@@ -268,18 +269,18 @@ export default function MenuPage() {
 
             </div>
             <Sidebar
-                title={selectedProduct ? selectedProduct.sku : "Product Detail"}
+                title={selectedIngredient ? selectedIngredient.sku : "Ingredient Detail"}
                 isOpen={isSidebarOpen}
                 onClose={closeSideBar}
                 className="w-1/3"
             >
-                {selectedProduct ? (
+                {selectedIngredient ? (
                     <div className="flex flex-col gap-4 p-4">
                         {/* Product Images */}
-                        {selectedProduct.images.length > 0 && (
+                        {selectedIngredient.images.length > 0 && (
                             <div className="w-full overflow-x-auto">
                                 <div className="flex flex-row gap-4 py-2">
-                                    {selectedProduct.images.map((item, index) => (
+                                    {selectedIngredient.images.map((item, index) => (
                                         <div
                                             key={index}
                                             className="flex-shrink-0 h-40 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center"
@@ -299,10 +300,10 @@ export default function MenuPage() {
                         <div className="w-full space-y-4 text-gray-800">
                             {/* Title + Category Badge */}
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                                <h3 className="text-2xl font-bold text-gray-900">{selectedProduct.name}</h3>
-                                {selectedProduct.category?.name && (
+                                <h3 className="text-2xl font-bold text-gray-900">{selectedIngredient.name}</h3>
+                                {selectedIngredient.category?.name && (
                                     <span className="inline-block bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">
-                                        {selectedProduct.category.name}
+                                        {selectedIngredient.category.name}
                                     </span>
                                 )}
                             </div>
@@ -312,17 +313,17 @@ export default function MenuPage() {
                                 {/* Price */}
                                 <div className="flex items-center gap-2">
                                     <span className="text-gray-500 font-medium">Price:</span>
-                                    <span className="text-green-600 font-semibold text-base">${selectedProduct.price}</span>
+                                    <span className="text-green-600 font-semibold text-base">${selectedIngredient.price}</span>
                                 </div>
 
                                 {/* Stock */}
                                 <div className="flex items-center gap-2">
                                     <span className="text-gray-500 font-medium">Stock:</span>
                                     <span
-                                        className={`text-xs font-bold px-2 py-1 rounded-full ${selectedProduct.stock > 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"
+                                        className={`text-xs font-bold px-2 py-1 rounded-full ${selectedIngredient.stock > 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"
                                             }`}
                                     >
-                                        {selectedProduct.stock > 0 ? `${selectedProduct.stock} items` : "Out of stock"}
+                                        {selectedIngredient.stock > 0 ? `${selectedIngredient.stock} items` : "Out of stock"}
                                     </span>
                                 </div>
                             </div>
@@ -330,15 +331,7 @@ export default function MenuPage() {
                             {/* Description */}
                             <div>
                                 <p className="text-sm text-gray-600 leading-relaxed">
-                                    {selectedProduct.description || "No description available."}
-                                </p>
-                            </div>
-
-                            {/* Materials */}
-                            <div className="flex items-center gap-2 border-b border-gray-200 pb-2">
-                                <span className="text-sm text-gray-500 font-medium">Materials:</span>
-                                <p className="text-sm text-gray-600 leading-relaxed">
-                                    {selectedProduct.material || "No description available."}
+                                    {selectedIngredient.description || "No description available."}
                                 </p>
                             </div>
 
@@ -346,9 +339,9 @@ export default function MenuPage() {
                             <div className="flex flex-row flex-wrap items-center gap-2">
                                 {editHandle && (
                                     <button
-                                        onClick={() => editHandle(selectedProduct._id)}
-                                        title="Edit product"
-                                        className='inline-flex text-sm gap-2 items-center px-4 py-1 rounded-md bg-coastal-additional-info'
+                                        onClick={() => editHandle(selectedIngredient._id)}
+                                        title="Edit"
+                                        className='inline-flex gap-2 items-center px-4 py-2 rounded-md bg-coastal-additional-info'
                                     >
                                         <FaPen className="text-white cursor-pointer size-3" />
                                         <span className="text-white">Edit</span>
@@ -356,9 +349,9 @@ export default function MenuPage() {
                                 )}
                                 {deleteHandle && (
                                     <button
-                                        onClick={() => deleteHandle(selectedProduct._id)}
-                                        title="Delete product"
-                                        className='inline-flex text-sm gap-2 px-4 py-1 rounded-md items-center bg-gray-400 text-white'
+                                        onClick={() => deleteHandle(selectedIngredient._id)}
+                                        title="Delete"
+                                        className='inline-flex gap-2 px-4 py-2 rounded-md items-center bg-gray-400 text-white'
                                     >
                                         <FaTrash className="text-white cursor-pointer size-3" />
                                         <span className="text-white">Delete</span>
@@ -369,7 +362,7 @@ export default function MenuPage() {
 
                     </div>
                 ) : (
-                    <p className="p-4 text-gray-500">No product selected</p>
+                    <p className="p-4 text-gray-500">No ingredient selected</p>
                 )}
             </Sidebar>
         </AdminLayout>

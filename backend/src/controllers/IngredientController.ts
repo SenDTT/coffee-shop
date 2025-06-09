@@ -3,16 +3,21 @@ import { IErrorResponse, IResponseData } from "../types/Common";
 import { getCategoryById } from "../services/CategoryService";
 import fs from "fs";
 import path from "path";
-import { IIngredientRequest } from "../types/IngredientTypes";
+import {
+  IDeleteMultipleIngredientsRequest,
+  IIngredientRequest,
+} from "../types/IngredientTypes";
 import {
   activeOrDeactiveIngredient,
   addImagesIngredient,
   addIngredient,
   deleteIngredient,
+  deleteMutipleIngredients,
   getAllIngredients,
   getIngredientById,
   updateIngredient,
 } from "../services/IngredientService";
+import { unlinkImages } from "./ProductController";
 
 export const addIngredientController: RequestHandler<
   unknown,
@@ -30,7 +35,17 @@ export const addIngredientController: RequestHandler<
       return;
     }
 
-    const ingredient = await addIngredient({ ...req.body, category });
+    const newImages = req.files as Express.Multer.File[];
+    let imageUrls: string[] = [];
+    if (newImages) {
+      imageUrls = newImages.map((file) => file.path);
+    }
+
+    const ingredient = await addIngredient({
+      ...req.body,
+      images: imageUrls,
+      category,
+    });
     res.json({ success: true, data: ingredient });
   } catch (err) {
     next(err);
@@ -43,9 +58,10 @@ export const updateIngredientController: RequestHandler<
   IIngredientRequest
 > = async (req, res, next) => {
   const { id } = req.params;
-  const { categoryId } = req.body;
+  const { categoryId, deletedImages } = req.body;
   try {
     const category = await getCategoryById(categoryId);
+    let model = await getIngredientById(id);
     if (category == null) {
       res
         .status(400)
@@ -53,7 +69,21 @@ export const updateIngredientController: RequestHandler<
       return;
     }
 
-    await updateIngredient(id, { ...req.body, category });
+    const newImages = req.files as Express.Multer.File[];
+    let imageUrls: string[] = [];
+    if (newImages) {
+      imageUrls = newImages.map((file) => file.path);
+    }
+
+    // delete images
+    let images = model.images;
+    if (deletedImages && deletedImages.length > 0) {
+      unlinkImages(deletedImages);
+
+      images = images.filter((item) => !deletedImages.includes(item));
+    }
+
+    await updateIngredient(id, { ...req.body, images: imageUrls, category });
 
     const newModel = await getIngredientById(id);
 
@@ -108,9 +138,29 @@ export const activeOrDeactiveIngredientController: RequestHandler<
       success: true,
       data: null,
       message:
-        (newModel?.active ? "Active" : "Deactive") + " Ingredient Successfully",
+        (!newModel?.active ? "Active" : "Deactive") +
+        " Ingredient Successfully",
     });
   } catch (err) {}
+};
+
+export const deleteMultiProductsController: RequestHandler<
+  unknown,
+  IResponseData | IErrorResponse,
+  IDeleteMultipleIngredientsRequest
+> = async (req, res, next) => {
+  try {
+    const { ids } = req.body;
+
+    await deleteMutipleIngredients(ids);
+    res.json({
+      success: true,
+      data: null,
+      message: "Deleted Product Successfully",
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 export const deleteIngredientController: RequestHandler<

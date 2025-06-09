@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 
 const LIMIT = 50;
 
-export default function AddProductPage() {
+export default function AddIngrdientPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -21,7 +21,6 @@ export default function AddProductPage() {
     const initialData = {
         name: '',
         sku: '',
-        material: '',
         price: '',
         description: '',
         category: '',
@@ -38,7 +37,7 @@ export default function AddProductPage() {
     }, []);
 
     const getListCategories = async (search: string, page: number = 0) => {
-        let params: CategoryParams = { limit: LIMIT, skip: page * LIMIT, type: 'product' };
+        let params: CategoryParams = { limit: LIMIT, skip: page * LIMIT, type: 'ingredient' };
         if (search !== "") {
             params = { ...params, search };
         }
@@ -101,24 +100,24 @@ export default function AddProductPage() {
                 formPayload.append("images", file);
             });
 
-            const res = await api.post("/products", formPayload);
+            const res = await api.post("/ingredients", formPayload);
 
             const dataRes = res.data;
 
             if (dataRes.success) {
-                setSuccess('Product added successfully!');
-                toast.success('Product added successfully!');
+                setSuccess('Ingredient added successfully!');
+                toast.success('Ingredient added successfully!');
 
                 setTimeout(() => {
-                    router.push('/admin/menu');
+                    router.push('/admin/ingredients');
                 }, 2000);
             } else {
-                setError('Failed to add product. Please try again.');
-                toast.error('Failed to add product. Please try again.');
+                setError('Failed to add ingredient. Please try again.');
+                toast.error('Failed to add ingredient. Please try again.');
             }
         } catch (err) {
-            setError('Failed to add product. Please try again.');
-            toast.error('Failed to add product. Please try again.');
+            setError('Failed to add ingredient. Please try again.');
+            toast.error('Failed to add ingredient. Please try again.');
 
             if ((err as any)?.response?.data?.errors) {
                 const errors = (err as any)?.response?.data?.errors;
@@ -135,14 +134,14 @@ export default function AddProductPage() {
             <ToastContainer />
 
             {/* heading */}
-            <Title title="Add Product" parentPath="/admin/menu" />
+            <Title title="Add Ingredient" parentPath="/admin/menu" />
 
             <div className="w-full flex flex-col sm:flex-row items-center gap-2 my-4 text-xs sm:text-base bg-white/50 rounded-lg py-3 px-4 shadow-md mb-4">
                 {/* form */}
                 <AdminForm fields={[
                     {
                         name: 'name',
-                        label: 'Product Name',
+                        label: 'Ingredient Name',
                         type: 'text',
                         placeholder: 'Cappuccino',
                         required: true,
@@ -206,26 +205,6 @@ export default function AddProductPage() {
                         error: errors.active ?? ''
                     },
                     {
-                        name: 'description',
-                        label: 'Description',
-                        type: 'textarea',
-                        placeholder: 'Enter product description',
-                        required: true,
-                        value: formData.description,
-                        onChange: handleInputChange,
-                        error: errors.description ?? ''
-                    },
-                    {
-                        name: 'material',
-                        label: 'Material',
-                        type: 'textarea',
-                        placeholder: 'Enter product material',
-                        required: true,
-                        value: formData.material,
-                        onChange: handleInputChange,
-                        error: errors.material ?? ''
-                    },
-                    {
                         name: 'images',
                         label: 'Images',
                         type: 'file',
@@ -237,7 +216,17 @@ export default function AddProductPage() {
                         onChange: handleInputChange,
                         error: errors.images ?? ''
                     },
-                ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl={'/admin/menu'} isShowButton={true}></AdminForm>
+                    {
+                        name: 'description',
+                        label: 'Description',
+                        type: 'textarea',
+                        placeholder: 'Enter ingredient description',
+                        required: true,
+                        value: formData.description,
+                        onChange: handleInputChange,
+                        error: errors.description ?? ''
+                    },
+                ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl={'/admin/ingredients'} isShowButton={true}></AdminForm>
             </div>
         </AdminLayout>
     );

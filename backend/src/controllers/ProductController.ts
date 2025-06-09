@@ -22,7 +22,7 @@ import mongoose from "mongoose";
 
 const uploadsDir = path.join(process.cwd());
 
-const unlinkImages = (images: string[]) => {
+export const unlinkImages = (images: string[]) => {
   for (const image_path of images) {
     const filePath = path.join(uploadsDir, image_path);
     fs.unlink(filePath, (err) => {
@@ -158,7 +158,7 @@ export const activeOrDeactiveProductController: RequestHandler<
       success: true,
       data: null,
       message:
-        (newModel?.active ? "Active" : "Deactive") + " Product Successfully",
+        (!newModel?.active ? "Active" : "Deactive") + " Product Successfully",
     });
   } catch (err) {}
 };

@@ -21,7 +21,8 @@ const AdminTable = <T extends { _id: string }>({
     onShowDeleteMultipleHandle,
     loading,
     selectedIds,
-    setSelectedIds
+    setSelectedIds,
+    activeHandle
 }: AdminTableProps<T>) => {
 
     const totalPages = Math.ceil(totalRecords / pageSize);
@@ -64,9 +65,9 @@ const AdminTable = <T extends { _id: string }>({
                     <thead className="bg-gray-100">
                         <tr>
                             {showCheckbox && (
-                                <th className="p-3">
+                                <th className="text-left p-3">
                                     <input
-                                        className="sm:-ml-3"
+                                        className=""
                                         aria-label="checkbox-all"
                                         type="checkbox"
                                         checked={selectedIds.size === rows.length && rows.length > 0}
@@ -79,13 +80,18 @@ const AdminTable = <T extends { _id: string }>({
                                     {name}
                                 </th>
                             ))}
+
+                            {/* Active column */}
+                            {activeHandle && (<th className="text-left px-4 py-3 text-sm font-bold text-gray-600">Active</th>)}
+
+                            {/* Actions column */}
                             {hasActionsCol && (deleteHandle || editHandle || viewHandle) && (
                                 <th className="text-left px-4 py-3 text-sm font-bold text-gray-600">Actions</th>
                             )}
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 bg-white">
-                        {loading && <tr className="bg-white"><td className="p-3 text-center" colSpan={columns.length + (showCheckbox ? 1 : 0) + (hasActionsCol ? 1 : 0)}><AiOutlineLoading3Quarters className="animate-spin mx-4" /></td></tr>}
+                        {loading && <tr className="bg-white"><td className="p-3 text-center" colSpan={columns.length + (showCheckbox ? 1 : 0) + (hasActionsCol ? 1 : 0) + (activeHandle ? 1 : 0)}><AiOutlineLoading3Quarters className="animate-spin mx-4" /></td></tr>}
                         {rows.map((row, index) => (
                             <tr key={row._id} className={(index % 2 === 0 ? "bg-white" : "bg-gray-100")}>
                                 {showCheckbox && (
@@ -103,9 +109,29 @@ const AdminTable = <T extends { _id: string }>({
                                         {String(getNestedValue(row, col))}
                                     </td>
                                 ))}
+
+                                {/* Active */}
+                                {activeHandle && (
+                                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                                        <div className="flex justify-start items-center gap-2">
+                                            <div className="flex items-center">
+                                                <input
+                                                    type="checkbox"
+                                                    title="Toggle active"
+                                                    name={`active-${row._id}`}
+                                                    checked={typeof (row as any)?.active !== "undefined" ? (row as any).active === 1 : false}
+                                                    onChange={() => activeHandle(row._id)}
+                                                    className="mr-2 text-coastal-additional-info"
+                                                />
+                                            </div>
+                                        </div>
+                                    </td>
+                                )}
+
+                                {/* Actions */}
                                 {hasActionsCol && (deleteHandle || editHandle || viewHandle) && (
                                     <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                                        <div className="flex justify-center items-center gap-2">
+                                        <div className="flex justify-start items-center gap-2">
                                             {viewHandle && <FaEye className="text-coastal-dark-bg size-4 cursor-pointer" onClick={() => viewHandle(row._id)} />}
                                             {editHandle && <FaPen className="text-coastal-additional-info cursor-pointer" onClick={() => editHandle(row._id)} />}
                                             {deleteHandle && <FaTrash className="text-gray-400 cursor-pointer" onClick={() => deleteHandle(row._id)} />}
