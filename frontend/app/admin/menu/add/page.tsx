@@ -25,7 +25,7 @@ export default function AddProductPage() {
         price: '',
         description: '',
         category: '',
-        stock: 1,
+        stock: '1',
         images: [],
         active: 1,
     };
@@ -187,13 +187,14 @@ export default function AddProductPage() {
                     {
                         name: 'stock',
                         label: 'Stock Quantity',
-                        type: 'number',
+                        type: 'text',
                         placeholder: '1',
                         min: 1,
                         required: true,
                         value: formData.stock,
                         onChange: handleInputChange,
-                        error: errors.stock ?? ''
+                        error: errors.stock ?? '',
+                        validate: (value) => Number.isNaN(Number(value)) ? 'Stock must be a number' : ''
                     },
                     {
                         name: 'active',

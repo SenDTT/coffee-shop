@@ -83,7 +83,11 @@ export const updateIngredientController: RequestHandler<
       images = images.filter((item) => !deletedImages.includes(item));
     }
 
-    await updateIngredient(id, { ...req.body, images: imageUrls, category });
+    await updateIngredient(id, {
+      ...req.body,
+      images: [...images, ...imageUrls],
+      category,
+    });
 
     const newModel = await getIngredientById(id);
 

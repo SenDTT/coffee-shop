@@ -186,13 +186,14 @@ export default function AddIngrdientPage() {
                     {
                         name: 'stock',
                         label: 'Stock Quantity',
-                        type: 'number',
+                        type: 'text',
                         placeholder: '1',
                         min: 1,
                         required: true,
                         value: formData.stock,
                         onChange: handleInputChange,
-                        error: errors.stock ?? ''
+                        error: errors.stock ?? '',
+                        validate: (value) => Number.isNaN(Number(value)) ? 'Stock must be a number' : ''
                     },
                     {
                         name: 'active',
@@ -205,6 +206,16 @@ export default function AddIngrdientPage() {
                         error: errors.active ?? ''
                     },
                     {
+                        name: 'description',
+                        label: 'Description',
+                        type: 'textarea',
+                        placeholder: 'Enter ingredient description',
+                        required: true,
+                        value: formData.description,
+                        onChange: handleInputChange,
+                        error: errors.description ?? ''
+                    },
+                    {
                         name: 'images',
                         label: 'Images',
                         type: 'file',
@@ -215,16 +226,6 @@ export default function AddIngrdientPage() {
                         accept: 'image/*',
                         onChange: handleInputChange,
                         error: errors.images ?? ''
-                    },
-                    {
-                        name: 'description',
-                        label: 'Description',
-                        type: 'textarea',
-                        placeholder: 'Enter ingredient description',
-                        required: true,
-                        value: formData.description,
-                        onChange: handleInputChange,
-                        error: errors.description ?? ''
                     },
                 ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl={'/admin/ingredients'} isShowButton={true}></AdminForm>
             </div>

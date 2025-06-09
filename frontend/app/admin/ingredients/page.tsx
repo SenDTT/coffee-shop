@@ -40,7 +40,7 @@ export default function AdminIngredientsPage() {
         const view = searchParams.get('view') ?? null;
 
         if (id && view === 'true') {
-            getProductById(id);
+            getIngredientById(id);
         }
     }, [searchParams]);
 
@@ -48,9 +48,9 @@ export default function AdminIngredientsPage() {
         fetchProducts();
     }, [params]);
 
-    const getProductById = async (id: string) => {
+    const getIngredientById = async (id: string) => {
         try {
-            const response = await api.get(`/products/${id}`);
+            const response = await api.get(`/ingredients/${id}`);
             const dataRes = response.data;
 
             if (dataRes.success && dataRes.data) {
@@ -158,7 +158,7 @@ export default function AdminIngredientsPage() {
 
     const onRequestDeleteById = async (id: string) => {
         try {
-            const response = await api.delete(`/products/${id}`);
+            const response = await api.delete(`/ingredients/${id}`);
             const dataRes = response.data;
 
             if (dataRes.success) {

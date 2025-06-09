@@ -5,13 +5,14 @@ import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import Title from '../../../../components/Admin/Title';
 import AdminForm from '../../../../components/Admin/AdminForm';
-import { CategoryParams, InputEvent, Product, SelectOption } from '../../../../types/Product';
+import { CategoryParams, InputEvent, SelectOption } from '../../../../types/Product';
 import api from '../../../../api';
 import { useParams, useRouter } from 'next/navigation';
+import { Ingredient } from '../../../../types/Ingredient';
 
 const LIMIT = 50;
 
-export default function EditProductPage() {
+export default function EditIngredientPage() {
     const router = useRouter();
     const params = useParams();
     const id = params.id;
@@ -23,7 +24,6 @@ export default function EditProductPage() {
     const initialData = {
         name: '',
         sku: '',
-        material: '',
         price: '',
         description: '',
         category: '',
@@ -31,7 +31,7 @@ export default function EditProductPage() {
         images: [],
         active: 1,
     };
-    const [model, setModel] = useState<Product | undefined>(undefined);
+    const [model, setModel] = useState<Ingredient | undefined>(undefined);
     const [deletedImages, setDeletedImages] = useState<string[]>([]);
 
     const [formData, setFormData] = useState(initialData);
@@ -39,7 +39,7 @@ export default function EditProductPage() {
 
     useEffect(() => {
         if (id && typeof id === 'string') {
-            getProductById(id)
+            getIngredientById(id)
         }
         return () => {
             setFormData(initialData);
@@ -47,9 +47,9 @@ export default function EditProductPage() {
         }
     }, [id]);
 
-    const getProductById = async (id: string) => {
+    const getIngredientById = async (id: string) => {
         try {
-            const response = await api.get(`/products/${id}`);
+            const response = await api.get(`/ingredients/${id}`);
             const dataRes = response.data;
 
             if (dataRes.success && dataRes.data) {
@@ -60,7 +60,6 @@ export default function EditProductPage() {
                 setFormData({
                     name: dataRes.data.name,
                     sku: skuSplit[1],
-                    material: dataRes.data.material,
                     price: dataRes.data.price + "",
                     description: dataRes.data.description,
                     category: dataRes.data.category._id,
@@ -148,24 +147,24 @@ export default function EditProductPage() {
                 formPayload.append("images", file);
             });
 
-            const res = await api.put(`/products/${id}`, formPayload);
+            const res = await api.put(`/ingredients/${id}`, formPayload);
 
             const dataRes = res.data;
 
             if (dataRes.success) {
-                setSuccess('Product updated successfully!');
-                toast.success('Product updated successfully!');
+                setSuccess('Ingredient updated successfully!');
+                toast.success('Ingredient updated successfully!');
 
                 setTimeout(() => {
-                    router.push(`/admin/menu?id=${id}&view=true`);
+                    router.push(`/admin/ingredients?id=${id}&view=true`);
                 }, 2000);
             } else {
-                setError('Failed to update product. Please try again.');
-                toast.error('Failed to update product. Please try again.');
+                setError('Failed to update Ingredient. Please try again.');
+                toast.error('Failed to update Ingredient. Please try again.');
             }
         } catch (err) {
-            setError('Failed to update product. Please try again.');
-            toast.error('Failed to update product. Please try again.');
+            setError('Failed to update Ingredient. Please try again.');
+            toast.error('Failed to update Ingredient. Please try again.');
 
             if ((err as any)?.response?.data?.errors) {
                 const errors = (err as any)?.response?.data?.errors;
@@ -182,16 +181,16 @@ export default function EditProductPage() {
             <ToastContainer />
 
             {/* heading */}
-            <Title title="Edit Product" parentPath={`/admin/menu?id=${id}&view=true`} />
+            <Title title="Edit Ingredient" parentPath={`/admin/ingredients?id=${id}&view=true`} />
 
             <div className="w-full flex flex-col sm:flex-row items-center gap-2 my-4 text-xs sm:text-base bg-white/50 rounded-lg py-3 px-4 shadow-md mb-4">
                 {/* form */}
                 <AdminForm fields={[
                     {
                         name: 'name',
-                        label: 'Product Name',
+                        label: 'Ingredient Name',
                         type: 'text',
-                        placeholder: 'Cappuccino',
+                        placeholder: 'Coffee Beans',
                         required: true,
                         value: formData.name,
                         onChange: handleInputChange,
@@ -264,16 +263,6 @@ export default function EditProductPage() {
                         error: errors.description ?? ''
                     },
                     {
-                        name: 'material',
-                        label: 'Material',
-                        type: 'textarea',
-                        placeholder: 'Enter product material',
-                        required: true,
-                        value: formData.material,
-                        onChange: handleInputChange,
-                        error: errors.material ?? ''
-                    },
-                    {
                         name: 'images',
                         label: 'Images',
                         type: 'file',
@@ -287,7 +276,7 @@ export default function EditProductPage() {
                         error: errors.images ?? '',
                         setDeletedImagePaths: setDeletedImages
                     },
-                ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Save" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl={`/admin/menu?id=${id}&view=true`} isShowButton={true}></AdminForm>
+                ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Save" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl={`/admin/ingredients?id=${id}&view=true`} isShowButton={true}></AdminForm>
             </div>
         </AdminLayout>
     );
