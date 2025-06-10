@@ -6,7 +6,7 @@ import CustomReactSelect from "./ReactSelect";
 import InputText from "./InputText";
 
 export default function AdminForm(props: AdminFormProps) {
-    const { fields, submitText, cancelText, cancelUrl, isShowButton, onSubmit } = props;
+    const { fields, submitText, cancelText, cancelUrl, isShowButton, onSubmit, className } = props;
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -38,7 +38,7 @@ export default function AdminForm(props: AdminFormProps) {
 
 
     return (
-        <div className="flex flex-col w-full h-full">
+        <div className={`flex flex-col w-full h-full ${className}`}>
             <form onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full h-full p-6">
                     {fields.map((field, index) => (
@@ -179,7 +179,7 @@ export default function AdminForm(props: AdminFormProps) {
                 </div>
 
                 {isShowButton && (
-                    <div className="flex sm:justify-end gap-2 mb-2 text-sm">
+                    <div className="flex sm:justify-end gap-2 mb-2 text-sm px-6 py-2">
                         <Link className="px-4 py-2 text-coastal-light-text bg-gray-200 rounded-md transition-colors" href={cancelUrl}>{cancelText || "Cancel"}</Link>
                         <button
                             type="submit"

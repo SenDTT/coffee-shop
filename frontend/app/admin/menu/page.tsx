@@ -14,6 +14,7 @@ import { confirmThemeSwal } from '../../../utils/sweetalert';
 import Sidebar from '../../../components/Admin/SideBar';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FaPen, FaTrash } from 'react-icons/fa';
+import { useSettings } from '../../../context/SettingsContext';
 
 const LIMIT = 10;
 
@@ -33,6 +34,13 @@ export default function MenuPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [inProccessing, setInProccessing] = useState<Boolean>(false);
+    const { settings } = useSettings();
+
+    useEffect(() => {
+        if (settings?.shopName) {
+            document.title = settings.shopName + " - Admin | Menu";
+        }
+    }, [settings]);
 
     useEffect(() => {
         const id = searchParams.get('id') ?? null;

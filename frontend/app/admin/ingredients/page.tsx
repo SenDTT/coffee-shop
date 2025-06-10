@@ -15,6 +15,7 @@ import Sidebar from '../../../components/Admin/SideBar';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FaPen, FaTrash } from 'react-icons/fa';
 import { Ingredient } from '../../../types/Ingredient';
+import { useSettings } from '../../../context/SettingsContext';
 
 const LIMIT = 10;
 
@@ -34,6 +35,13 @@ export default function AdminIngredientsPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [inProccessing, setInProccessing] = useState<Boolean>(false);
+    const { settings } = useSettings();
+
+    useEffect(() => {
+        if (settings?.shopName) {
+            document.title = settings.shopName + " - Admin | Ingredients";
+        }
+    }, [settings]);
 
     useEffect(() => {
         const id = searchParams.get('id') ?? null;

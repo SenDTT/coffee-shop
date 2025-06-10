@@ -7,10 +7,18 @@ import MenuPreview from "../components/Home/MenuPreview";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useSettings } from "../context/SettingsContext";
 
 const Home: NextPage = () => {
   const { logout } = useAuth();
   const searchParams = useSearchParams();
+  const { settings } = useSettings();
+
+  useEffect(() => {
+    if (settings?.shopName) {
+      document.title = settings.shopName;
+    }
+  }, [settings]);
 
   useEffect(() => {
     const expired = searchParams.get('expired');

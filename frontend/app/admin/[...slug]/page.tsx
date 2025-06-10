@@ -1,7 +1,9 @@
 'use client';
 
+import AdminLayout from '@/components/Layouts/AdminLayout';
 import { notFound, useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { FaSpinner } from 'react-icons/fa';
 
 const validAdminRoutes = ["dashboard", "products", "orders", "users"];
 
@@ -20,9 +22,10 @@ export default function AdminCatchAll() {
     }, [params, router]);
 
     return (
-        <div className="h-screen flex flex-col justify-center items-center">
-            <h1 className="text-3xl font-bold">Admin Page</h1>
-            <p className="text-gray-600 mt-2">This is a valid admin route.</p>
-        </div>
+        <AdminLayout>
+            <div className="h-screen flex flex-col justify-center items-center">
+                <FaSpinner className='size-4 animate-spin' />
+            </div>
+        </AdminLayout>
     );
 }

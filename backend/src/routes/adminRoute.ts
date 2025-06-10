@@ -9,8 +9,15 @@ import {
   updateUserRoleController,
   uploadProfileImageController,
 } from "../controllers/AccountController";
+import {
+  getSettingsController,
+  updateSettingsController,
+} from "../controllers/SettingsController";
 
 const router = Router();
+
+// settings routes
+router.get("/settings", getSettingsController);
 
 router.use(authenticate, isAdminUser);
 
@@ -31,7 +38,6 @@ router.put("/users/:id/role", updateUserRoleController);
 router.get("/orders", adminGetAllOrdersController);
 
 // settings routes
-router.get("/settings");
-router.put("/settings");
+router.put("/settings", updateSettingsController);
 
 export default router;

@@ -1,8 +1,19 @@
+'use client';
+
 import Link from 'next/link';
 import { TbAlertTriangle } from 'react-icons/tb';
 import AdminLayout from '../../components/Layouts/AdminLayout';
+import { useSettings } from '../../context/SettingsContext';
+import { useEffect } from 'react';
 
 export default function Admin404() {
+    const { settings } = useSettings();
+
+    useEffect(() => {
+        if (settings?.shopName) {
+            document.title = settings.shopName + " - Admin | Not Found";
+        }
+    }, [settings]);
 
     return (
         <AdminLayout>

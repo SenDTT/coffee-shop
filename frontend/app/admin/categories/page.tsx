@@ -13,6 +13,7 @@ import AdminTable from '../../../components/Admin/AdminTable';
 import { confirmThemeSwal } from '../../../utils/sweetalert';
 import { useRouter } from 'next/navigation';
 import { Category } from '../../../types/Category';
+import { useSettings } from '../../../context/SettingsContext';
 
 const LIMIT = 10;
 
@@ -29,6 +30,13 @@ export default function AdminCategoriesPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const router = useRouter();
     const [inProccessing, setInProccessing] = useState<Boolean>(false);
+    const { settings } = useSettings();
+
+    useEffect(() => {
+        if (settings?.shopName) {
+            document.title = settings.shopName + " - Admin | Categories";
+        }
+    }, [settings]);
 
     useEffect(() => {
         fetchProducts();

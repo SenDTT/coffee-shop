@@ -13,6 +13,7 @@ import AdminTable from '../../../components/Admin/AdminTable';
 import Sidebar from '../../../components/Admin/SideBar';
 import { useSearchParams } from 'next/navigation';
 import { User } from '../../../types/User';
+import { useSettings } from '../../../context/SettingsContext';
 
 const LIMIT = 10;
 
@@ -31,6 +32,13 @@ export default function UserPage() {
     const [selectedProduct, setSelectedProduct] = useState<User | null>(null);
     const searchParams = useSearchParams();
     const [inProccessing, setInProccessing] = useState<Boolean>(false);
+    const { settings } = useSettings();
+
+    useEffect(() => {
+        if (settings?.shopName) {
+            document.title = settings.shopName + " - Admin | Users";
+        }
+    }, [settings]);
 
     useEffect(() => {
         const id = searchParams.get('id') ?? null;

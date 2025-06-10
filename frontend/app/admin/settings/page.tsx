@@ -1,10 +1,11 @@
 // app/admin/settings/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import GeneralSettings from './GeneralSettings';
-import AdminLayout from '@/components/Layouts/AdminLayout';
-import Title from '@/components/Admin/Title';
+import AdminLayout from '../../../components/Layouts/AdminLayout';
+import Title from '../../../components/Admin/Title';
+import { useSettings } from '../../../context/SettingsContext';
 // import HomepageCustomization from '@/components/admin/settings/HomepageCustomization';
 // import ThemeAppearance from '@/components/admin/settings/ThemeAppearance';
 // import DeliveryPickupSettings from '@/components/admin/settings/DeliveryPickupSettings';
@@ -16,7 +17,7 @@ import Title from '@/components/Admin/Title';
 // import CustomPagesSettings from '@/components/admin/settings/CustomPagesSettings';
 
 const tabs = [
-    { id: 'general', label: 'General Settings' },
+    { id: 'general', label: 'General' },
     // { id: 'homepage', label: 'Homepage Customization' },
     // { id: 'theme', label: 'Theme & Appearance' },
     // { id: 'delivery', label: 'Delivery & Pickup Settings' },
@@ -30,6 +31,13 @@ const tabs = [
 
 export default function SettingsPage() {
     const [activeTab, setActiveTab] = useState('general');
+    const { settings } = useSettings();
+
+    useEffect(() => {
+        if (settings?.shopName) {
+            document.title = settings.shopName + " - Admin | Settings";
+        }
+    }, [settings]);
 
     const renderTabContent = () => {
         switch (activeTab) {

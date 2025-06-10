@@ -1,7 +1,10 @@
 'use client';
 
 import { AuthProvider } from '@/context/AuthContext';
+import { SettingsProvider } from '@/context/SettingsContext';
 
 export default function ClientProviders({ children }: { children: React.ReactNode }) {
-    return <AuthProvider>{children}</AuthProvider>;
+    return <SettingsProvider>
+        <AuthProvider>{children}</AuthProvider>
+    </SettingsProvider>;
 }

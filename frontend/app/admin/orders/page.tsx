@@ -10,6 +10,7 @@ import api from '../../../api';
 import AdminTable from '../../../components/Admin/AdminTable';
 import Sidebar from '../../../components/Admin/SideBar';
 import { useSearchParams } from 'next/navigation';
+import { useSettings } from '../../../context/SettingsContext';
 
 const LIMIT = 10;
 
@@ -26,6 +27,13 @@ export default function MenuPage() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState<Product | null>(null);
     const searchParams = useSearchParams();
+    const { settings } = useSettings();
+
+    useEffect(() => {
+        if (settings?.shopName) {
+            document.title = settings.shopName + " - Admin | Orders";
+        }
+    }, [settings]);
 
     useEffect(() => {
         const id = searchParams.get('id') ?? null;
