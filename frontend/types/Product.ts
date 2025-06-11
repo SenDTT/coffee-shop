@@ -82,7 +82,8 @@ export type AdminFormFieldWithValue = AdminFormField & {
   onSelect?: (e: SelectOption) => void;
   validate?: (value: string | number | string[] | Date | boolean) => string;
   images?: string,
-  setDeletedImagePaths?: (paths: string[]) => void
+  setDeletedImagePaths?: (paths: string[]) => void,
+  isBannerImage?: boolean,
 };
 
 export type FetchOptionsResponse = {

@@ -3,10 +3,10 @@
 
 import { useEffect, useState } from 'react';
 import GeneralSettings from './GeneralSettings';
+import HomepageSettings from './HomepageSettings';
 import AdminLayout from '../../../components/Layouts/AdminLayout';
 import Title from '../../../components/Admin/Title';
 import { useSettings } from '../../../context/SettingsContext';
-// import HomepageCustomization from '@/components/admin/settings/HomepageCustomization';
 // import ThemeAppearance from '@/components/admin/settings/ThemeAppearance';
 // import DeliveryPickupSettings from '@/components/admin/settings/DeliveryPickupSettings';
 // import PaymentSettings from '@/components/admin/settings/PaymentSettings';
@@ -18,7 +18,7 @@ import { useSettings } from '../../../context/SettingsContext';
 
 const tabs = [
     { id: 'general', label: 'General' },
-    // { id: 'homepage', label: 'Homepage Customization' },
+    { id: 'homepage', label: 'Homepage' },
     // { id: 'theme', label: 'Theme & Appearance' },
     // { id: 'delivery', label: 'Delivery & Pickup Settings' },
     // { id: 'payment', label: 'Payment Settings' },
@@ -42,7 +42,7 @@ export default function SettingsPage() {
     const renderTabContent = () => {
         switch (activeTab) {
             case 'general': return <GeneralSettings />;
-            // case 'homepage': return <HomepageCustomization />;
+            case 'homepage': return <HomepageSettings />;
             // case 'theme': return <ThemeAppearance />;
             // case 'delivery': return <DeliveryPickupSettings />;
             // case 'payment': return <PaymentSettings />;

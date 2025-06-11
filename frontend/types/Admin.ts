@@ -14,6 +14,11 @@ export interface IGeneralSettings {
   shopName: string;
 }
 
+export interface IHompageSettings {
+  bannerText: string;
+  heroImage: string;
+}
+
 export interface ISetting {
   _id: string;
   key: string;
@@ -23,7 +28,7 @@ export interface ISetting {
   updatedAt: string;
   description: string;
   __v: number;
-};
+}
 
 export interface SettingsContextType {
   settings: IGeneralSettings | null;

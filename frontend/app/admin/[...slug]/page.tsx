@@ -1,6 +1,6 @@
 'use client';
 
-import AdminLayout from '@/components/Layouts/AdminLayout';
+import AdminLayout from '../../../components/Layouts/AdminLayout';
 import { notFound, useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { FaSpinner } from 'react-icons/fa';

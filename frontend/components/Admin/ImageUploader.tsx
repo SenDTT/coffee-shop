@@ -66,6 +66,10 @@ export default function ImageUploader(props: AdminFormFieldWithValue) {
         }
     };
 
+    const isHiddenUpload = (): boolean => {
+        return !props.multiple && previews.length > 0;
+    }
+
     return (
         <div className="w-full flex flex-col gap-4">
             <div className="flex flex-wrap gap-4">
@@ -74,7 +78,7 @@ export default function ImageUploader(props: AdminFormFieldWithValue) {
                         <img
                             src={process.env.NEXT_PUBLIC_DOMAIN + path}
                             alt={`Preview ${index}`}
-                            className="w-12 h-12 sm:w-28 sm:h-28 object-cover border rounded"
+                            className={`${props.isBannerImage ? 'w-full' : 'w-12 sm:w-28'} h-12 sm:h-28 object-cover border rounded`}
                         />
                         <button
                             type="button"
@@ -91,7 +95,7 @@ export default function ImageUploader(props: AdminFormFieldWithValue) {
                         <img
                             src={src}
                             alt={`Preview ${index}`}
-                            className="w-12 h-12 sm:w-28 sm:h-28 object-cover border rounded"
+                            className={`${props.isBannerImage ? 'w-full' : 'w-12 sm:w-28'} h-12 sm:h-28 object-cover border rounded`}
                         />
                         <button
                             type="button"
@@ -105,7 +109,7 @@ export default function ImageUploader(props: AdminFormFieldWithValue) {
                 ))}
 
                 {/* Upload frame button */}
-                <label className="w-12 h-12 sm:w-28 sm:h-28 flex items-center justify-center border-2 border-dashed border-gray-300 rounded cursor-pointer hover:border-gray-500">
+                <label className={`w-12 h-12 sm:w-28 sm:h-28 flex items-center justify-center border-2 border-dashed border-gray-300 rounded cursor-pointer hover:border-gray-500 ${isHiddenUpload() ? 'hidden' : ''}`}>
                     <input
                         ref={fileInputRef}
                         type="file"

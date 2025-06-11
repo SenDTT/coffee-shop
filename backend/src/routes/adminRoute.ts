@@ -12,6 +12,7 @@ import {
 import {
   getSettingsController,
   updateSettingsController,
+  updateHomepageSettingsController,
 } from "../controllers/SettingsController";
 
 const router = Router();
@@ -38,6 +39,15 @@ router.put("/users/:id/role", updateUserRoleController);
 router.get("/orders", adminGetAllOrdersController);
 
 // settings routes
-router.put("/settings", updateSettingsController);
+router.put(
+  "/settings",
+  updateSettingsController
+);
+
+router.put(
+  "/settings/homepage",
+  upload.single("heroImage"),
+  updateHomepageSettingsController
+);
 
 export default router;

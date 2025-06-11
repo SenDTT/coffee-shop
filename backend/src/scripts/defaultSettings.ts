@@ -21,11 +21,6 @@ export const defaultSettings = [
     value: "Freshly Roasted, Brewed with Love.",
   },
   { group: "homepage", key: "heroImage", value: "/images/hero-coffee.jpg" },
-  {
-    group: "homepage",
-    key: "featuredCategories",
-    value: ["espresso", "cold brew", "beans", "gear"],
-  },
 
   // Theme & Appearance
   { group: "themeAppearance", key: "primaryColor", value: "#7C3AED" },

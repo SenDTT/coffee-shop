@@ -11,9 +11,14 @@ export interface IGeneralSettings {
   shopDescription: string;
 }
 
+export interface IHompageSettings {
+  bannerText: string;
+  heroImage?: string;
+}
+
 export interface ISettingsBody {
   group: string;
   data: IDataOfSettingBody;
 }
 
-export type IDataOfSettingBody = IGeneralSettings;
+export type IDataOfSettingBody = IGeneralSettings | IHompageSettings;
