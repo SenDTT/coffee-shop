@@ -5,7 +5,7 @@ import { SettingModel } from "../models/Settings";
 
 dotenv.config();
 
-async function seedSettings() {
+export async function seedSettings() {
   try {
     await mongoose.connect(process.env.MONGO_URI!);
     console.log("✅ Connected to MongoDB");

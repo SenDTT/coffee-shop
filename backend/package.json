@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node src/server.ts",
-    "seed:settings": "ts-node src/scripts/seedSettings.ts"
+    "seed:settings": "ts-node src/scripts/seedSettings.ts",
+    "seed:account": "ts-node src/scripts/seedAdminAccount.ts",
+    "seed:app": "ts-node src/scripts/seeds.ts"
   },
   "keywords": [],
   "author": "",
