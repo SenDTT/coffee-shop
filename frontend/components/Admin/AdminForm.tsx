@@ -1,12 +1,19 @@
+'use client';
+import React from "react";
+
 import { AdminFormProps } from "@/types/Product";
 import Link from "next/link";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import ImageUploader from "./ImageUploader";
-import CustomReactSelect from "./ReactSelect";
 import InputText from "./InputText";
+import dynamic from "next/dynamic";
+import { FaSpinner } from "react-icons/fa";
+
+const BlogEditor = dynamic(() => import('./BlogEditor'), { ssr: false, loading: () => <p><FaSpinner className='size-4 animate-spin' /></p>, });
+const CustomReactSelect = dynamic(() => import('./ReactSelect'), { ssr: false });
 
 export default function AdminForm(props: AdminFormProps) {
-    const { fields, submitText, cancelText, cancelUrl, isShowButton, onSubmit, className } = props;
+    const { fields, submitText, cancelText, cancelUrl, isShowButton, onSubmit, className, formClassName, buttonDivClassName } = props;
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -40,7 +47,7 @@ export default function AdminForm(props: AdminFormProps) {
     return (
         <div className={`flex flex-col w-full h-full ${className}`}>
             <form onSubmit={handleSubmit}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full h-full p-6">
+                <div className={formClassName ?? 'grid grid-cols-1 sm:grid-cols-2 gap-4 w-full h-full p-6'}>
                     {fields.map((field, index) => (
                         <div key={index} className="flex flex-col">
                             <label className="text-sm font-semibold text-gray-700 mb-1 inline-flex gap-1" htmlFor={field.name}>
@@ -130,6 +137,17 @@ export default function AdminForm(props: AdminFormProps) {
                                     placeholder={field.placeholder}
                                 />
                             )}
+                            {field.type === "editor" && typeof field.value === "string" && (
+                                <>
+                                    <BlogEditor
+                                        onChange={(val) => field.onChange({ target: { name: field.name, value: val } })}
+                                        name={field.name}
+                                        value={field.value}
+                                        type="editor"
+                                        label={field.label} />
+                                </>
+                            )}
+
                             {/* {field.type === "color" && (
                                 <input
                                     type="color"
@@ -179,7 +197,7 @@ export default function AdminForm(props: AdminFormProps) {
                 </div>
 
                 {isShowButton && (
-                    <div className="flex sm:justify-end gap-2 mb-2 text-sm px-6 py-2">
+                    <div className={`${buttonDivClassName ?? ''} flex sm:justify-end gap-2 mb-2 text-sm px-6 py-2`}>
                         <Link className="px-4 py-2 text-coastal-light-text bg-gray-200 rounded-md transition-colors" href={cancelUrl}>{cancelText || "Cancel"}</Link>
                         <button
                             type="submit"

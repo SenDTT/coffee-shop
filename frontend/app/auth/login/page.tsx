@@ -41,7 +41,15 @@ export default function LoginPage() {
                 toast.success('Login successful!');
 
                 setTimeout(() => {
-                    router.push('/');
+                    if (data.user.role === 'admin') {
+                        router.push('/admin/dashboard');
+                    } else if (data.user.role === 'user') {
+                        router.push('/');
+                    } else {
+                        logout();
+                        toast.error('Unauthorized access. Please log in again.');
+                        router.push('/auth/login');
+                    }
                 }, 2000);
             } else {
                 toast.error('Login failed. Please check your credentials.');

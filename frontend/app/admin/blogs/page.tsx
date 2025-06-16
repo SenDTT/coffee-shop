@@ -12,13 +12,13 @@ import api from '../../../api';
 import AdminTable from '../../../components/Admin/AdminTable';
 import { confirmThemeSwal } from '../../../utils/sweetalert';
 import { useRouter } from 'next/navigation';
-import { Category } from '../../../types/Category';
 import { useSettings } from '../../../context/SettingsContext';
+import { BlogPost } from '../../../types/Admin';
 
 const LIMIT = 10;
 
-export default function AdminCategoriesPage() {
-    const [categories, setCategories] = useState<Category[]>([]);
+export default function BlogsManagementPage() {
+    const [blogs, setBlogs] = useState<BlogPost[]>([]);
     const [showDeleteBtn, setShowDeleteBtn] = useState(false);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [params, setParams] = useState<GetListParams>({
@@ -34,26 +34,26 @@ export default function AdminCategoriesPage() {
 
     useEffect(() => {
         if (settings?.shopName) {
-            document.title = settings.shopName + " - Admin | Categories";
+            document.title = settings.shopName + " - Admin | Blogs";
         }
     }, [settings]);
 
     useEffect(() => {
-        fetchProducts();
+        fetchBlogs();
     }, [params]);
 
-    const fetchProducts = async () => {
+    const fetchBlogs = async () => {
         setLoading(true);
         try {
-            const res = await api.get('/categories', { params });
+            const res = await api.get('/blogs', { params });
             const dataRes = res.data;
 
             if (dataRes.success && dataRes.data) {
-                setCategories(dataRes.data.data);
+                setBlogs(dataRes.data.data);
                 setTotal(dataRes.data.total);
             }
         } catch (err) {
-            toast.error("Failed");
+            toast.error("Fetch Blog Failed");
             console.log(err);
         } finally {
             setLoading(false);
@@ -65,7 +65,7 @@ export default function AdminCategoriesPage() {
         const ids = [...selectedIds.values()];
         // Reset deleteIds or perform any other necessary actions
         try {
-            const response = await api.post("/categories/delete-multiple", { ids });
+            const response = await api.post("/blogs/delete-multiple", { ids });
             const dataRes = response.data;
 
             if (dataRes.success) {
@@ -83,45 +83,6 @@ export default function AdminCategoriesPage() {
         }
     };
 
-    const resetDataWithoutApi = (id: string, data: Category) => {
-        const newData = categories.map((item) => {
-            if (item._id === id) {
-                return data;
-            }
-
-            return item;
-        });
-        setCategories(newData);
-    }
-
-    const activeHandle = async (id: string) => {
-        if (inProccessing) return;
-
-        setInProccessing(true);
-        try {
-            const response = await api.put(`/categories/${id}/active`);
-            const dataRes = response.data;
-
-            if (dataRes.success) {
-                // Show success message
-                toast.success(dataRes.message);
-            } else {
-                toast.error("Items deleted Failed");
-            }
-        } catch (err) {
-            toast.error("Failed");
-            console.log(err);
-        } finally {
-            // Reset state
-            const item = categories.find(item => item._id === id);
-
-            if (item && item._id) {
-                resetDataWithoutApi(id, { ...item, active: item.active === 0 ? 1 : 0 });
-            }
-            setInProccessing(false);
-        }
-    }
-
     const toggleShowDeleteBtn = (value: boolean) => {
         setShowDeleteBtn(value);
     };
@@ -137,7 +98,7 @@ export default function AdminCategoriesPage() {
 
     const onRequestDeleteById = async (id: string) => {
         try {
-            const response = await api.delete(`/categories/${id}`);
+            const response = await api.delete(`/blogs/${id}`);
             const dataRes = response.data;
 
             if (dataRes.success) {
@@ -171,7 +132,31 @@ export default function AdminCategoriesPage() {
     }
 
     const editHandle = (id: string) => {
-        router.push(`/admin/categories/${id}`);
+        router.push(`/admin/blogs/${id}`);
+    }
+
+    const activeHandle = async (id: string) => {
+        if (inProccessing) return;
+
+        setInProccessing(true);
+        try {
+            const response = await api.put(`/blogs/${id}/active`);
+            const dataRes = response.data;
+
+            if (dataRes.success) {
+                // Show success message
+                toast.success(dataRes.message);
+            } else {
+                toast.error("Items update Failed");
+            }
+        } catch (err) {
+            toast.error("Failed");
+            console.log(err);
+        } finally {
+            // Reset state
+            resetParams();
+            setInProccessing(false);
+        }
     }
 
     const onPageChange = (newPage: number) => {
@@ -191,13 +176,23 @@ export default function AdminCategoriesPage() {
         });
     }
 
+    const viewHandle = (id: string) => {
+        const blog = blogs.find((item) => item._id === id);
+
+        if (blog && blog.slug) {
+            window.open(`/blogs/${blog.slug}`, '_blank');
+        }
+
+        return;
+    }
+
     return (
         <AdminLayout>
             {/* Alert */}
             <ToastContainer />
 
             {/* heading */}
-            <Title title="Categories Management" />
+            <Title title="Blogs Management" />
 
             {/* filter row and actions */}
             <div className="w-full flex flex-col items-start sm:items-center gap-2 my-4 text-xs sm:text-base bg-white/50 rounded-lg py-3 px-4 shadow-md mb-4">
@@ -207,7 +202,7 @@ export default function AdminCategoriesPage() {
                     <div className="flex flex-row sm:justify-end items-center gap-2 sm:w-full">
                         <DeleteButton onDelete={deleteMultipleHandle} disabled={!showDeleteBtn} />
 
-                        <AddButton path="/admin/categories/add" />
+                        <AddButton path="/admin/blogs/add" />
                     </div>
                 </div>
 
@@ -216,10 +211,11 @@ export default function AdminCategoriesPage() {
                     showCheckbox
                     selectedIds={selectedIds}
                     setSelectedIds={setSelectedIds}
-                    headers={["Name", "Description", "Type"]}
-                    columns={["name", "description", "type"]}
-                    rows={categories}
+                    headers={["Title", "Category", "Tags", "Author"]}
+                    columns={["title", "category.name", "tags", "author.name"]}
+                    rows={blogs}
                     hasActionsCol={true}
+                    viewHandle={viewHandle}
                     deleteHandle={deleteHandle}
                     editHandle={editHandle}
                     activeHandle={activeHandle}

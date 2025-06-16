@@ -301,3 +301,22 @@ export const updateOrderController: RequestHandler<
     next(err);
   }
 };
+
+// only upload image
+export const uploadImageController: RequestHandler<
+  unknown,
+  IResponseData | IErrorResponse
+> = async (req, res, next) => {
+  try {
+    const newImages = req.file as Express.Multer.File;
+    if (!newImages) {
+      res.status(400).json({ success: false, message: "No image uploaded" });
+      return;
+    }
+
+    res.json({ success: true, data: { url: newImages.path } });
+  } catch (err) {
+    next(err);
+  }
+}
+// Compare this snippet from frontend/components/Admin/BlogEditor.tsx:

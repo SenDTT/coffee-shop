@@ -236,8 +236,6 @@ export default function AdminIngredientsPage() {
         setSelectedIngredient(null);
     }
 
-    // TODO: add active column and call api
-
     return (
         <AdminLayout>
             {/* Alert */}

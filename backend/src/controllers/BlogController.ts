@@ -28,10 +28,7 @@ export const getAllBlogsController: RequestHandler<
       Number(skip) || 0,
       Number(limit) || 10
     );
-    if (blogs.total === 0) {
-      res.status(404).json({ success: false, message: "No blogs found" });
-      return;
-    }
+
     res.json({ success: true, data: blogs });
   } catch (err) {
     next(err);
@@ -126,4 +123,4 @@ export const updateBlogController: RequestHandler<
   } catch (err) {
     next(err);
   }
-}
+};

@@ -26,6 +26,8 @@ export type AdminFormProps = {
   cancelText?: string;
   cancelUrl: string;
   className?: string;
+  formClassName?: string;
+  buttonDivClassName?: string;
   loading?: boolean;
   error?: string;
   setErrors?: (e: Record<string, string>) => void;

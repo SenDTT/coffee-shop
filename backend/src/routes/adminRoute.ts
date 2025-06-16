@@ -8,6 +8,7 @@ import {
   updateUserInfoController,
   updateUserRoleController,
   uploadProfileImageController,
+  uploadImageController,
 } from "../controllers/AccountController";
 import {
   getSettingsController,
@@ -49,5 +50,7 @@ router.put(
   upload.single("heroImage"),
   updateHomepageSettingsController
 );
+
+router.post("/upload", upload.single("file"), uploadImageController);
 
 export default router;

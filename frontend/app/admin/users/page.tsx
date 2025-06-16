@@ -166,8 +166,6 @@ export default function UserPage() {
         setSelectedProduct(null);
     }
 
-    // TODO: add active column and call api
-
     return (
         <AdminLayout>
             {/* Alert */}
@@ -232,6 +230,11 @@ export default function UserPage() {
                             {/* Title + Category Badge */}
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                                 <h3 className="text-2xl font-bold text-gray-900">{selectedProduct.name}</h3>
+                                {selectedProduct.role && (
+                                    <span className="inline-block bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">
+                                        {selectedProduct.role}
+                                    </span>
+                                )}
                             </div>
 
                             {/* Description */}

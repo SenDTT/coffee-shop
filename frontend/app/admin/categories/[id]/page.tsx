@@ -8,6 +8,7 @@ import AdminForm from '../../../../components/Admin/AdminForm';
 import { Category, CategoryParams, InputEvent, SelectOption } from '../../../../types/Product';
 import api from '../../../../api';
 import { useParams, useRouter } from 'next/navigation';
+import { useSettings } from '../../../../context/SettingsContext';
 
 const LIMIT = 50;
 
@@ -30,7 +31,14 @@ export default function EditCategoryPage() {
 
     const [formData, setFormData] = useState(initialData);
     const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
+    const { settings } = useSettings();
 
+    useEffect(() => {
+        if (settings?.shopName) {
+            document.title = settings.shopName + " - Admin | Edit Category";
+        }
+    }, [settings]);
+    
     useEffect(() => {
         if (id && typeof id === 'string') {
             getCategoryById(id)

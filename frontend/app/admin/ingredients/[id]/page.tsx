@@ -9,6 +9,7 @@ import { CategoryParams, InputEvent, SelectOption } from '../../../../types/Prod
 import api from '../../../../api';
 import { useParams, useRouter } from 'next/navigation';
 import { Ingredient } from '../../../../types/Ingredient';
+import { useSettings } from '../../../../context/SettingsContext';
 
 const LIMIT = 50;
 
@@ -36,6 +37,13 @@ export default function EditIngredientPage() {
 
     const [formData, setFormData] = useState(initialData);
     const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
+    const { settings } = useSettings();
+
+    useEffect(() => {
+        if (settings?.shopName) {
+            document.title = settings.shopName + " - Admin | Edit Ingredient";
+        }
+    }, [settings]);
 
     useEffect(() => {
         if (id && typeof id === 'string') {

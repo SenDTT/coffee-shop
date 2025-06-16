@@ -5,31 +5,42 @@ import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import Title from '../../../../components/Admin/Title';
 import AdminForm from '../../../../components/Admin/AdminForm';
-import { GetListParams, InputEvent, SelectOption } from '../../../../types/Product';
+import { CategoryParams, InputEvent, SelectOption } from '../../../../types/Product';
 import api from '../../../../api';
 import { useRouter } from 'next/navigation';
 import { useSettings } from '../../../../context/SettingsContext';
 
 const LIMIT = 50;
 
-export default function AddCategoryPage() {
+export default function AddBlogPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [success, setSuccess] = useState<string | null>(null);
     const initialData = {
-        name: '',
-        description: '',
-        type: 'ingredient',
-        parent: '',
-        active: 1,
+        title: '',
+        content: '',
+        category: '',
+        tags: '',
+        slug: '',
+        metaTitle: '',
+        metaDescription: '',
+        metaKeywords: '',
+        metaImage: '',
+        metaUrl: '',
+        metaAuthor: '',
+        metaPublishedAt: null,
+        metaPublished: false,
+        author: '',
+        image: '',
+        publishedAt: null
     };
     const { settings } = useSettings();
 
     useEffect(() => {
         if (settings?.shopName) {
-            document.title = settings.shopName + " - Admin | Add Category";
+            document.title = settings.shopName + " - Admin | Add Blog";
         }
     }, [settings]);
 
@@ -41,7 +52,7 @@ export default function AddCategoryPage() {
     }, []);
 
     const getListCategories = async (search: string, page: number = 0) => {
-        let params: GetListParams = { limit: LIMIT, skip: page * LIMIT };
+        let params: CategoryParams = { limit: LIMIT, skip: page * LIMIT, type: 'blog' };
         if (search !== "") {
             params = { ...params, search };
         }
@@ -61,7 +72,7 @@ export default function AddCategoryPage() {
 
         setFormData((prevData) => ({
             ...prevData,
-            [name]: value
+            [name]: value,
         }));
     };
 
@@ -72,31 +83,35 @@ export default function AddCategoryPage() {
         setSuccess(null);
         try {
             // Simulate API call
-            let data: any = formData;
+            const formPayload = new FormData();
 
-            if (formData.parent) {
-                data = { ...formData, parentId: formData.parent };
+            Object.entries(formData).forEach(([key, value]) => {
+                if (key === "image" || key === "author") return;
+                formPayload.append(key, String(value));
+            });
+
+            if (formData.image) {
+                formPayload.append("image", formData.image);
             }
-            delete data.parent;
 
-            const res = await api.post("/categories", data);
+            const res = await api.post("/blogs", formPayload);
 
             const dataRes = res.data;
 
             if (dataRes.success) {
-                setSuccess('Category added successfully!');
-                toast.success('Category added successfully!');
+                setSuccess('Blog added successfully!');
+                toast.success('Blog added successfully!');
 
                 setTimeout(() => {
-                    router.push('/admin/categories');
+                    router.push('/admin/blogs');
                 }, 2000);
             } else {
-                setError('Failed to add category. Please try again.');
-                toast.error('Failed to add category. Please try again.');
+                setError('Failed to add Blog. Please try again.');
+                toast.error('Failed to add Blog. Please try again.');
             }
         } catch (err) {
-            setError('Failed to add category. Please try again.');
-            toast.error('Failed to add category. Please try again.');
+            setError('Failed to add Blog. Please try again.');
+            toast.error('Failed to add Blog. Please try again.');
 
             if ((err as any)?.response?.data?.errors) {
                 const errors = (err as any)?.response?.data?.errors;
@@ -104,7 +119,6 @@ export default function AddCategoryPage() {
             }
         } finally {
             setLoading(false);
-            setFormData(initialData);
         }
     };
 
@@ -114,63 +128,66 @@ export default function AddCategoryPage() {
             <ToastContainer />
 
             {/* heading */}
-            <Title title="Add Category" parentPath="/admin/categories" />
+            <Title title="Add Blog" parentPath="/admin/blogs" />
 
             <div className="w-full flex flex-col sm:flex-row items-center gap-2 my-4 text-xs sm:text-base bg-white/50 rounded-lg py-3 px-4 shadow-md mb-4">
                 {/* form */}
                 <AdminForm fields={[
                     {
-                        name: 'name',
-                        label: 'Category Name',
+                        name: 'title',
+                        label: 'Blog Title',
                         type: 'text',
-                        placeholder: 'Blog',
+                        placeholder: 'New Title',
                         required: true,
-                        value: formData.name,
+                        value: formData.title,
                         onChange: handleInputChange,
                         error: errors.name ?? ''
                     },
                     {
-                        name: 'type',
-                        label: 'Type',
-                        type: 'select',
-                        options: [{ value: 'ingredient', label: 'Ingredient' }, { value: 'product', label: 'Product' }, { value: 'blog', label: 'Blog' }],
-                        required: true,
-                        value: formData.type,
-                        onChange: handleInputChange,
-                        error: errors.type ?? ''
-                    },
-                    {
-                        name: 'parent',
-                        label: 'Parent',
+                        name: 'category',
+                        label: 'Category',
                         type: 'async-select',
                         options: categoryOptions,
-                        required: false,
-                        value: formData.parent,
+                        required: true,
+                        value: formData.category,
                         onChange: handleInputChange,
                         fetchOptionsAPI: getListCategories,
-                        error: errors.parent ?? errors.parentId ?? ''
+                        error: errors.category ?? errors.categoryId ?? ''
                     },
                     {
-                        name: 'active',
-                        label: 'Active Status',
-                        type: 'select',
-                        options: [{ value: '1', label: 'Active' }, { value: '0', label: 'Inactive' }],
+                        name: 'tags',
+                        label: 'Tags',
+                        type: 'text',
+                        placeholder: 'news',
+                        min: 1,
                         required: true,
-                        value: formData.active.toString(),
+                        value: formData.tags,
                         onChange: handleInputChange,
-                        error: errors.active ?? ''
+                        error: errors.stock ?? '',
+                        validate: (value) => Number.isNaN(Number(value)) ? 'Stock must be a number' : ''
                     },
                     {
-                        name: 'description',
-                        label: 'Description',
-                        type: 'textarea',
-                        placeholder: 'Enter category description',
-                        required: true,
-                        value: formData.description,
+                        type: "editor",
+                        name: "content",
+                        label: "Content",
+                        value: formData.content,
                         onChange: handleInputChange,
-                        error: errors.description ?? ''
+                        required: true,
+                        error: errors.content ?? '',
                     },
-                ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl={'/admin/categories'} isShowButton={true}></AdminForm>
+                    {
+                        name: 'image',
+                        label: 'Featured Image',
+                        type: 'file',
+                        placeholder: 'upload image',
+                        required: false,
+                        value: formData.image,
+                        multiple: false,
+                        accept: 'image/*',
+                        onChange: handleInputChange,
+                        error: errors.image ?? ''
+                    },
+                ]} buttonDivClassName='w-2/3 mx-auto' formClassName='grid grid-cols-1 gap-4 w-2/3 mx-auto h-full p-6' setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl={'/admin/menu'} isShowButton={true}></AdminForm>
             </div>
         </AdminLayout>
     );

@@ -231,8 +231,6 @@ export default function MenuPage() {
         setSelectedProduct(null);
     }
 
-    // TODO: add active column and call api
-
     return (
         <AdminLayout>
             {/* Alert */}

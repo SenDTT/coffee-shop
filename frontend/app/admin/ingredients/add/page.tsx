@@ -8,6 +8,7 @@ import AdminForm from '../../../../components/Admin/AdminForm';
 import { CategoryParams, InputEvent, SelectOption } from '../../../../types/Product';
 import api from '../../../../api';
 import { useRouter } from 'next/navigation';
+import { useSettings } from '../../../../context/SettingsContext';
 
 const LIMIT = 50;
 
@@ -31,7 +32,14 @@ export default function AddIngrdientPage() {
 
     const [formData, setFormData] = useState(initialData);
     const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
+    const { settings } = useSettings();
 
+    useEffect(() => {
+        if (settings?.shopName) {
+            document.title = settings.shopName + " - Admin | Add Ingredient";
+        }
+    }, [settings]);
+    
     useEffect(() => {
         return () => setFormData(initialData);
     }, []);
