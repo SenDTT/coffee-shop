@@ -6,14 +6,42 @@ import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import Image from '@tiptap/extension-image'
 import Dropcursor from '@tiptap/extension-dropcursor'
+import BulletList from '@tiptap/extension-bullet-list'
+import OrderedList from '@tiptap/extension-ordered-list'
 import { useEffect, useMemo, useState } from 'react'
 import { FaList, FaListOl, FaRedo, FaRegImage, FaUndo } from 'react-icons/fa';
 import { TbBlockquote } from 'react-icons/tb';
-import { MdOutlineFormatBold, MdOutlineFormatItalic, MdOutlineFormatStrikethrough, MdOutlineFormatUnderlined } from 'react-icons/md';
+import { MdHorizontalRule, MdOutlineFormatBold, MdOutlineFormatItalic, MdOutlineFormatStrikethrough, MdOutlineFormatUnderlined } from 'react-icons/md';
 import api from '../../api';
+import { StyledHeading } from '../extensions/StyleHeading';
+import HorizontalRule from '@tiptap/extension-horizontal-rule';
+import { Color } from '@tiptap/extension-color';
+import TextStyle from '@tiptap/extension-text-style'
+import FontFamily from '@tiptap/extension-font-family'
+import TextAlign from '@tiptap/extension-text-align'
+import TextAlignButtons from '../extensions/TextAlignButton';
+
+const COLORS = [
+    { hex: '#000000', name: 'black' },
+    { hex: '#FFFFFF', name: 'white' },
+    { hex: '#FF0000', name: 'red' },
+    { hex: '#FFA500', name: 'orange' },
+    { hex: '#FFFF00', name: 'yellow' },
+    { hex: '#008000', name: 'green' },
+    { hex: '#00FFFF', name: 'cyan' },
+    { hex: '#0000FF', name: 'blue' },
+    { hex: '#800080', name: 'purple' },
+    { hex: '#FFC0CB', name: 'pink' },
+    { hex: '#A52A2A', name: 'brown' },
+    { hex: '#808080', name: 'gray' },
+    { hex: '#ADD8E6', name: 'lightblue' },
+    { hex: '#F0E68C', name: 'khaki' },
+    { hex: '#D3D3D3', name: 'lightgray' },
+]
 
 export default function BlogEditor(props: AdminFormFieldWithValue) {
     const [mounted, setMounted] = useState(false);
+    const [currentColor, setCurrentColor] = useState<string | null>(null);
 
     useEffect(() => {
         setMounted(true);
@@ -41,23 +69,19 @@ export default function BlogEditor(props: AdminFormFieldWithValue) {
                     class: 'border-l-4 border-gray-300 pl-4 italic text-gray-600',
                 },
             },
-            bulletList: {
-                HTMLAttributes: {
-                    class: 'list-disc list-inside',
-                },
+            dropcursor: false,
+        }),
+        StyledHeading.configure({
+            levels: [1, 2, 3, 4, 5, 6],
+        }),
+        BulletList.configure({
+            HTMLAttributes: {
+                class: 'list-disc pl-4 marker:text-gray-500', // customize as needed
             },
-            heading: {
-                levels: [1, 2, 3, 4, 5, 6],
-            },
-            orderedList: {
-                HTMLAttributes: {
-                    class: 'list-decimal list-inside',
-                },
-            },
-            listItem: {
-                HTMLAttributes: {
-                    class: 'mb-2',
-                },
+        }),
+        OrderedList.configure({
+            HTMLAttributes: {
+                class: 'list-decimal pl-4 marker:text-gray-500', // or Tailwind style you prefer
             },
         }),
         Image.configure({
@@ -68,8 +92,20 @@ export default function BlogEditor(props: AdminFormFieldWithValue) {
             color: '#000',
             width: 2,
         }),
+        HorizontalRule.configure({
+            HTMLAttributes: {
+                class: 'border-t border-gray-300 my-2',
+            },
+        }),
+        Color,
+        TextStyle,
+        FontFamily.configure({
+            types: ['textStyle', 'heading'],
+        }),
+        TextAlign.configure({
+            types: ['heading', 'paragraph'],
+        }),
     ], []);
-
 
     const editor = useEditor({
         extensions,
@@ -80,14 +116,28 @@ export default function BlogEditor(props: AdminFormFieldWithValue) {
             },
         },
         onUpdate({ editor }) {
-            props.onChange({
-                target: {
-                    name: props.name,
-                    value: editor.getHTML(),
-                },
-            });
+            const html = editor.getHTML();
+            console.log("Editor content updated:", html);
+            // if (html !== props.value) {
+            // props.onChange({
+            //     target: {
+            //         name: props.name,
+            //         value: html,
+            //     },
+            // });
+            // }
         },
-    })
+        immediatelyRender: false,
+    }, []);
+
+    useEffect(() => {
+        console.log("BlogEditor parent rendered. New value:", props.value);
+    }, [props.value]);
+
+    useEffect(() => {
+        console.log("Editor mounted");
+        return () => console.log("Editor unmounted");
+    }, []);
 
     useEffect(() => {
         if (editor && props.value !== editor.getHTML()) {
@@ -113,7 +163,7 @@ export default function BlogEditor(props: AdminFormFieldWithValue) {
         const imageUrl = data.data.url;
 
         if (imageUrl) {
-            editor?.chain().focus().setImage({ src: imageUrl }).run();
+            editor?.chain().focus().setImage({ src: process.env.NEXT_PUBLIC_DOMAIN + imageUrl }).run();
         }
     };
 
@@ -124,7 +174,10 @@ export default function BlogEditor(props: AdminFormFieldWithValue) {
             {/* Sidebar Toolbar */}
             <div className="flex flex-row flex-wrap gap-2 p-4 border rounded-t-md bg-slate-50 shadow-sm text-sm w-full sm:w-auto">
                 <button
-                    onClick={() => editor.chain().focus().toggleBold().run()}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        editor.chain().focus().toggleBold().run()
+                    }}
                     className={`px-2 py-1 rounded border ${editor.isActive('bold') ? 'bg-coastal-light-text text-white' : 'hover:bg-gray-200'}`}
                     title="Bold"
                     aria-label="Bold"
@@ -132,7 +185,10 @@ export default function BlogEditor(props: AdminFormFieldWithValue) {
                     <MdOutlineFormatBold className="inline-block size-5" />
                 </button>
                 <button
-                    onClick={() => editor.chain().focus().toggleItalic().run()}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        editor.chain().focus().toggleItalic().run();
+                    }}
                     className={`px-2 py-1 rounded border ${editor.isActive('italic') ? 'bg-coastal-light-text text-white' : 'hover:bg-gray-200'}`}
                     title="Italic"
                     aria-label="Italic"
@@ -140,7 +196,10 @@ export default function BlogEditor(props: AdminFormFieldWithValue) {
                     <MdOutlineFormatItalic className="inline-bloc size-5" />
                 </button>
                 <button
-                    onClick={() => editor.chain().focus().toggleUnderline().run()}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        editor.chain().focus().toggleUnderline().run()
+                    }}
                     className={`px-2 py-1 rounded border ${editor.isActive('underline') ? 'bg-coastal-light-text text-white' : 'hover:bg-gray-200'}`}
                     title="Underline"
                     aria-label="Underline"
@@ -148,51 +207,98 @@ export default function BlogEditor(props: AdminFormFieldWithValue) {
                     <MdOutlineFormatUnderlined className="inline-block size-5" />
                 </button>
                 <button
-                    onClick={() => editor.chain().focus().toggleStrike().run()}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        editor.chain().focus().toggleStrike().run();
+                    }}
                     className={`px-2 py-1 rounded border ${editor.isActive('strike') ? 'bg-coastal-light-text text-white' : 'hover:bg-gray-200'}`}
                     title="Strike"
                     aria-label="Strike"
                 >
                     <MdOutlineFormatStrikethrough className="inline-block size-5" />
                 </button>
-                <button
-                    onClick={() => {
-                        if (editor?.can().chain().focus().toggleHeading({ level: 1 }).run()) {
-                            editor.chain().focus().toggleHeading({ level: 1 }).run()
+                <select
+                    className={`border border-gray-300 rounded px-2 py-1 text-sm cursor-pointer ${currentColor ? `bg-${currentColor}-500` : ''}`}
+                    onChange={(e) => {
+                        e.preventDefault();
+                        const color = e.target.value;
+                        const colorName = COLORS.find(c => c.hex === color)?.name || '';
+                        setCurrentColor(colorName);
+                        editor.chain().focus().setColor(color).run()
+                    }}
+                    defaultValue=""
+                    aria-label="Heading Color Selector"
+                >
+                    <option value="">Colors</option>
+                    {COLORS.map((color) => (
+                        <option
+                            key={color.hex}
+                            value={color.hex}
+                        >
+                            {color.name}
+                        </option>
+                    ))}
+                </select>
+                <select
+                    onChange={(e) => {
+                        e.preventDefault();
+                        const level = parseInt(e.target.value);
+                        if (!isNaN(level)) {
+                            editor?.chain().focus().toggleHeading({ level: level as 1 | 2 | 3 | 4 | 5 | 6 }).run();
                         }
                     }}
-                    className={`px-2 py-1 rounded border ${editor.isActive('heading', { level: 1 }) ? 'bg-coastal-light-text text-white' : 'hover:bg-gray-200'}`}
-                    title="H1"
-                    aria-label="H1"
+                    value={
+                        [1, 2, 3, 4, 5, 6].find((lvl) => editor?.isActive('heading', { level: lvl })) ?? ''
+                    }
+                    className="px-2 py-1 rounded border text-sm"
+                    aria-label="Heading Level Selector"
                 >
-                    H1
+                    <option value="">Normal Text</option>
+                    <option value="1">Heading 1</option>
+                    <option value="2">Heading 2</option>
+                    <option value="3">Heading 3</option>
+                    <option value="4">Heading 4</option>
+                    <option value="5">Heading 5</option>
+                    <option value="6">Heading 6</option>
+                </select>
+                <select
+                    className="border rounded px-2 py-1"
+                    onChange={(e) => {
+                        e.preventDefault();
+                        const fontFamily = e.target.value;
+                        if (fontFamily) {
+                            editor.chain().focus().setFontFamily(fontFamily).run();
+                        } else {
+                            editor.chain().focus().unsetFontFamily().run();
+                        }
+                    }}
+                    defaultValue=""
+                    aria-label="Font Family Selector"
+                >
+                    <option value="">Select Font</option>
+                    <option value="Arial">Arial</option>
+                    <option value="Georgia">Georgia</option>
+                    <option value="Courier New">Courier New</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Comic Sans MS">Comic Sans MS</option>
+                </select>
+                <TextAlignButtons editor={editor} />
+                <button
+                    onClick={(e) => {
+                        e.preventDefault();
+                        editor.chain().focus().setHorizontalRule().run();
+                    }}
+                    className={`px-2 py-1 rounded border ${editor.isActive('bulletList') ? 'bg-coastal-light-text text-white' : 'hover:bg-gray-200'}`}
+                    title="List"
+                    aria-label="List"
+                >
+                    <MdHorizontalRule className="inline-block size-5" />
                 </button>
                 <button
-                    onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-                    className={`px-2 py-1 rounded border ${editor.isActive('heading', { level: 2 }) ? 'bg-coastal-light-text text-white' : 'hover:bg-gray-200'}`}
-                    title="H2"
-                    aria-label="H2"
-                >
-                    H2
-                </button>
-                <button
-                    onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-                    className={`px-2 py-1 rounded border ${editor.isActive('heading', { level: 3 }) ? 'bg-coastal-light-text text-white' : 'hover:bg-gray-200'}`}
-                    title="H3"
-                    aria-label="H3"
-                >
-                    H3
-                </button>
-                <button
-                    onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
-                    className={`px-2 py-1 rounded border ${editor.isActive('heading', { level: 4 }) ? 'bg-coastal-light-text text-white' : 'hover:bg-gray-200'}`}
-                    title="H4"
-                    aria-label="H4"
-                >
-                    H4
-                </button>
-                <button
-                    onClick={() => editor.chain().focus().toggleBlockquote().run()}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        editor.chain().focus().toggleBlockquote().run();
+                    }}
                     className={`px-2 py-1 rounded border ${editor.isActive('blockquote') ? 'bg-coastal-light-text text-white' : 'hover:bg-gray-200'}`}
                     title="Blockquote"
                     aria-label="Blockquote"
@@ -200,7 +306,10 @@ export default function BlogEditor(props: AdminFormFieldWithValue) {
                     <TbBlockquote className="inline-block size-5" />
                 </button>
                 <button
-                    onClick={() => editor.chain().focus().toggleBulletList().run()}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        editor.chain().focus().toggleBulletList().run();
+                    }}
                     className={`px-2 py-1 rounded border ${editor.isActive('bulletList') ? 'bg-coastal-light-text text-white' : 'hover:bg-gray-200'}`}
                     title="List"
                     aria-label="List"
@@ -208,14 +317,17 @@ export default function BlogEditor(props: AdminFormFieldWithValue) {
                     <FaList className="inline-block size-5" />
                 </button>
                 <button
-                    onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        editor.chain().focus().toggleOrderedList().run();
+                    }}
                     className={`px-2 py-1 rounded border ${editor.isActive('orderedList') ? 'bg-coastal-light-text text-white' : 'hover:bg-gray-200'}`}
                     title="List OL"
                     aria-label="List OL"
                 >
                     <FaListOl className="inline-block size-5" />
                 </button>
-                <label htmlFor="image-upload" className="cursor-pointer px-2 py-1 border rounded hover:bg-gray-200">
+                <label htmlFor="image-upload" className="cursor-pointer px-2 py-2 border rounded hover:bg-gray-200">
                     <FaRegImage className="inline-block w-5 h-5" />
                 </label>
                 <input
@@ -227,7 +339,10 @@ export default function BlogEditor(props: AdminFormFieldWithValue) {
                     title="Upload image"
                 />
                 <button
-                    onClick={() => editor.chain().focus().undo().run()}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        editor.chain().focus().undo().run();
+                    }}
                     className={`px-2 py-1 rounded border ${editor.isActive('orderedList') ? 'bg-coastal-light-text text-white' : 'hover:bg-gray-200'}`}
                     title="Undo"
                     aria-label="Undo"
@@ -235,7 +350,10 @@ export default function BlogEditor(props: AdminFormFieldWithValue) {
                     <FaUndo className="inline-block " />
                 </button>
                 <button
-                    onClick={() => editor.chain().focus().redo().run()}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        editor.chain().focus().redo().run();
+                    }}
                     className={`px-2 py-1 rounded border ${editor.isActive('orderedList') ? 'bg-coastal-light-text text-white' : 'hover:bg-gray-200'}`}
                     title="Redo"
                     aria-label="Redo"
