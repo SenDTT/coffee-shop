@@ -52,16 +52,22 @@ BlogSchema.pre("save", function (next) {
   }
 
   this.metaKeywords = extractMetaKeywords(this.content);
+
+  if (this.tags && Array.isArray(this.tags)) {
+    this.metaKeywords += "," + this.tags.join(", ");
+  }
+
   if (!this.metaImage) {
-    this.metaImage = this.image || "https://yourdomain.com/default-image.jpg"; // default image URL
+    this.metaImage =
+      this.image || `${process.env.APP_DOMAIN}/upload/default-image.jpg`; // default image URL
   }
 
   if (!this.metaCanonical) {
-    this.metaCanonical = `https://yourdomain.com/blog/${this.slug}`;
+    this.metaCanonical = `${process.env.APP_DOMAIN}/blog/${this.slug}`;
   }
 
   if (!this.metaUrl) {
-    this.metaUrl = `https://yourdomain.com/blog/${this.slug}`;
+    this.metaUrl = `${process.env.APP_DOMAIN}/blog/${this.slug}`;
   }
 
   if (!this.metaAuthor && this.author?.toString) {

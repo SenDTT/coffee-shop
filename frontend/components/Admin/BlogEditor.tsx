@@ -42,6 +42,7 @@ const COLORS = [
 export default function BlogEditor(props: AdminFormFieldWithValue) {
     const [mounted, setMounted] = useState(false);
     const [currentColor, setCurrentColor] = useState<string | null>(null);
+    const [content, setContent] = useState<string>(props.value as string || '');
 
     useEffect(() => {
         setMounted(true);
@@ -70,6 +71,10 @@ export default function BlogEditor(props: AdminFormFieldWithValue) {
                 },
             },
             dropcursor: false,
+            heading: false,
+            bulletList: false,
+            orderedList: false,
+            horizontalRule: false,
         }),
         StyledHeading.configure({
             levels: [1, 2, 3, 4, 5, 6],
@@ -109,7 +114,7 @@ export default function BlogEditor(props: AdminFormFieldWithValue) {
 
     const editor = useEditor({
         extensions,
-        content: props.value as string,
+        content: content,
         editorProps: {
             attributes: {
                 class: 'min-h-[300px] p-4 w-full text-base cursor-text border-none outline-none',
@@ -117,27 +122,18 @@ export default function BlogEditor(props: AdminFormFieldWithValue) {
         },
         onUpdate({ editor }) {
             const html = editor.getHTML();
-            console.log("Editor content updated:", html);
-            // if (html !== props.value) {
-            // props.onChange({
-            //     target: {
-            //         name: props.name,
-            //         value: html,
-            //     },
-            // });
-            // }
+            if (html !== props.value) {
+                setContent(html);
+            }
         },
         immediatelyRender: false,
     }, []);
 
     useEffect(() => {
-        console.log("BlogEditor parent rendered. New value:", props.value);
-    }, [props.value]);
-
-    useEffect(() => {
-        console.log("Editor mounted");
-        return () => console.log("Editor unmounted");
-    }, []);
+        if (content && props.onBeforeSubmitHanlde) {
+            props.onBeforeSubmitHanlde(content as string)
+        }
+    }, [content]);
 
     useEffect(() => {
         if (editor && props.value !== editor.getHTML()) {

@@ -86,6 +86,7 @@ export type AdminFormFieldWithValue = AdminFormField & {
   images?: string,
   setDeletedImagePaths?: (paths: string[]) => void,
   isBannerImage?: boolean,
+  onBeforeSubmitHanlde?: (e: string) => void;
 };
 
 export type FetchOptionsResponse = {

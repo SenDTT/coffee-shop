@@ -7,6 +7,7 @@ import {
 } from "../controllers/BlogController";
 import { add_blog_validator, is_existed_blog_validator } from "../middlewares/BlogMiddleware";
 import { authenticate, isAdminUser } from "../middlewares/AuthMiddleware";
+import { upload } from "../utils/multerUtil";
 
 const routes = Router();
 
@@ -15,7 +16,7 @@ routes.get("/:id", is_existed_blog_validator, getBlogByIdController);
 
 routes.use(authenticate, isAdminUser);
 
-routes.post("/", add_blog_validator, addBlogController);
+routes.post("/", upload.single('image'), add_blog_validator, addBlogController);
 routes.put("/:id", is_existed_blog_validator, updateBlogController);
 // routes.delete("/:id", is_existed_blog_validator, deleteBlogController);
 // routes.put("/:id/active", is_existed_blog_validator, activeOrDeactiveBlogController);

@@ -23,20 +23,10 @@ export default function AddBlogPage() {
         content: '',
         category: '',
         tags: '',
-        slug: '',
-        metaTitle: '',
-        metaDescription: '',
-        metaKeywords: '',
-        metaImage: '',
-        metaUrl: '',
-        metaAuthor: '',
-        metaPublishedAt: null,
-        metaPublished: false,
-        author: '',
         image: '',
-        publishedAt: null
     };
     const { settings } = useSettings();
+    const [content, setContent] = useState<string>('');
 
     useEffect(() => {
         if (settings?.shopName) {
@@ -76,19 +66,47 @@ export default function AddBlogPage() {
         }));
     };
 
+    const validateForm = () => {
+        const newErrors: Record<string, string> = {};
+        let isValid = true;
+
+        if (!content) {
+            newErrors.content = 'Content is required';
+            isValid = isValid && false;
+        }
+
+        setErrors(prev => ({
+            ...prev,
+            ...newErrors
+        }));
+
+        return isValid;
+    }
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
+        setErrors({});
         setSuccess(null);
+
+        if (!validateForm()) {
+            setLoading(false);
+            return;
+        }
+
         try {
             // Simulate API call
             const formPayload = new FormData();
 
             Object.entries(formData).forEach(([key, value]) => {
-                if (key === "image" || key === "author") return;
+                if (key === "image" || key === "content") return;
                 formPayload.append(key, String(value));
             });
+
+            if (content) {
+                formPayload.append("content", content);
+            }
 
             if (formData.image) {
                 formPayload.append("image", formData.image);
@@ -122,6 +140,10 @@ export default function AddBlogPage() {
         }
     };
 
+    const onCollectContent = (content: string) => {
+        setContent(content);
+    };
+
     return (
         <AdminLayout>
             {/* Alert */}
@@ -141,7 +163,7 @@ export default function AddBlogPage() {
                         required: true,
                         value: formData.title,
                         onChange: handleInputChange,
-                        error: errors.name ?? ''
+                        error: errors.title ?? ''
                     },
                     {
                         name: 'category',
@@ -159,12 +181,10 @@ export default function AddBlogPage() {
                         label: 'Tags',
                         type: 'text',
                         placeholder: 'news',
-                        min: 1,
                         required: true,
                         value: formData.tags,
                         onChange: handleInputChange,
-                        error: errors.stock ?? '',
-                        validate: (value) => Number.isNaN(Number(value)) ? 'Stock must be a number' : ''
+                        error: errors.tags ?? '',
                     },
                     {
                         type: "editor",
@@ -172,8 +192,9 @@ export default function AddBlogPage() {
                         label: "Content",
                         value: formData.content,
                         onChange: handleInputChange,
-                        required: true,
+                        required: false,
                         error: errors.content ?? '',
+                        onBeforeSubmitHanlde: onCollectContent,
                     },
                     {
                         name: 'image',
@@ -185,7 +206,7 @@ export default function AddBlogPage() {
                         multiple: false,
                         accept: 'image/*',
                         onChange: handleInputChange,
-                        error: errors.image ?? ''
+                        error: errors.image ?? '',
                     },
                 ]} buttonDivClassName='w-2/3 mx-auto' formClassName='grid grid-cols-1 gap-4 w-2/3 mx-auto h-full p-6' setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl={'/admin/menu'} isShowButton={true}></AdminForm>
             </div>

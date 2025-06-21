@@ -56,13 +56,23 @@ export const getBlogByIdController: RequestHandler<
 export const addBlogController: RequestHandler<
   unknown,
   IResponseData | IErrorResponse,
-  { title: string; content: string; category: string }
+  { title: string; content: string; category: string; tags?: string }
 > = async (req, res, next) => {
   try {
     const user = (req as any).user;
-    const { title, content, category } = req.body;
+    const { title, content, category, tags } = req.body;
     const slug = `${slugify(title)}-${formatDateToYYYYMMDD(new Date())}`;
 
+    const newImage = req.file as Express.Multer.File;
+    let imageUrl: string = "";
+    if (newImage) {
+      imageUrl = `${process.env.APP_DOMAIN}/${newImage.path}`;
+    }
+
+    let tagsValue: string[] = [];
+    if (tags) {
+      tagsValue = tags.split(",").map((tag) => tag.trim());
+    }
     const metaDescription = extractMetaDescription(content);
     const newBlog = new BlogModel({
       title,
@@ -72,6 +82,8 @@ export const addBlogController: RequestHandler<
       metaDescription,
       author: user._id,
       slug,
+      tags: tagsValue,
+      image: imageUrl,
       metaUrl: `${process.env.APP_DOMAIN}/blog/${slug}`,
     });
     const blog = await newBlog.save();

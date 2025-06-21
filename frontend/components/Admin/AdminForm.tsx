@@ -144,7 +144,8 @@ export default function AdminForm(props: AdminFormProps) {
                                         name={field.name}
                                         value={field.value}
                                         type="editor"
-                                        label={field.label} />
+                                        label={field.label}
+                                        onBeforeSubmitHanlde={field.onBeforeSubmitHanlde} />
                                 </>
                             )}
 
