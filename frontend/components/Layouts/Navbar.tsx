@@ -3,13 +3,13 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useAuth } from '@/context/AuthContext';
 import AuthNav from '../AuthNav';
 import { FaBars } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
+import { useAppSelector } from '@/store';
 
 export default function Navbar() {
-    const { user } = useAuth();
+    const { user } = useAppSelector(state => state.auth);
     const [menuOpen, setMenuOpen] = useState(false);
     const toggleMenu = () => setMenuOpen(!menuOpen);
     const closeMenu = () => setMenuOpen(false);
@@ -59,7 +59,7 @@ export default function Navbar() {
                             {page}
                         </Link>
                     ))}
-                    <AuthNav user={user} mobile={true} closeMenu={closeMenu} />
+                    <AuthNav user={user} mobile={true} />
                 </div>
             </div>
         </>

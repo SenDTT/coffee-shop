@@ -2,17 +2,18 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../../context/AuthContext';
+import { logout } from '../../../store/slices/auth';
+import { useAppDispatch } from '../../../store';
 
 export default function Logout() {
     const router = useRouter();
-    const { logout } = useAuth(); // Assuming you have a logout function in your Auth context
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
-        logout();
+        dispatch(logout());
 
         return () => router.replace('/');; // cleanup
-    }, [logout, router]);
+    }, [dispatch, router]);
 
     return (
         <div className="flex flex-col items-center justify-center h-screen">

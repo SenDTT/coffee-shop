@@ -89,7 +89,7 @@ export default function SideBar() {
 
             <footer className="mt-10">
                 <div className="container mx-auto px-4 py-6 text-center text-xs sm:text-sm text-coastal-light-bg">
-                    &copy; {new Date("05/05/2025").getFullYear()} Coffee Shop
+                    &copy; {new Date().getFullYear()} Coffee Shop
                 </div>
             </footer>
         </div>

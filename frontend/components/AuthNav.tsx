@@ -11,10 +11,9 @@ const getGreeting = () => {
     return { greeting: 'Good evening', color: 'bg-purple-600' };
 };
 
-export default function AuthNav({ user, mobile = false, closeMenu }: {
+export default function AuthNav({ user, mobile = false }: {
     user: any;
     mobile?: boolean;
-    closeMenu?: () => void;
 }) {
     const router = useRouter();
     const [greetingData, setGreetingData] = useState({ greeting: 'Hello', color: '' });
@@ -25,7 +24,6 @@ export default function AuthNav({ user, mobile = false, closeMenu }: {
     }, []);
 
     const handleLogout = () => {
-        closeMenu?.();
         router.push('/auth/logout');
     };
 
@@ -35,14 +33,12 @@ export default function AuthNav({ user, mobile = false, closeMenu }: {
                 <Link
                     href="/auth/login"
                     className="text-sm text-latte-600 hover:text-cabin-600 transition font-bold"
-                    onClick={closeMenu}
                 >
                     Login
                 </Link>
                 <Link
                     href="/auth/register"
                     className="text-sm bg-cabin-600 text-white px-4 py-2 rounded-full hover:bg-cabin-700 transition font-medium"
-                    onClick={closeMenu}
                 >
                     Sign Up
                 </Link>
@@ -70,10 +66,10 @@ export default function AuthNav({ user, mobile = false, closeMenu }: {
 
                 {openDropdown && (
                     <div className="ml-4 mt-1 space-y-1 text-right">
-                        <Link href="/profile" className="block text-sm py-1 text-cabin-700" onClick={closeMenu}>
+                        <Link href="/profile" className="block text-sm py-1 text-cabin-700">
                             Profile
                         </Link>
-                        <Link href="/admin" className="block text-sm py-1 text-cabin-700" onClick={closeMenu}>
+                        <Link href="/admin" className="block text-sm py-1 text-cabin-700">
                             Admin Dashboard
                         </Link>
                         <button

@@ -3,18 +3,20 @@
 import api from '../../../api';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import InputField from '../../../components/InputField';
-import { useAuth } from '../../../context/AuthContext';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
+import { useAppDispatch, useAppSelector } from '../../../store';
+import { logout, setAuth } from '../../../store/slices/auth';
 
 export default function LoginPage() {
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const { user, setAuth, logout } = useAuth();
     const [loading, setLoading] = useState(false);
+    const dispatch = useAppDispatch();
+    const { user } = useAppSelector((state) => state.auth);
 
     useEffect(() => {
         if (user) {
@@ -32,11 +34,11 @@ export default function LoginPage() {
 
             if (response.status === 200 && response.data.success) {
                 const data = response.data.data;
-                setAuth({
+                dispatch(setAuth({
                     userData: data.user,
                     accToken: data.accessToken,
                     refToken: data.refreshToken,
-                });
+                }));
 
                 toast.success('Login successful!');
 
@@ -46,7 +48,7 @@ export default function LoginPage() {
                     } else if (data.user.role === 'user') {
                         router.push('/');
                     } else {
-                        logout();
+                        dispatch(logout());
                         toast.error('Unauthorized access. Please log in again.');
                         router.push('/auth/login');
                     }

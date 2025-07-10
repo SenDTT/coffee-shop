@@ -6,11 +6,12 @@ import Layout from "../components/Layouts/MainLayout";
 import MenuPreview from "../components/Home/MenuPreview";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
 import { useSettings } from "../context/SettingsContext";
+import { useAppDispatch } from "../store";
+import { logout } from "../store/slices/auth";
 
 const Home: NextPage = () => {
-  const { logout } = useAuth();
+  const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
   const { settings } = useSettings();
 
@@ -23,9 +24,9 @@ const Home: NextPage = () => {
   useEffect(() => {
     const expired = searchParams.get('expired');
     if (expired === "true") {
-      logout();
+      dispatch(logout());
     }
-  }, [searchParams]);
+  }, [searchParams, dispatch]);
 
   return (
     <Layout>
