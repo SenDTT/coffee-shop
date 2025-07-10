@@ -7,40 +7,43 @@ import { toast, ToastContainer } from 'react-toastify';
 import AddButton from '../../../components/Admin/AddButton';
 import SearchItem from '../../../components/Admin/SearchItem';
 import Title from '../../../components/Admin/Title';
-import { GetListParams, Product } from '../../../types/Product';
+import { Product } from '../../../types/Product';
 import api from '../../../api';
 import AdminTable from '../../../components/Admin/AdminTable';
 import { confirmThemeSwal } from '../../../utils/sweetalert';
 import Sidebar from '../../../components/Admin/SideBar';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FaPen, FaTrash } from 'react-icons/fa';
-import { useSettings } from '../../../context/SettingsContext';
+import { useAppDispatch, useAppSelector } from '../../../store';
+import { beginLoading, beginProcess, clearMessage, fetchAllProducts, fetchAProduct, handleMessage, onHanldeSearchData, onReduxPageChange, unSelectProduct, updateCurrentProductData } from '../../../store/slices/admin/menu';
 
 const LIMIT = 10;
 
 export default function MenuPage() {
-    const [products, setProducts] = useState<Product[]>([]);
     const [showDeleteBtn, setShowDeleteBtn] = useState(false);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-    const [params, setParams] = useState<GetListParams>({
-        limit: LIMIT,
-        skip: 0,
-    });
-    const [loading, setLoading] = useState(true);
-    const [total, setTotal] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const router = useRouter();
     const searchParams = useSearchParams();
-    const [inProccessing, setInProccessing] = useState<Boolean>(false);
-    const { settings } = useSettings();
+    const { settings } = useAppSelector(state => state.settings);
+    const { selectedProduct, products, params, error, success, message, loading, total, currentPage, inProccessing } = useAppSelector(state => state.products);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         if (settings?.shopName) {
             document.title = settings.shopName + " - Admin | Menu";
         }
     }, [settings]);
+
+    useEffect(() => {
+        if (error && message) {
+            toast.error(message);
+            dispatch(clearMessage());
+        } else if (success && message) {
+            toast.success(message);
+            dispatch(clearMessage())
+        }
+    }, [error, success, message]);
 
     useEffect(() => {
         const id = searchParams.get('id') ?? null;
@@ -60,31 +63,23 @@ export default function MenuPage() {
             const response = await api.get(`/products/${id}`);
             const dataRes = response.data;
 
-            if (dataRes.success && dataRes.data) {
-                console.log(dataRes.data);
-                setSelectedProduct(dataRes.data);
-                setIsSidebarOpen(true);
-            }
+            dispatch(fetchAProduct(dataRes));
         } catch (err) {
-            toast.error('Failed to get product. Please try again.');
+            dispatch(handleMessage({ success: false, message: 'Failed to get product. Please try again.' }));
         }
     }
 
     const fetchProducts = async () => {
-        setLoading(true);
+        dispatch(beginLoading());
+
         try {
             const res = await api.get('/products', { params });
             const dataRes = res.data;
 
-            if (dataRes.success && dataRes.data) {
-                setProducts(dataRes.data.data);
-                setTotal(dataRes.data.total);
-            }
+            dispatch(fetchAllProducts(dataRes));
         } catch (err) {
-            toast.error("Failed");
             console.log(err);
-        } finally {
-            setLoading(false);
+            dispatch(handleMessage({ success: false, message: "Failed to fetch data. Please try again" }));
         }
     };
 
@@ -98,16 +93,16 @@ export default function MenuPage() {
 
             if (dataRes.success) {
                 // Show success message
-                toast.success(dataRes.message);
+                dispatch(handleMessage(dataRes));
             } else {
-                toast.error("Items deleted Failed");
+                dispatch(handleMessage({ success: false, message: "Items deleted Failed" }));
             }
         } catch (err) {
-            toast.error("Failed");
+            dispatch(handleMessage({ success: false, message: "Items deleted Failed" }));
             console.log(err);
         } finally {
             // Reset state
-            resetParams();
+            handleShowDeleteBtn();
         }
     };
 
@@ -116,44 +111,33 @@ export default function MenuPage() {
     };
 
     const onClickSearch = (searchTerm: string) => {
-        setCurrentPage(1);
-        if (searchTerm !== "") {
-            setParams({ ...params, search: searchTerm });
-        } else {
-            setParams({ limit: LIMIT, skip: 0 });
-        }
+        dispatch(onHanldeSearchData({ search: searchTerm }));
     }
 
     const onRequestDeleteById = async (id: string) => {
+        dispatch(beginProcess());
         try {
             const response = await api.delete(`/products/${id}`);
             const dataRes = response.data;
 
             if (dataRes.success) {
                 // Show success message
-                toast.success(dataRes.message);
+                dispatch(handleMessage(dataRes));
             } else {
-                toast.error("Items deleted Failed");
+                dispatch(handleMessage({ success: false, message: "Items deleted Failed" }))
             }
         } catch (err) {
-            toast.error("Failed");
+            dispatch(handleMessage({ success: false, message: "Items deleted Failed" }))
             console.log(err);
         } finally {
             // Reset state
-            resetParams();
+            handleShowDeleteBtn();
             closeSideBar();
         }
     }
 
     const resetDataWithoutApi = (id: string, data: Product) => {
-        const newData = products.map((item) => {
-            if (item._id === id) {
-                return data;
-            }
-
-            return item;
-        });
-        setProducts(newData);
+        dispatch(updateCurrentProductData({ id, data }));
     }
 
     const deleteHandle = (id: string) => {
@@ -178,19 +162,19 @@ export default function MenuPage() {
     const activeHandle = async (id: string) => {
         if (inProccessing) return;
 
-        setInProccessing(true);
+        dispatch(beginProcess());
         try {
             const response = await api.put(`/products/${id}/active`);
             const dataRes = response.data;
 
             if (dataRes.success) {
                 // Show success message
-                toast.success(dataRes.message);
+                dispatch(handleMessage(dataRes));
             } else {
-                toast.error("Items update Failed");
+                dispatch(handleMessage({ success: false, message: "Items update Failed" }))
             }
         } catch (err) {
-            toast.error("Failed");
+            dispatch(handleMessage({ success: false, message: "Items update Failed" }))
             console.log(err);
         } finally {
             // Reset state
@@ -199,36 +183,27 @@ export default function MenuPage() {
             if (item && item._id) {
                 resetDataWithoutApi(id, { ...item, active: item.active === 0 ? 1 : 0 });
             }
-            setInProccessing(false);
         }
     }
 
     const onPageChange = (newPage: number) => {
-        setCurrentPage(newPage);
-        setParams({
-            skip: (newPage - 1) * LIMIT,
-            limit: LIMIT
-        });
+        dispatch(onReduxPageChange({ page: newPage }));
     }
 
-    const resetParams = () => {
+    const handleShowDeleteBtn = () => {
         setShowDeleteBtn(false);
         setSelectedIds(new Set());
-        setParams({
-            skip: 0,
-            limit: LIMIT
-        });
     }
 
     const viewHandle = (id: string) => {
         const product = products.find(p => p._id === id) || null;
-        setSelectedProduct(product);
+        dispatch(fetchAProduct({ success: true, data: product }));
         setIsSidebarOpen(true);
     }
 
     const closeSideBar = () => {
         setIsSidebarOpen(false);
-        setSelectedProduct(null);
+        dispatch(unSelectProduct());
     }
 
     return (
