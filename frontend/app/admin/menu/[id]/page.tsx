@@ -60,7 +60,7 @@ export default function EditProductPage() {
         return () => {
             setFormData(initialData);
             dispatch(clearCurrentProduct());
-            dispatch(handleSetErrors({ errors: {} }));
+            setErrors({});
         }
     }, [id, dispatch]);
 

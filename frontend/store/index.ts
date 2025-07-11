@@ -3,6 +3,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./slices/auth";
 import settingsReducer from "./slices/setting";
 import productsReducer from "./slices/admin/menu";
+import ingredientReducer from "./slices/admin/ingredients";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 export const store = configureStore({
@@ -10,6 +11,7 @@ export const store = configureStore({
     auth: authReducer,
     settings: settingsReducer,
     products: productsReducer,
+    ingredients: ingredientReducer,
   },
 });
 

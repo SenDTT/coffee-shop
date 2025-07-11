@@ -8,8 +8,9 @@ import AdminForm from '../../../../components/Admin/AdminForm';
 import { CategoryParams, InputEvent, SelectOption } from '../../../../types/Product';
 import api from '../../../../api';
 import { useParams, useRouter } from 'next/navigation';
-import { Ingredient } from '../../../../types/Ingredient';
-import { useSettings } from '../../../../context/SettingsContext';
+import { useAppDispatch, useAppSelector } from '../../../../store';
+import { clearCurrentIngredient, clearMessage, fetchAnIngredient, handleSetErrors } from '../../../../store/slices/admin/ingredients';
+import { handleMessage } from '../../../../store/slices/admin/menu';
 
 const LIMIT = 50;
 
@@ -18,9 +19,6 @@ export default function EditIngredientPage() {
     const params = useParams();
     const id = params.id;
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [errors, setErrors] = useState<Record<string, string>>({});
-    const [success, setSuccess] = useState<string | null>(null);
     const [skuPrefix, setSkuPrefix] = useState("");
     const initialData = {
         name: '',
@@ -32,12 +30,12 @@ export default function EditIngredientPage() {
         images: [],
         active: 1,
     };
-    const [model, setModel] = useState<Ingredient | undefined>(undefined);
     const [deletedImages, setDeletedImages] = useState<string[]>([]);
-
     const [formData, setFormData] = useState(initialData);
     const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
-    const { settings } = useSettings();
+    const { settings } = useAppSelector(state => state.settings);
+    const dispatch = useAppDispatch();
+    const { error, message, success, errors, selectedIngredient } = useAppSelector(state => state.ingredients);
 
     useEffect(() => {
         if (settings?.shopName) {
@@ -46,12 +44,23 @@ export default function EditIngredientPage() {
     }, [settings]);
 
     useEffect(() => {
+        if (error && message) {
+            toast.error(message);
+            dispatch(clearMessage());
+        } else if (success && message) {
+            toast.success(message);
+            dispatch(clearMessage())
+        }
+    }, [error, success, message]);
+
+    useEffect(() => {
         if (id && typeof id === 'string') {
             getIngredientById(id)
         }
         return () => {
             setFormData(initialData);
-            setModel(undefined);
+            dispatch(clearCurrentIngredient());
+            setErrors({});
         }
     }, [id]);
 
@@ -61,7 +70,7 @@ export default function EditIngredientPage() {
             const dataRes = response.data;
 
             if (dataRes.success && dataRes.data) {
-                setModel(dataRes.data);
+                dispatch(fetchAnIngredient(dataRes));
                 const skuSplit = dataRes.data.sku.split("-");
                 setSkuPrefix(skuSplit[0] + "-");
                 setCategoryOptions([{ value: dataRes.data.category._id, label: dataRes.data.category.name }])
@@ -77,8 +86,7 @@ export default function EditIngredientPage() {
                 });
             }
         } catch (err) {
-            setError('Failed to get product. Please try again.');
-            toast.error('Failed to get product. Please try again.');
+            dispatch(handleMessage({ success: false, message: 'Failed to get product. Please try again.' }))
 
             if ((err as any)?.response?.data?.errors) {
                 const errors = (err as any)?.response?.data?.errors;
@@ -133,8 +141,7 @@ export default function EditIngredientPage() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
-        setError(null);
-        setSuccess(null);
+
         try {
             // Simulate API call
             const formPayload = new FormData();
@@ -160,19 +167,16 @@ export default function EditIngredientPage() {
             const dataRes = res.data;
 
             if (dataRes.success) {
-                setSuccess('Ingredient updated successfully!');
-                toast.success('Ingredient updated successfully!');
+                dispatch(handleMessage({ success: true, message: 'Ingredient updated successfully!' }));
 
                 setTimeout(() => {
                     router.push(`/admin/ingredients?id=${id}&view=true`);
                 }, 2000);
             } else {
-                setError('Failed to update Ingredient. Please try again.');
-                toast.error('Failed to update Ingredient. Please try again.');
+                dispatch(handleMessage({ success: false, message: 'Failed to update Ingredient. Please try again.' }))
             }
         } catch (err) {
-            setError('Failed to update Ingredient. Please try again.');
-            toast.error('Failed to update Ingredient. Please try again.');
+            dispatch(handleMessage({ success: false, message: 'Failed to update Ingredient. Please try again.' }))
 
             if ((err as any)?.response?.data?.errors) {
                 const errors = (err as any)?.response?.data?.errors;
@@ -182,6 +186,10 @@ export default function EditIngredientPage() {
             setLoading(false);
         }
     };
+
+    const setErrors = (err: Record<string, string>) => {
+        dispatch(handleSetErrors({ errors: err }));
+    }
 
     return (
         <AdminLayout>
@@ -277,7 +285,7 @@ export default function EditIngredientPage() {
                         placeholder: 'upload images',
                         required: false,
                         value: formData.images.join(','),
-                        images: model ? model.images.join(",") : "",
+                        images: selectedIngredient ? selectedIngredient.images.join(",") : "",
                         multiple: true,
                         accept: 'image/*',
                         onChange: handleInputChange,

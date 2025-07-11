@@ -8,16 +8,15 @@ import AdminForm from '../../../../components/Admin/AdminForm';
 import { CategoryParams, InputEvent, SelectOption } from '../../../../types/Product';
 import api from '../../../../api';
 import { useRouter } from 'next/navigation';
-import { useSettings } from '../../../../context/SettingsContext';
+import { useAppDispatch, useAppSelector } from '../../../../store';
+import { clearMessage, handleSetErrors } from '../../../../store/slices/admin/ingredients';
+import { handleMessage } from '../../../../store/slices/admin/menu';
 
 const LIMIT = 50;
 
 export default function AddIngrdientPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [errors, setErrors] = useState<Record<string, string>>({});
-    const [success, setSuccess] = useState<string | null>(null);
     const [skuPrefix, setSkuPrefix] = useState("");
     const initialData = {
         name: '',
@@ -32,16 +31,31 @@ export default function AddIngrdientPage() {
 
     const [formData, setFormData] = useState(initialData);
     const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
-    const { settings } = useSettings();
+    const { settings } = useAppSelector(state => state.settings);
+    const dispatch = useAppDispatch();
+    const { error, message, success, errors } = useAppSelector(state => state.ingredients);
 
     useEffect(() => {
         if (settings?.shopName) {
             document.title = settings.shopName + " - Admin | Add Ingredient";
         }
     }, [settings]);
-    
+
     useEffect(() => {
-        return () => setFormData(initialData);
+        if (error && message) {
+            toast.error(message);
+            dispatch(clearMessage());
+        } else if (success && message) {
+            toast.success(message);
+            dispatch(clearMessage())
+        }
+    }, [error, success, message]);
+
+    useEffect(() => {
+        return () => {
+            setFormData(initialData);
+            setErrors({});
+        }
     }, []);
 
     const getListCategories = async (search: string, page: number = 0) => {
@@ -90,8 +104,7 @@ export default function AddIngrdientPage() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
-        setError(null);
-        setSuccess(null);
+
         try {
             // Simulate API call
             const formPayload = new FormData();
@@ -113,19 +126,16 @@ export default function AddIngrdientPage() {
             const dataRes = res.data;
 
             if (dataRes.success) {
-                setSuccess('Ingredient added successfully!');
-                toast.success('Ingredient added successfully!');
+                dispatch(handleMessage({ success: true, message: 'Ingredient added successfully!' }))
 
                 setTimeout(() => {
                     router.push('/admin/ingredients');
                 }, 2000);
             } else {
-                setError('Failed to add ingredient. Please try again.');
-                toast.error('Failed to add ingredient. Please try again.');
+                dispatch(handleMessage({ success: false, message: 'Failed to add ingredient. Please try again.' }))
             }
         } catch (err) {
-            setError('Failed to add ingredient. Please try again.');
-            toast.error('Failed to add ingredient. Please try again.');
+            dispatch(handleMessage({ success: false, message: 'Failed to add ingredient. Please try again.' }))
 
             if ((err as any)?.response?.data?.errors) {
                 const errors = (err as any)?.response?.data?.errors;
@@ -135,6 +145,10 @@ export default function AddIngrdientPage() {
             setLoading(false);
         }
     };
+
+    const setErrors = (err: Record<string, string>) => {
+        dispatch(handleSetErrors({ errors: err }));
+    }
 
     return (
         <AdminLayout>

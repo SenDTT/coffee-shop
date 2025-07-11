@@ -7,7 +7,6 @@ import { toast, ToastContainer } from 'react-toastify';
 import AddButton from '../../../components/Admin/AddButton';
 import SearchItem from '../../../components/Admin/SearchItem';
 import Title from '../../../components/Admin/Title';
-import { GetListParams } from '../../../types/Product';
 import api from '../../../api';
 import AdminTable from '../../../components/Admin/AdminTable';
 import { confirmThemeSwal } from '../../../utils/sweetalert';
@@ -15,33 +14,36 @@ import Sidebar from '../../../components/Admin/SideBar';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FaPen, FaTrash } from 'react-icons/fa';
 import { Ingredient } from '../../../types/Ingredient';
-import { useSettings } from '../../../context/SettingsContext';
+import { useAppDispatch, useAppSelector } from '../../../store';
+import { beginLoading, beginProcess, clearMessage, fetchAllIngredients, fetchAnIngredient, handleMessage, onHanldeSearchData, onReduxPageChange, unSelectIngredient, updateCurrentIngredientData } from '../../../store/slices/admin/ingredients';
 
 const LIMIT = 10;
 
 export default function AdminIngredientsPage() {
-    const [ingredients, setIngredients] = useState<Ingredient[]>([]);
     const [showDeleteBtn, setShowDeleteBtn] = useState(false);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-    const [params, setParams] = useState<GetListParams>({
-        limit: LIMIT,
-        skip: 0,
-    });
-    const [loading, setLoading] = useState(true);
-    const [total, setTotal] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
     const router = useRouter();
     const searchParams = useSearchParams();
-    const [inProccessing, setInProccessing] = useState<Boolean>(false);
-    const { settings } = useSettings();
+    const { settings } = useAppSelector(state => state.settings);
+    const { ingredients, error, success, currentPage, message, selectedIngredient, total, params, loading, inProccessing } = useAppSelector(state => state.ingredients);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         if (settings?.shopName) {
             document.title = settings.shopName + " - Admin | Ingredients";
         }
     }, [settings]);
+
+    useEffect(() => {
+        if (error && message) {
+            toast.error(message);
+            dispatch(clearMessage());
+        } else if (success && message) {
+            toast.success(message);
+            dispatch(clearMessage())
+        }
+    }, [error, success, message]);
 
     useEffect(() => {
         const id = searchParams.get('id') ?? null;
@@ -53,7 +55,7 @@ export default function AdminIngredientsPage() {
     }, [searchParams]);
 
     useEffect(() => {
-        fetchProducts();
+        fetchIngredients();
     }, [params]);
 
     const getIngredientById = async (id: string) => {
@@ -62,60 +64,52 @@ export default function AdminIngredientsPage() {
             const dataRes = response.data;
 
             if (dataRes.success && dataRes.data) {
-                console.log(dataRes.data);
-                setSelectedIngredient(dataRes.data);
+                dispatch(fetchAnIngredient(dataRes));
                 setIsSidebarOpen(true);
+            } else {
+                dispatch(handleMessage({ success: false, message: 'Failed to get ingredients. Please try again.' }))
             }
         } catch (err) {
-            toast.error('Failed to get ingredients. Please try again.');
+            dispatch(handleMessage({ success: false, message: 'Failed to get ingredients. Please try again.' }))
         }
     }
 
-    const fetchProducts = async () => {
-        setLoading(true);
+    const fetchIngredients = async () => {
+        dispatch(beginLoading());
         try {
             const res = await api.get('/ingredients', { params });
             const dataRes = res.data;
 
             if (dataRes.success && dataRes.data) {
-                setIngredients(dataRes.data.data);
-                setTotal(dataRes.data.total);
+                dispatch(fetchAllIngredients(dataRes));
+            } else {
+                dispatch(handleMessage({ success: false, message: 'Failed to get ingredients. Please try again.' }))
             }
         } catch (err) {
-            toast.error("Failed");
-            console.log(err);
-        } finally {
-            setLoading(false);
+            dispatch(handleMessage({ success: false, message: 'Failed to get ingredients. Please try again.' }))
         }
     };
 
     const resetDataWithoutApi = (id: string, data: Ingredient) => {
-        const newData = ingredients.map((item) => {
-            if (item._id === id) {
-                return data;
-            }
-
-            return item;
-        });
-        setIngredients(newData);
+        dispatch(updateCurrentIngredientData({ id, data }));
     }
 
     const activeHandle = async (id: string) => {
         if (inProccessing) return;
 
-        setInProccessing(true);
+        dispatch(beginProcess());
         try {
             const response = await api.put(`/ingredients/${id}/active`);
             const dataRes = response.data;
 
             if (dataRes.success) {
                 // Show success message
-                toast.success(dataRes.message);
+                dispatch(handleMessage(dataRes));
             } else {
-                toast.error("Items deleted Failed");
+                dispatch(handleMessage({ success: false, message: "Items deleted Failed" }));
             }
         } catch (err) {
-            toast.error("Failed");
+            dispatch(handleMessage({ success: false, message: "Items deleted Failed" }));
             console.log(err);
         } finally {
             // Reset state
@@ -124,7 +118,6 @@ export default function AdminIngredientsPage() {
             if (item && item._id) {
                 resetDataWithoutApi(id, { ...item, active: item.active === 0 ? 1 : 0 });
             }
-            setInProccessing(false);
         }
     }
 
@@ -138,15 +131,16 @@ export default function AdminIngredientsPage() {
 
             if (dataRes.success) {
                 // Show success message
-                toast.success(dataRes.message);
+                dispatch(handleMessage(dataRes));
             } else {
-                toast.error("Items deleted Failed");
+                dispatch(handleMessage({ success: false, message: "Items deleted Failed" }));
             }
         } catch (err) {
-            toast.error("Failed");
+            dispatch(handleMessage({ success: false, message: "Items deleted Failed" }));
             console.log(err);
         } finally {
             // Reset state
+            fetchIngredients();
             resetParams();
         }
     };
@@ -156,12 +150,7 @@ export default function AdminIngredientsPage() {
     };
 
     const onClickSearch = (searchTerm: string) => {
-        setCurrentPage(1);
-        if (searchTerm !== "") {
-            setParams({ ...params, search: searchTerm });
-        } else {
-            setParams({ limit: LIMIT, skip: 0 });
-        }
+        dispatch(onHanldeSearchData({ search: searchTerm }));
     }
 
     const onRequestDeleteById = async (id: string) => {
@@ -171,18 +160,18 @@ export default function AdminIngredientsPage() {
 
             if (dataRes.success) {
                 // Show success message
-                toast.success(dataRes.message);
+                dispatch(handleMessage(dataRes));
             } else {
-                toast.error("Items deleted Failed");
+                dispatch(handleMessage({ success: false, message: "Items deleted Failed" }))
             }
         } catch (err) {
-            toast.error("Failed");
+            dispatch(handleMessage({ success: false, message: "Items deleted Failed" }))
             console.log(err);
         } finally {
             // Reset state
             //resetParams();
             const newData = ingredients.filter((item) => item._id !== id);
-            setIngredients(newData);
+            dispatch(fetchAllIngredients({ success: true, data: { data: newData, total } }));
 
             closeSideBar();
         }
@@ -208,32 +197,24 @@ export default function AdminIngredientsPage() {
     }
 
     const onPageChange = (newPage: number) => {
-        setCurrentPage(newPage);
-        setParams({
-            skip: (newPage - 1) * LIMIT,
-            limit: LIMIT
-        });
+        dispatch(onReduxPageChange({ page: newPage }));
     }
 
     const resetParams = () => {
         setShowDeleteBtn(false);
         setSelectedIds(new Set());
-        setParams({
-            skip: 0,
-            limit: LIMIT
-        });
-        setCurrentPage(1);
+        onPageChange(1);
     }
 
     const viewHandle = (id: string) => {
         const product = ingredients.find(p => p._id === id) || null;
-        setSelectedIngredient(product);
+        dispatch(fetchAnIngredient({ success: true, data: product }));
         setIsSidebarOpen(true);
     }
 
     const closeSideBar = () => {
         setIsSidebarOpen(false);
-        setSelectedIngredient(null);
+        dispatch(unSelectIngredient());
     }
 
     return (
