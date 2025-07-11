@@ -5,10 +5,11 @@ import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import Title from '../../../../components/Admin/Title';
 import AdminForm from '../../../../components/Admin/AdminForm';
-import { CategoryParams, InputEvent, Product, SelectOption } from '../../../../types/Product';
+import { CategoryParams, InputEvent, SelectOption } from '../../../../types/Product';
 import api from '../../../../api';
 import { useParams, useRouter } from 'next/navigation';
-import { useSettings } from '../../../../context/SettingsContext';
+import { useAppDispatch, useAppSelector } from '../../../../store';
+import { clearCurrentProduct, clearMessage, fetchAProduct, handleMessage, handleSetErrors } from '../../../../store/slices/admin/menu';
 
 const LIMIT = 50;
 
@@ -17,9 +18,6 @@ export default function EditProductPage() {
     const params = useParams();
     const id = params.id;
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [errors, setErrors] = useState<Record<string, string>>({});
-    const [success, setSuccess] = useState<string | null>(null);
     const [skuPrefix, setSkuPrefix] = useState("");
     const initialData = {
         name: '',
@@ -32,26 +30,36 @@ export default function EditProductPage() {
         images: [],
         active: 1,
     };
-    const [model, setModel] = useState<Product | undefined>(undefined);
     const [deletedImages, setDeletedImages] = useState<string[]>([]);
-
     const [formData, setFormData] = useState(initialData);
     const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
-    const { settings } = useSettings();
+    const { settings } = useAppSelector(state => state.settings);
+    const { error, success, message, selectedProduct, errors } = useAppSelector(state => state.products);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         if (settings?.shopName) {
             document.title = settings.shopName + " - Admin | Edit Menu";
         }
     }, [settings]);
-    
+
+    useEffect(() => {
+        if (error && message) {
+            toast.error(message);
+            dispatch(clearMessage());
+        } else if (success && message) {
+            toast.success(message);
+            dispatch(clearMessage())
+        }
+    }, [error, success, message]);
+
     useEffect(() => {
         if (id && typeof id === 'string') {
             getProductById(id)
         }
         return () => {
             setFormData(initialData);
-            setModel(undefined);
+            dispatch(clearCurrentProduct());
         }
     }, [id]);
 
@@ -61,7 +69,7 @@ export default function EditProductPage() {
             const dataRes = response.data;
 
             if (dataRes.success && dataRes.data) {
-                setModel(dataRes.data);
+                dispatch(fetchAProduct(dataRes));
                 const skuSplit = dataRes.data.sku.split("-");
                 setSkuPrefix(skuSplit[0] + "-");
                 setCategoryOptions([{ value: dataRes.data.category._id, label: dataRes.data.category.name }])
@@ -78,8 +86,7 @@ export default function EditProductPage() {
                 });
             }
         } catch (err) {
-            setError('Failed to get product. Please try again.');
-            toast.error('Failed to get product. Please try again.');
+            dispatch(handleMessage({ success: false, message: 'Failed to get product. Please try again.' }))
 
             if ((err as any)?.response?.data?.errors) {
                 const errors = (err as any)?.response?.data?.errors;
@@ -134,8 +141,7 @@ export default function EditProductPage() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
-        setError(null);
-        setSuccess(null);
+        dispatch(clearMessage());
         try {
             // Simulate API call
             const formPayload = new FormData();
@@ -161,19 +167,16 @@ export default function EditProductPage() {
             const dataRes = res.data;
 
             if (dataRes.success) {
-                setSuccess('Product updated successfully!');
-                toast.success('Product updated successfully!');
+                dispatch(handleMessage({ success: true, message: 'Product updated successfully!' }))
 
                 setTimeout(() => {
                     router.push(`/admin/menu?id=${id}&view=true`);
                 }, 2000);
             } else {
-                setError('Failed to update product. Please try again.');
-                toast.error('Failed to update product. Please try again.');
+                dispatch(handleMessage({ success: false, message: 'Failed to update product. Please try again.' }))
             }
         } catch (err) {
-            setError('Failed to update product. Please try again.');
-            toast.error('Failed to update product. Please try again.');
+            dispatch(handleMessage({ success: false, message: 'Failed to update product. Please try again.' }))
 
             if ((err as any)?.response?.data?.errors) {
                 const errors = (err as any)?.response?.data?.errors;
@@ -183,6 +186,10 @@ export default function EditProductPage() {
             setLoading(false);
         }
     };
+
+    const setErrors = (err: Record<string, string>) => {
+        dispatch(handleSetErrors({ errors: err }));
+    }
 
     return (
         <AdminLayout>
@@ -288,7 +295,7 @@ export default function EditProductPage() {
                         placeholder: 'upload images',
                         required: false,
                         value: formData.images.join(','),
-                        images: model ? model.images.join(",") : "",
+                        images: selectedProduct ? selectedProduct.images.join(",") : "",
                         multiple: true,
                         accept: 'image/*',
                         onChange: handleInputChange,

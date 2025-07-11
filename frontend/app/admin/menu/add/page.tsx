@@ -8,16 +8,14 @@ import AdminForm from '../../../../components/Admin/AdminForm';
 import { CategoryParams, InputEvent, SelectOption } from '../../../../types/Product';
 import api from '../../../../api';
 import { useRouter } from 'next/navigation';
-import { useSettings } from '../../../../context/SettingsContext';
+import { useAppDispatch, useAppSelector } from '../../../../store';
+import { clearMessage, handleMessage, handleSetErrors } from '../../../../store/slices/admin/menu';
 
 const LIMIT = 50;
 
 export default function AddProductPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [errors, setErrors] = useState<Record<string, string>>({});
-    const [success, setSuccess] = useState<string | null>(null);
     const [skuPrefix, setSkuPrefix] = useState("");
     const initialData = {
         name: '',
@@ -33,14 +31,26 @@ export default function AddProductPage() {
 
     const [formData, setFormData] = useState(initialData);
     const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
-    const { settings } = useSettings();
+    const { settings } = useAppSelector(state => state.settings);
+    const { error, success, message, errors } = useAppSelector(state => state.products);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         if (settings?.shopName) {
             document.title = settings.shopName + " - Admin | Add Menu";
         }
     }, [settings]);
-    
+
+    useEffect(() => {
+        if (error && message) {
+            toast.error(message);
+            dispatch(clearMessage());
+        } else if (success && message) {
+            toast.success(message);
+            dispatch(clearMessage())
+        }
+    }, [error, success, message]);
+
     useEffect(() => {
         return () => setFormData(initialData);
     }, []);
@@ -91,8 +101,7 @@ export default function AddProductPage() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
-        setError(null);
-        setSuccess(null);
+        dispatch(clearMessage());
         try {
             // Simulate API call
             const formPayload = new FormData();
@@ -114,19 +123,16 @@ export default function AddProductPage() {
             const dataRes = res.data;
 
             if (dataRes.success) {
-                setSuccess('Product added successfully!');
-                toast.success('Product added successfully!');
+                dispatch(handleMessage({ success: true, message: 'Product added successfully!' }))
 
                 setTimeout(() => {
                     router.push('/admin/menu');
                 }, 2000);
             } else {
-                setError('Failed to add product. Please try again.');
-                toast.error('Failed to add product. Please try again.');
+                dispatch(handleMessage({ success: false, message: 'Failed to add product. Please try again.' }))
             }
         } catch (err) {
-            setError('Failed to add product. Please try again.');
-            toast.error('Failed to add product. Please try again.');
+            dispatch(handleMessage({ success: false, message: 'Failed to add product. Please try again.' }))
 
             if ((err as any)?.response?.data?.errors) {
                 const errors = (err as any)?.response?.data?.errors;
@@ -136,6 +142,10 @@ export default function AddProductPage() {
             setLoading(false);
         }
     };
+
+    const setErrors = (err: Record<string, string>) => {
+        dispatch(handleSetErrors({ errors: err }));
+    }
 
     return (
         <AdminLayout>

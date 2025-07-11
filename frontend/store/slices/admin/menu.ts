@@ -5,7 +5,8 @@ interface ProductState {
   products: Product[];
   error: boolean | null;
   selectedProduct: Product | null;
-  loading: boolean; // is loading data
+  loading: boolean; // is loading list data
+  inProccessing: boolean; // is processing of action
   success: boolean | null;
   message: string | null;
   params: {
@@ -15,7 +16,7 @@ interface ProductState {
   };
   currentPage: number;
   total: number;
-  inProccessing: boolean; // is processing of action
+  errors: Record<string, string>; // list errors of form data
 }
 
 const LIMIT = 10;
@@ -34,6 +35,7 @@ const initialState: ProductState = {
   currentPage: 1,
   total: 0,
   inProccessing: false,
+  errors: {},
 };
 
 export const productSlice = createSlice({
@@ -152,6 +154,14 @@ export const productSlice = createSlice({
     unSelectProduct: (state) => {
       state.selectedProduct = null;
     },
+    handleSetErrors: (
+      state,
+      action: PayloadAction<{ errors: Record<string, string> }>
+    ) => {
+      const { errors } = action.payload;
+
+      state.errors = errors;
+    },
   },
 });
 
@@ -167,5 +177,6 @@ export const {
   updateCurrentProductData,
   onHanldeSearchData,
   unSelectProduct,
+  handleSetErrors,
 } = productSlice.actions;
 export default productSlice.reducer;
