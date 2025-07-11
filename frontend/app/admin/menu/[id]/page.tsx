@@ -60,8 +60,9 @@ export default function EditProductPage() {
         return () => {
             setFormData(initialData);
             dispatch(clearCurrentProduct());
+            dispatch(handleSetErrors({ errors: {} }));
         }
-    }, [id]);
+    }, [id, dispatch]);
 
     const getProductById = async (id: string) => {
         try {
@@ -302,7 +303,7 @@ export default function EditProductPage() {
                         error: errors.images ?? '',
                         setDeletedImagePaths: setDeletedImages
                     },
-                ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Save" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl={`/admin/menu?id=${id}&view=true`} isShowButton={true}></AdminForm>
+                ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Save" loading={loading} cancelUrl={`/admin/menu?id=${id}&view=true`} isShowButton={true}></AdminForm>
             </div>
         </AdminLayout>
     );

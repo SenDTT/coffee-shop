@@ -52,8 +52,11 @@ export default function AddProductPage() {
     }, [error, success, message]);
 
     useEffect(() => {
-        return () => setFormData(initialData);
-    }, []);
+        return () => {
+            setFormData(initialData);
+            dispatch(handleSetErrors({ errors: {} }));
+        }
+    }, [dispatch]);
 
     const getListCategories = async (search: string, page: number = 0) => {
         let params: CategoryParams = { limit: LIMIT, skip: page * LIMIT, type: 'product' };
@@ -256,7 +259,7 @@ export default function AddProductPage() {
                         onChange: handleInputChange,
                         error: errors.images ?? ''
                     },
-                ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl={'/admin/menu'} isShowButton={true}></AdminForm>
+                ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} cancelUrl={'/admin/menu'} isShowButton={true}></AdminForm>
             </div>
         </AdminLayout>
     );

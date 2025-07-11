@@ -29,9 +29,7 @@ export type AdminFormProps = {
   formClassName?: string;
   buttonDivClassName?: string;
   loading?: boolean;
-  error?: string;
   setErrors?: (e: Record<string, string>) => void;
-  success?: string;
   successMessage?: string;
   errorMessage?: string;
   isShowButton?: boolean;
@@ -83,9 +81,9 @@ export type AdminFormFieldWithValue = AdminFormField & {
   autoFocus?: boolean;
   onSelect?: (e: SelectOption) => void;
   validate?: (value: string | number | string[] | Date | boolean) => string;
-  images?: string,
-  setDeletedImagePaths?: (paths: string[]) => void,
-  isBannerImage?: boolean,
+  images?: string;
+  setDeletedImagePaths?: (paths: string[]) => void;
+  isBannerImage?: boolean;
   onBeforeSubmitHanlde?: (e: string) => void;
 };
 
@@ -121,5 +119,5 @@ export type AdminTableProps<T extends object> = {
   loading: boolean;
   selectedIds: Set<string>;
   setSelectedIds: (ids: Set<string>) => void;
-  activeHandle?: (id: string) => void
+  activeHandle?: (id: string) => void;
 };
