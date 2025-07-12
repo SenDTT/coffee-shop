@@ -12,10 +12,7 @@ import AdminTable from '../../../components/Admin/AdminTable';
 import { confirmThemeSwal } from '../../../utils/sweetalert';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '../../../store';
-import { beginLoading, beginProcess, clearMessage, fetchAllAdminBlogs, onHanldeSearchData, onReduxPageChange } from '../../../store/slices/admin/adminBlogs';
-import { handleMessage } from '@/store/slices/admin/adminMenu';
-
-const LIMIT = 10;
+import { beginLoading, beginProcess, clearMessage, fetchAllAdminBlogs, onHanldeSearchData, onReduxPageChange, handleMessage } from '../../../store/slices/admin/adminBlogs';
 
 export default function BlogsManagementPage() {
     const [showDeleteBtn, setShowDeleteBtn] = useState(false);
@@ -217,7 +214,7 @@ export default function BlogsManagementPage() {
                     activeHandle={activeHandle}
                     totalRecords={total}
                     currentPage={currentPage}
-                    pageSize={LIMIT}
+                    pageSize={params.limit}
                     onPageChange={onPageChange}
                     loading={loading}
                     onShowDeleteMultipleHandle={toggleShowDeleteBtn}

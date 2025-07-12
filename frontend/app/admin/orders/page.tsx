@@ -12,8 +12,6 @@ import { useSearchParams } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '../../../store';
 import { beginLoading, clearMessage, fetchAdminOrder, fetchAllAdminOrders, handleMessage, onHanldeSearchData, onReduxPageChange, unSelectAdminOrder } from '../../../store/slices/admin/adminOrders';
 
-const LIMIT = 10;
-
 export default function OrdersPage() {
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -132,7 +130,7 @@ export default function OrdersPage() {
                     viewHandle={viewHandle}
                     totalRecords={total}
                     currentPage={currentPage}
-                    pageSize={LIMIT}
+                    pageSize={params.limit}
                     onPageChange={onPageChange}
                     loading={loading}
                 />

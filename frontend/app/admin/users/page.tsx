@@ -14,8 +14,6 @@ import { User } from '../../../types/User';
 import { useAppDispatch, useAppSelector } from '../../../store';
 import { beginLoading, beginProcess, clearCurrentAdminUser, clearMessage, fetchAdminUser, fetchAllAdminUsers, handleMessage, onHanldeSearchData, onReduxPageChange, updateCurrentAdminUsersData } from '../../../store/slices/admin/adminUsers';
 
-const LIMIT = 10;
-
 export default function UserPage() {
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -165,7 +163,7 @@ export default function UserPage() {
                     activeHandle={isAdminHandle}
                     totalRecords={total}
                     currentPage={currentPage}
-                    pageSize={LIMIT}
+                    pageSize={params.limit}
                     onPageChange={onPageChange}
                     loading={loading}
                 />

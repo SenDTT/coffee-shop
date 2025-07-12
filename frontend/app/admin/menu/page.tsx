@@ -17,8 +17,6 @@ import { FaPen, FaTrash } from 'react-icons/fa';
 import { useAppDispatch, useAppSelector } from '../../../store';
 import { beginLoading, beginProcess, clearMessage, fetchAllProducts, fetchAProduct, handleMessage, onHanldeSearchData, onReduxPageChange, unSelectProduct, updateCurrentProductData } from '../../../store/slices/admin/adminMenu';
 
-const LIMIT = 10;
-
 export default function MenuPage() {
     const [showDeleteBtn, setShowDeleteBtn] = useState(false);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -244,7 +242,7 @@ export default function MenuPage() {
                     activeHandle={activeHandle}
                     totalRecords={total}
                     currentPage={currentPage}
-                    pageSize={LIMIT}
+                    pageSize={params.limit}
                     onPageChange={onPageChange}
                     loading={loading}
                     onShowDeleteMultipleHandle={toggleShowDeleteBtn}

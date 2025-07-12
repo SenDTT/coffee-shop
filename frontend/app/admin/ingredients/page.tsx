@@ -17,8 +17,6 @@ import { Ingredient } from '../../../types/Ingredient';
 import { useAppDispatch, useAppSelector } from '../../../store';
 import { beginLoading, beginProcess, clearMessage, fetchAllIngredients, fetchAnIngredient, handleMessage, onHanldeSearchData, onReduxPageChange, unSelectIngredient, updateCurrentIngredientData } from '../../../store/slices/admin/adminIngredients';
 
-const LIMIT = 10;
-
 export default function AdminIngredientsPage() {
     const [showDeleteBtn, setShowDeleteBtn] = useState(false);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -252,7 +250,7 @@ export default function AdminIngredientsPage() {
                     activeHandle={activeHandle}
                     totalRecords={total}
                     currentPage={currentPage}
-                    pageSize={LIMIT}
+                    pageSize={params.limit}
                     onPageChange={onPageChange}
                     loading={loading}
                     onShowDeleteMultipleHandle={toggleShowDeleteBtn}
