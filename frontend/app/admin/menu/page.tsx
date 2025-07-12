@@ -133,7 +133,7 @@ export default function MenuPage() {
         } finally {
             // Reset state
             const newData = products.filter((item) => item._id !== id);
-            dispatch(fetchAllProducts({ success: true, data: { data: newData, total } }));
+            dispatch(fetchAllProducts({ success: true, data: { data: newData, total: total - 1 } }));
             handleShowDeleteBtn();
             closeSideBar();
         }

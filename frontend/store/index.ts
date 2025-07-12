@@ -5,6 +5,7 @@ import adminSettingsReducer from "./slices/setting";
 import adminProductsReducer from "./slices/admin/adminMenu";
 import adminIngredientReducer from "./slices/admin/adminIngredients";
 import adminOrdersReducer from "./slices/admin/adminOrders";
+import adminBlogsReducer from "./slices/admin/adminBlogs";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 export const store = configureStore({
@@ -14,6 +15,7 @@ export const store = configureStore({
     adminProducts: adminProductsReducer,
     adminIngredients: adminIngredientReducer,
     adminOrders: adminOrdersReducer,
+    adminBlogs: adminBlogsReducer,
   },
 });
 

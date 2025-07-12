@@ -7,30 +7,24 @@ import { toast, ToastContainer } from 'react-toastify';
 import AddButton from '../../../components/Admin/AddButton';
 import SearchItem from '../../../components/Admin/SearchItem';
 import Title from '../../../components/Admin/Title';
-import { GetListParams } from '../../../types/Product';
 import api from '../../../api';
 import AdminTable from '../../../components/Admin/AdminTable';
 import { confirmThemeSwal } from '../../../utils/sweetalert';
 import { useRouter } from 'next/navigation';
-import { useSettings } from '../../../context/SettingsContext';
-import { BlogPost } from '../../../types/Admin';
+import { useAppDispatch, useAppSelector } from '../../../store';
+import { beginLoading, beginProcess, clearMessage, fetchAllAdminBlogs, onHanldeSearchData, onReduxPageChange } from '../../../store/slices/admin/adminBlogs';
+import { handleMessage } from '@/store/slices/admin/adminMenu';
 
 const LIMIT = 10;
 
 export default function BlogsManagementPage() {
-    const [blogs, setBlogs] = useState<BlogPost[]>([]);
     const [showDeleteBtn, setShowDeleteBtn] = useState(false);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-    const [params, setParams] = useState<GetListParams>({
-        limit: LIMIT,
-        skip: 0,
-    });
-    const [loading, setLoading] = useState(true);
-    const [total, setTotal] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
     const router = useRouter();
     const [inProccessing, setInProccessing] = useState<Boolean>(false);
-    const { settings } = useSettings();
+    const { settings } = useAppSelector(state => state.settings);
+    const { blogs, error, success, message, params, loading, total, currentPage } = useAppSelector(state => state.adminBlogs);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         if (settings?.shopName) {
@@ -39,24 +33,33 @@ export default function BlogsManagementPage() {
     }, [settings]);
 
     useEffect(() => {
+        if (error && message) {
+            toast.error(message);
+            dispatch(clearMessage());
+        } else if (success && message) {
+            toast.success(message);
+            dispatch(clearMessage())
+        }
+    }, [error, success, message]);
+
+    useEffect(() => {
         fetchBlogs();
     }, [params]);
 
     const fetchBlogs = async () => {
-        setLoading(true);
+        dispatch(beginLoading());
         try {
             const res = await api.get('/blogs', { params });
             const dataRes = res.data;
 
             if (dataRes.success && dataRes.data) {
-                setBlogs(dataRes.data.data);
-                setTotal(dataRes.data.total);
+                dispatch(fetchAllAdminBlogs(dataRes));
+            } else {
+                dispatch(handleMessage({ success: false, message: "Failed to fetch blogs" }));
             }
         } catch (err) {
-            toast.error("Fetch Blog Failed");
+            dispatch(handleMessage({ success: false, message: "Failed to fetch blogs" }));
             console.log(err);
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -70,16 +73,17 @@ export default function BlogsManagementPage() {
 
             if (dataRes.success) {
                 // Show success message
-                toast.success(dataRes.message);
+                dispatch(handleMessage(dataRes));
             } else {
-                toast.error("Items deleted Failed");
+                dispatch(handleMessage({ success: false, message: "Items deleted Failed" }));
             }
         } catch (err) {
-            toast.error("Failed");
+            dispatch(handleMessage({ success: false, message: "Items deleted Failed" }));
             console.log(err);
         } finally {
             // Reset state
             resetParams();
+            fetchBlogs();
         }
     };
 
@@ -88,12 +92,7 @@ export default function BlogsManagementPage() {
     };
 
     const onClickSearch = (searchTerm: string) => {
-        setCurrentPage(1);
-        if (searchTerm !== "") {
-            setParams({ ...params, search: searchTerm });
-        } else {
-            setParams({ limit: LIMIT, skip: 0 });
-        }
+        dispatch(onHanldeSearchData({ search: searchTerm }));
     }
 
     const onRequestDeleteById = async (id: string) => {
@@ -114,6 +113,8 @@ export default function BlogsManagementPage() {
             // Reset state
             resetParams();
         }
+        const newData = blogs.filter((item) => item._id !== id);
+        dispatch(fetchAllAdminBlogs({ success: true, data: { data: newData, total: total - 1 } }));
     }
 
     const deleteHandle = (id: string) => {
@@ -138,42 +139,37 @@ export default function BlogsManagementPage() {
     const activeHandle = async (id: string) => {
         if (inProccessing) return;
 
-        setInProccessing(true);
+        dispatch(beginProcess());
         try {
             const response = await api.put(`/blogs/${id}/active`);
             const dataRes = response.data;
 
             if (dataRes.success) {
                 // Show success message
-                toast.success(dataRes.message);
+                dispatch(handleMessage(dataRes));
             } else {
-                toast.error("Items update Failed");
+                dispatch(handleMessage({ success: false, message: "Failed to change status" }));
             }
         } catch (err) {
-            toast.error("Failed");
+            dispatch(handleMessage({ success: false, message: "Failed to change status" }));
             console.log(err);
         } finally {
             // Reset state
             resetParams();
-            setInProccessing(false);
+
+            // update the blogs state
+            const newData = blogs.filter((item) => item._id !== id);
+            dispatch(fetchAllAdminBlogs({ success: true, data: { data: newData, total } }));
         }
     }
 
     const onPageChange = (newPage: number) => {
-        setCurrentPage(newPage);
-        setParams({
-            skip: (newPage - 1) * LIMIT,
-            limit: LIMIT
-        });
+        dispatch(onReduxPageChange({ page: newPage }));
     }
 
     const resetParams = () => {
         setShowDeleteBtn(false);
         setSelectedIds(new Set());
-        setParams({
-            skip: 0,
-            limit: LIMIT
-        });
     }
 
     const viewHandle = (id: string) => {

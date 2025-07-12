@@ -8,16 +8,15 @@ import AdminForm from '../../../../components/Admin/AdminForm';
 import { CategoryParams, InputEvent, SelectOption } from '../../../../types/Product';
 import api from '../../../../api';
 import { useRouter } from 'next/navigation';
-import { useSettings } from '../../../../context/SettingsContext';
+import { useAppDispatch, useAppSelector } from '../../../../store';
+import { clearCurrentAdminBlog, clearMessage, handleSetErrors } from '../../../../store/slices/admin/adminBlogs';
+import { handleMessage } from '../../../../store/slices/admin/adminMenu';
 
 const LIMIT = 50;
 
 export default function AddBlogPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [errors, setErrors] = useState<Record<string, string>>({});
-    const [success, setSuccess] = useState<string | null>(null);
     const initialData = {
         title: '',
         content: '',
@@ -25,8 +24,12 @@ export default function AddBlogPage() {
         tags: '',
         image: '',
     };
-    const { settings } = useSettings();
+    const { settings } = useAppSelector(state => state.settings);
+    const { error, message, success, errors } = useAppSelector(state => state.adminBlogs);
+    const dispatch = useAppDispatch();
     const [content, setContent] = useState<string>('');
+    const [formData, setFormData] = useState(initialData);
+    const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
 
     useEffect(() => {
         if (settings?.shopName) {
@@ -34,11 +37,22 @@ export default function AddBlogPage() {
         }
     }, [settings]);
 
-    const [formData, setFormData] = useState(initialData);
-    const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
+    useEffect(() => {
+        if (error && message) {
+            toast.error(message);
+            dispatch(clearMessage());
+        } else if (success && message) {
+            toast.success(message);
+            dispatch(clearMessage())
+        }
+    }, [error, success, message]);
 
     useEffect(() => {
-        return () => setFormData(initialData);
+        return () => {
+            setFormData(initialData);
+            dispatch(clearCurrentAdminBlog());
+            dispatch(handleSetErrors({ errors: {} }));
+        }
     }, []);
 
     const getListCategories = async (search: string, page: number = 0) => {
@@ -75,20 +89,19 @@ export default function AddBlogPage() {
             isValid = isValid && false;
         }
 
-        setErrors(prev => ({
-            ...prev,
-            ...newErrors
-        }));
+        setErrors({ ...errors, ...newErrors });
 
         return isValid;
+    }
+
+    const setErrors = (err: Record<string, string>) => {
+        dispatch(handleSetErrors({ errors: err }));
     }
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
-        setError(null);
         setErrors({});
-        setSuccess(null);
 
         if (!validateForm()) {
             setLoading(false);
@@ -117,19 +130,16 @@ export default function AddBlogPage() {
             const dataRes = res.data;
 
             if (dataRes.success) {
-                setSuccess('Blog added successfully!');
-                toast.success('Blog added successfully!');
+                dispatch(handleMessage({ success: true, message: 'Blog added successfully!' }));
 
                 setTimeout(() => {
                     router.push('/admin/blogs');
                 }, 2000);
             } else {
-                setError('Failed to add Blog. Please try again.');
-                toast.error('Failed to add Blog. Please try again.');
+                dispatch(handleMessage({ success: false, message: 'Failed to add Blog. Please try again.' }));
             }
         } catch (err) {
-            setError('Failed to add Blog. Please try again.');
-            toast.error('Failed to add Blog. Please try again.');
+            dispatch(handleMessage({ success: false, message: 'Failed to add Blog. Please try again.' }));
 
             if ((err as any)?.response?.data?.errors) {
                 const errors = (err as any)?.response?.data?.errors;
@@ -208,7 +218,7 @@ export default function AddBlogPage() {
                         onChange: handleInputChange,
                         error: errors.image ?? '',
                     },
-                ]} buttonDivClassName='w-2/3 mx-auto' formClassName='grid grid-cols-1 gap-4 w-2/3 mx-auto h-full p-6' setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl={'/admin/menu'} isShowButton={true}></AdminForm>
+                ]} buttonDivClassName='w-2/3 mx-auto' formClassName='grid grid-cols-1 gap-4 w-2/3 mx-auto h-full p-6' setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} cancelUrl={'/admin/menu'} isShowButton={true}></AdminForm>
             </div>
         </AdminLayout>
     );
