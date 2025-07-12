@@ -9,7 +9,7 @@ import { CategoryParams, InputEvent, SelectOption } from '../../../../types/Prod
 import api from '../../../../api';
 import { useParams, useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '../../../../store';
-import { clearCurrentProduct, clearMessage, fetchAProduct, handleMessage, handleSetErrors } from '../../../../store/slices/admin/menu';
+import { clearCurrentProduct, clearMessage, fetchAProduct, handleMessage, handleSetErrors } from '../../../../store/slices/admin/adminMenu';
 
 const LIMIT = 50;
 
@@ -34,7 +34,7 @@ export default function EditProductPage() {
     const [formData, setFormData] = useState(initialData);
     const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
     const { settings } = useAppSelector(state => state.settings);
-    const { error, success, message, selectedProduct, errors } = useAppSelector(state => state.products);
+    const { error, success, message, selectedProduct, errors } = useAppSelector(state => state.adminProducts);
     const dispatch = useAppDispatch();
 
     useEffect(() => {

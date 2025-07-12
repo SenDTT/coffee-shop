@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Ingredient } from "../../../types/Ingredient";
+import { Product } from "../../../types/Product";
 
-interface IngredientState {
-  ingredients: Ingredient[];
+interface ProductState {
+  products: Product[];
   error: boolean | null;
-  selectedIngredient: Ingredient | null;
+  selectedProduct: Product | null;
   loading: boolean; // is loading list data
   inProccessing: boolean; // is processing of action
   success: boolean | null;
@@ -21,10 +21,10 @@ interface IngredientState {
 
 const LIMIT = 10;
 
-const initialState: IngredientState = {
-  ingredients: [],
+const initialState: ProductState = {
+  products: [],
   error: null,
-  selectedIngredient: null,
+  selectedProduct: null,
   loading: true,
   success: null,
   message: null,
@@ -38,14 +38,14 @@ const initialState: IngredientState = {
   errors: {},
 };
 
-export const ingredientSlice = createSlice({
-  name: "ingredients",
+export const productSlice = createSlice({
+  name: "adminProduct",
   initialState,
   reducers: {
-    fetchAllIngredients: (
+    fetchAllProducts: (
       state,
       action: PayloadAction<{
-        data: { data: Ingredient[]; total: number };
+        data: { data: Product[]; total: number };
         success: boolean;
         message?: string;
       }>
@@ -53,7 +53,7 @@ export const ingredientSlice = createSlice({
       const { data, success, message } = action.payload;
 
       if (success) {
-        state.ingredients = data.data;
+        state.products = data.data;
         state.total = data.total;
       } else {
         state.error = true;
@@ -62,10 +62,10 @@ export const ingredientSlice = createSlice({
 
       state.loading = false;
     },
-    fetchAnIngredient: (
+    fetchAProduct: (
       state,
       action: PayloadAction<{
-        data: Ingredient | null;
+        data: Product | null;
         success: boolean;
         message?: string;
       }>
@@ -73,7 +73,7 @@ export const ingredientSlice = createSlice({
       const { data, success, message } = action.payload;
 
       if (success) {
-        state.selectedIngredient = data;
+        state.selectedProduct = data;
       } else {
         state.error = true;
         state.message = message || "Failed to get data. Please try again.";
@@ -114,8 +114,8 @@ export const ingredientSlice = createSlice({
       state.success = null;
       state.message = null;
     },
-    clearCurrentIngredient: (state) => {
-      state.selectedIngredient = null;
+    clearCurrentProduct: (state) => {
+      state.selectedProduct = null;
     },
     onHanldeSearchData: (state, action: PayloadAction<{ search: string }>) => {
       const { search } = action.payload;
@@ -140,19 +140,19 @@ export const ingredientSlice = createSlice({
         limit: LIMIT,
       };
     },
-    updateCurrentIngredientData: (
+    updateCurrentProductData: (
       state,
-      action: PayloadAction<{ id: string; data: Ingredient }>
+      action: PayloadAction<{ id: string; data: Product }>
     ) => {
       const { id, data } = action.payload;
-      const index = state.ingredients.findIndex((item) => item._id === id);
+      const index = state.products.findIndex((item) => item._id === id);
 
       if (index !== -1) {
-        state.ingredients[index] = data;
+        state.products[index] = data;
       }
     },
-    unSelectIngredient: (state) => {
-      state.selectedIngredient = null;
+    unSelectProduct: (state) => {
+      state.selectedProduct = null;
     },
     handleSetErrors: (
       state,
@@ -166,17 +166,17 @@ export const ingredientSlice = createSlice({
 });
 
 export const {
-  fetchAnIngredient,
-  fetchAllIngredients,
+  fetchAProduct,
+  fetchAllProducts,
   beginProcess,
   beginLoading,
   handleMessage,
   clearMessage,
-  clearCurrentIngredient,
+  clearCurrentProduct,
   onReduxPageChange,
-  updateCurrentIngredientData,
+  updateCurrentProductData,
   onHanldeSearchData,
-  unSelectIngredient,
+  unSelectProduct,
   handleSetErrors,
-} = ingredientSlice.actions;
-export default ingredientSlice.reducer;
+} = productSlice.actions;
+export default productSlice.reducer;

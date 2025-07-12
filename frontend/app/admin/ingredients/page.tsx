@@ -15,7 +15,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { FaPen, FaTrash } from 'react-icons/fa';
 import { Ingredient } from '../../../types/Ingredient';
 import { useAppDispatch, useAppSelector } from '../../../store';
-import { beginLoading, beginProcess, clearMessage, fetchAllIngredients, fetchAnIngredient, handleMessage, onHanldeSearchData, onReduxPageChange, unSelectIngredient, updateCurrentIngredientData } from '../../../store/slices/admin/ingredients';
+import { beginLoading, beginProcess, clearMessage, fetchAllIngredients, fetchAnIngredient, handleMessage, onHanldeSearchData, onReduxPageChange, unSelectIngredient, updateCurrentIngredientData } from '../../../store/slices/admin/adminIngredients';
 
 const LIMIT = 10;
 
@@ -26,7 +26,7 @@ export default function AdminIngredientsPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { settings } = useAppSelector(state => state.settings);
-    const { ingredients, error, success, currentPage, message, selectedIngredient, total, params, loading, inProccessing } = useAppSelector(state => state.ingredients);
+    const { ingredients, error, success, currentPage, message, selectedIngredient, total, params, loading, inProccessing } = useAppSelector(state => state.adminIngredients);
     const dispatch = useAppDispatch();
 
     useEffect(() => {

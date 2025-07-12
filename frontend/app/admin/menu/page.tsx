@@ -15,7 +15,7 @@ import Sidebar from '../../../components/Admin/SideBar';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FaPen, FaTrash } from 'react-icons/fa';
 import { useAppDispatch, useAppSelector } from '../../../store';
-import { beginLoading, beginProcess, clearMessage, fetchAllProducts, fetchAProduct, handleMessage, onHanldeSearchData, onReduxPageChange, unSelectProduct, updateCurrentProductData } from '../../../store/slices/admin/menu';
+import { beginLoading, beginProcess, clearMessage, fetchAllProducts, fetchAProduct, handleMessage, onHanldeSearchData, onReduxPageChange, unSelectProduct, updateCurrentProductData } from '../../../store/slices/admin/adminMenu';
 
 const LIMIT = 10;
 
@@ -26,7 +26,7 @@ export default function MenuPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { settings } = useAppSelector(state => state.settings);
-    const { selectedProduct, products, params, error, success, message, loading, total, currentPage, inProccessing } = useAppSelector(state => state.products);
+    const { selectedProduct, products, params, error, success, message, loading, total, currentPage, inProccessing } = useAppSelector(state => state.adminProducts);
     const dispatch = useAppDispatch();
 
     useEffect(() => {

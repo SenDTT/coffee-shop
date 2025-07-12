@@ -9,8 +9,7 @@ import { CategoryParams, InputEvent, SelectOption } from '../../../../types/Prod
 import api from '../../../../api';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '../../../../store';
-import { clearMessage, handleSetErrors } from '../../../../store/slices/admin/ingredients';
-import { handleMessage } from '../../../../store/slices/admin/menu';
+import { clearMessage, handleSetErrors, handleMessage } from '../../../../store/slices/admin/adminIngredients';
 
 const LIMIT = 50;
 
@@ -33,7 +32,7 @@ export default function AddIngrdientPage() {
     const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
     const { settings } = useAppSelector(state => state.settings);
     const dispatch = useAppDispatch();
-    const { error, message, success, errors } = useAppSelector(state => state.ingredients);
+    const { error, message, success, errors } = useAppSelector(state => state.adminIngredients);
 
     useEffect(() => {
         if (settings?.shopName) {
@@ -249,7 +248,7 @@ export default function AddIngrdientPage() {
                         onChange: handleInputChange,
                         error: errors.images ?? ''
                     },
-                ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl={'/admin/ingredients'} isShowButton={true}></AdminForm>
+                ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} cancelUrl={'/admin/ingredients'} isShowButton={true}></AdminForm>
             </div>
         </AdminLayout>
     );

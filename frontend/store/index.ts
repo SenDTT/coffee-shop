@@ -1,17 +1,19 @@
 // store/index.ts
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./slices/auth";
-import settingsReducer from "./slices/setting";
-import productsReducer from "./slices/admin/menu";
-import ingredientReducer from "./slices/admin/ingredients";
+import adminSettingsReducer from "./slices/setting";
+import adminProductsReducer from "./slices/admin/adminMenu";
+import adminIngredientReducer from "./slices/admin/adminIngredients";
+import adminOrdersReducer from "./slices/admin/adminOrders";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    settings: settingsReducer,
-    products: productsReducer,
-    ingredients: ingredientReducer,
+    settings: adminSettingsReducer,
+    adminProducts: adminProductsReducer,
+    adminIngredients: adminIngredientReducer,
+    adminOrders: adminOrdersReducer,
   },
 });
 

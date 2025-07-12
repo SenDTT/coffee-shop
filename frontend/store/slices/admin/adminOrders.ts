@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Product } from "../../../types/Product";
+import { Order } from "../../../types/Order";
 
 interface ProductState {
-  products: Product[];
+  orders: Order[];
   error: boolean | null;
-  selectedProduct: Product | null;
+  selectedOrder: Order | null;
   loading: boolean; // is loading list data
   inProccessing: boolean; // is processing of action
   success: boolean | null;
@@ -22,9 +22,9 @@ interface ProductState {
 const LIMIT = 10;
 
 const initialState: ProductState = {
-  products: [],
+  orders: [],
   error: null,
-  selectedProduct: null,
+  selectedOrder: null,
   loading: true,
   success: null,
   message: null,
@@ -38,14 +38,14 @@ const initialState: ProductState = {
   errors: {},
 };
 
-export const productSlice = createSlice({
-  name: "product",
+export const ordersSlice = createSlice({
+  name: "adminProduct",
   initialState,
   reducers: {
-    fetchAllProducts: (
+    fetchAllAdminOrders: (
       state,
       action: PayloadAction<{
-        data: { data: Product[]; total: number };
+        data: { data: Order[]; total: number };
         success: boolean;
         message?: string;
       }>
@@ -53,7 +53,7 @@ export const productSlice = createSlice({
       const { data, success, message } = action.payload;
 
       if (success) {
-        state.products = data.data;
+        state.orders = data.data;
         state.total = data.total;
       } else {
         state.error = true;
@@ -62,10 +62,10 @@ export const productSlice = createSlice({
 
       state.loading = false;
     },
-    fetchAProduct: (
+    fetchAdminOrder: (
       state,
       action: PayloadAction<{
-        data: Product | null;
+        data: Order | null;
         success: boolean;
         message?: string;
       }>
@@ -73,7 +73,7 @@ export const productSlice = createSlice({
       const { data, success, message } = action.payload;
 
       if (success) {
-        state.selectedProduct = data;
+        state.selectedOrder = data;
       } else {
         state.error = true;
         state.message = message || "Failed to get data. Please try again.";
@@ -114,8 +114,8 @@ export const productSlice = createSlice({
       state.success = null;
       state.message = null;
     },
-    clearCurrentProduct: (state) => {
-      state.selectedProduct = null;
+    clearCurrentAdminOrder: (state) => {
+      state.selectedOrder = null;
     },
     onHanldeSearchData: (state, action: PayloadAction<{ search: string }>) => {
       const { search } = action.payload;
@@ -140,19 +140,19 @@ export const productSlice = createSlice({
         limit: LIMIT,
       };
     },
-    updateCurrentProductData: (
+    updateCurrentAdminOrderData: (
       state,
-      action: PayloadAction<{ id: string; data: Product }>
+      action: PayloadAction<{ id: string; data: Order }>
     ) => {
       const { id, data } = action.payload;
-      const index = state.products.findIndex((item) => item._id === id);
+      const index = state.orders.findIndex((item) => item._id === id);
 
       if (index !== -1) {
-        state.products[index] = data;
+        state.orders[index] = data;
       }
     },
-    unSelectProduct: (state) => {
-      state.selectedProduct = null;
+    unSelectAdminOrder: (state) => {
+      state.selectedOrder = null;
     },
     handleSetErrors: (
       state,
@@ -166,17 +166,17 @@ export const productSlice = createSlice({
 });
 
 export const {
-  fetchAProduct,
-  fetchAllProducts,
+  fetchAdminOrder,
+  fetchAllAdminOrders,
   beginProcess,
   beginLoading,
   handleMessage,
   clearMessage,
-  clearCurrentProduct,
+  clearCurrentAdminOrder,
   onReduxPageChange,
-  updateCurrentProductData,
+  updateCurrentAdminOrderData,
   onHanldeSearchData,
-  unSelectProduct,
+  unSelectAdminOrder,
   handleSetErrors,
-} = productSlice.actions;
-export default productSlice.reducer;
+} = ordersSlice.actions;
+export default ordersSlice.reducer;

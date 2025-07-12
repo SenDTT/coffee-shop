@@ -9,7 +9,7 @@ import { CategoryParams, InputEvent, SelectOption } from '../../../../types/Prod
 import api from '../../../../api';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '../../../../store';
-import { clearMessage, handleMessage, handleSetErrors } from '../../../../store/slices/admin/menu';
+import { clearMessage, handleMessage, handleSetErrors } from '../../../../store/slices/admin/adminMenu';
 
 const LIMIT = 50;
 
@@ -32,7 +32,7 @@ export default function AddProductPage() {
     const [formData, setFormData] = useState(initialData);
     const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
     const { settings } = useAppSelector(state => state.settings);
-    const { error, success, message, errors } = useAppSelector(state => state.products);
+    const { error, success, message, errors } = useAppSelector(state => state.adminProducts);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
