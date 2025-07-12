@@ -115,15 +115,20 @@ export const updateUserRoleController: RequestHandler<
 > = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const user = await getUserById(id);
+    let user = await getUserById(id);
     if (!user) {
       res.status(400).json({ success: false, message: "User is not existed" });
       return;
     }
     const role = user.role === UserRoles.user ? "admin" : "user";
     await updateUserRole(id, role);
+    user = await getUserById(id);
 
-    res.json({ success: true, data: { ...user, role } });
+    res.json({
+      success: true,
+      data: user,
+      message: "User role updated successfully",
+    });
   } catch (err) {
     next(err);
   }
@@ -318,5 +323,5 @@ export const uploadImageController: RequestHandler<
   } catch (err) {
     next(err);
   }
-}
+};
 // Compare this snippet from frontend/components/Admin/BlogEditor.tsx:

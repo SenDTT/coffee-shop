@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BlogPost } from "../../../types/Admin";
 
-interface ProductState {
+interface AdminProductState {
   blogs: BlogPost[];
   error: boolean | null;
   selectedBlog: BlogPost | null;
@@ -21,7 +21,7 @@ interface ProductState {
 
 const LIMIT = 10;
 
-const initialState: ProductState = {
+const initialState: AdminProductState = {
   blogs: [],
   error: null,
   selectedBlog: null,

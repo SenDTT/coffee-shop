@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Ingredient } from "../../../types/Ingredient";
+import { User } from "../../../types/User";
 
-interface AdminIngredientState {
-  ingredients: Ingredient[];
+interface AdminUserState {
+  users: User[];
   error: boolean | null;
-  selectedIngredient: Ingredient | null;
+  selectedUser: User | null;
   loading: boolean; // is loading list data
   inProccessing: boolean; // is processing of action
   success: boolean | null;
@@ -21,10 +21,10 @@ interface AdminIngredientState {
 
 const LIMIT = 10;
 
-const initialState: AdminIngredientState = {
-  ingredients: [],
+const initialState: AdminUserState = {
+  users: [],
   error: null,
-  selectedIngredient: null,
+  selectedUser: null,
   loading: true,
   success: null,
   message: null,
@@ -38,14 +38,14 @@ const initialState: AdminIngredientState = {
   errors: {},
 };
 
-export const ingredientSlice = createSlice({
-  name: "adminIngredients",
+export const userSlice = createSlice({
+  name: "adminProduct",
   initialState,
   reducers: {
-    fetchAllIngredients: (
+    fetchAllAdminUsers: (
       state,
       action: PayloadAction<{
-        data: { data: Ingredient[]; total: number };
+        data: { data: User[]; total: number };
         success: boolean;
         message?: string;
       }>
@@ -53,7 +53,7 @@ export const ingredientSlice = createSlice({
       const { data, success, message } = action.payload;
 
       if (success) {
-        state.ingredients = data.data;
+        state.users = data.data;
         state.total = data.total;
       } else {
         state.error = true;
@@ -62,10 +62,10 @@ export const ingredientSlice = createSlice({
 
       state.loading = false;
     },
-    fetchAnIngredient: (
+    fetchAdminUser: (
       state,
       action: PayloadAction<{
-        data: Ingredient | null;
+        data: User | null;
         success: boolean;
         message?: string;
       }>
@@ -73,7 +73,7 @@ export const ingredientSlice = createSlice({
       const { data, success, message } = action.payload;
 
       if (success) {
-        state.selectedIngredient = data;
+        state.selectedUser = data;
       } else {
         state.error = true;
         state.message = message || "Failed to get data. Please try again.";
@@ -114,8 +114,8 @@ export const ingredientSlice = createSlice({
       state.success = null;
       state.message = null;
     },
-    clearCurrentIngredient: (state) => {
-      state.selectedIngredient = null;
+    clearCurrentAdminUser: (state) => {
+      state.selectedUser = null;
     },
     onHanldeSearchData: (state, action: PayloadAction<{ search: string }>) => {
       const { search } = action.payload;
@@ -140,19 +140,16 @@ export const ingredientSlice = createSlice({
         limit: LIMIT,
       };
     },
-    updateCurrentIngredientData: (
+    updateCurrentAdminUsersData: (
       state,
-      action: PayloadAction<{ id: string; data: Ingredient }>
+      action: PayloadAction<{ id: string; data: User }>
     ) => {
       const { id, data } = action.payload;
-      const index = state.ingredients.findIndex((item) => item._id === id);
+      const index = state.users.findIndex((item) => item._id === id);
 
       if (index !== -1) {
-        state.ingredients[index] = data;
+        state.users[index] = data;
       }
-    },
-    unSelectIngredient: (state) => {
-      state.selectedIngredient = null;
     },
     handleSetErrors: (
       state,
@@ -166,17 +163,16 @@ export const ingredientSlice = createSlice({
 });
 
 export const {
-  fetchAnIngredient,
-  fetchAllIngredients,
+  fetchAdminUser,
+  fetchAllAdminUsers,
   beginProcess,
   beginLoading,
   handleMessage,
   clearMessage,
-  clearCurrentIngredient,
+  clearCurrentAdminUser,
   onReduxPageChange,
-  updateCurrentIngredientData,
+  updateCurrentAdminUsersData,
   onHanldeSearchData,
-  unSelectIngredient,
   handleSetErrors,
-} = ingredientSlice.actions;
-export default ingredientSlice.reducer;
+} = userSlice.actions;
+export default userSlice.reducer;

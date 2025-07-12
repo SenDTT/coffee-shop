@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Order } from "../../../types/Order";
 
-interface ProductState {
+interface AdminOrderState {
   orders: Order[];
   error: boolean | null;
   selectedOrder: Order | null;
@@ -21,7 +21,7 @@ interface ProductState {
 
 const LIMIT = 10;
 
-const initialState: ProductState = {
+const initialState: AdminOrderState = {
   orders: [],
   error: null,
   selectedOrder: null,
