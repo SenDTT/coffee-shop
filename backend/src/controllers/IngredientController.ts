@@ -91,7 +91,7 @@ export const updateIngredientController: RequestHandler<
 
     const newModel = await getIngredientById(id);
 
-    res.json({ success: true, data: newModel });
+    res.json({ success: true, data: newModel, message: "Updated Ingredient Successfully" });
   } catch (err) {
     next(err);
   }

@@ -76,7 +76,11 @@ export const updateCategoryController: RequestHandler<
 
     const newModel = await getCategoryById(id);
 
-    res.json({ success: true, data: newModel });
+    res.json({
+      success: true,
+      data: newModel,
+      message: "Updated Category Successfully",
+    });
   } catch (err) {
     next(err);
   }

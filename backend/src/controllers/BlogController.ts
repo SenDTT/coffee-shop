@@ -131,7 +131,7 @@ export const updateBlogController: RequestHandler<
         .json({ success: false, message: "Failed to update blog" });
       return;
     }
-    res.json({ success: true, data: updatedBlog });
+    res.json({ success: true, data: updatedBlog, message: "Updated Blog Successfully" });
   } catch (err) {
     next(err);
   }

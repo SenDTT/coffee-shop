@@ -18,9 +18,8 @@ export default function BlogsManagementPage() {
     const [showDeleteBtn, setShowDeleteBtn] = useState(false);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const router = useRouter();
-    const [inProccessing, setInProccessing] = useState<Boolean>(false);
     const { settings } = useAppSelector(state => state.settings);
-    const { blogs, error, success, message, params, loading, total, currentPage } = useAppSelector(state => state.adminBlogs);
+    const { blogs, error, success, message, params, loading, total, currentPage, inProccessing } = useAppSelector(state => state.adminBlogs);
     const dispatch = useAppDispatch();
 
     useEffect(() => {

@@ -7,30 +7,21 @@ import { toast, ToastContainer } from 'react-toastify';
 import AddButton from '../../../components/Admin/AddButton';
 import SearchItem from '../../../components/Admin/SearchItem';
 import Title from '../../../components/Admin/Title';
-import { GetListParams } from '../../../types/Product';
 import api from '../../../api';
 import AdminTable from '../../../components/Admin/AdminTable';
 import { confirmThemeSwal } from '../../../utils/sweetalert';
 import { useRouter } from 'next/navigation';
 import { Category } from '../../../types/Category';
-import { useSettings } from '../../../context/SettingsContext';
-
-const LIMIT = 10;
+import { useAppDispatch, useAppSelector } from '../../../store';
+import { beginLoading, beginProcess, clearMessage, fetchAllAdminCategories, handleMessage, onHanldeSearchData, onReduxPageChange, updateCurrentAdminCategoryData } from '../../../store/slices/admin/adminCategories';
 
 export default function AdminCategoriesPage() {
-    const [categories, setCategories] = useState<Category[]>([]);
     const [showDeleteBtn, setShowDeleteBtn] = useState(false);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-    const [params, setParams] = useState<GetListParams>({
-        limit: LIMIT,
-        skip: 0,
-    });
-    const [loading, setLoading] = useState(true);
-    const [total, setTotal] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
     const router = useRouter();
-    const [inProccessing, setInProccessing] = useState<Boolean>(false);
-    const { settings } = useSettings();
+    const { settings } = useAppSelector(state => state.settings);
+    const { error, success, message, categories, selectedCategory, params, loading, total, currentPage, inProccessing } = useAppSelector(state => state.adminCategories);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         if (settings?.shopName) {
@@ -39,24 +30,31 @@ export default function AdminCategoriesPage() {
     }, [settings]);
 
     useEffect(() => {
-        fetchProducts();
+        if (error && message) {
+            toast.error(message);
+            dispatch(clearMessage());
+        } else if (success && message) {
+            toast.success(message);
+            dispatch(clearMessage())
+        }
+    }, [error, success, message]);
+
+    useEffect(() => {
+        fetchAllCategories();
     }, [params]);
 
-    const fetchProducts = async () => {
-        setLoading(true);
+    const fetchAllCategories = async () => {
+        dispatch(beginLoading());
         try {
             const res = await api.get('/categories', { params });
             const dataRes = res.data;
 
             if (dataRes.success && dataRes.data) {
-                setCategories(dataRes.data.data);
-                setTotal(dataRes.data.total);
+                dispatch(fetchAllAdminCategories(dataRes));
             }
         } catch (err) {
-            toast.error("Failed");
+            dispatch(handleMessage({ success: false, message: "Failed to fetch categories. Please try again." }));
             console.log(err);
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -70,55 +68,50 @@ export default function AdminCategoriesPage() {
 
             if (dataRes.success) {
                 // Show success message
-                toast.success(dataRes.message);
+                dispatch(handleMessage(dataRes));
             } else {
-                toast.error("Items deleted Failed");
+                dispatch(handleMessage({ success: false, message: "Items deleted Failed" }));
             }
         } catch (err) {
-            toast.error("Failed");
+            dispatch(handleMessage({ success: false, message: "Items deleted Failed" }));
             console.log(err);
         } finally {
             // Reset state
-            resetParams();
+            fetchAllCategories();
         }
     };
 
     const resetDataWithoutApi = (id: string, data: Category) => {
-        const newData = categories.map((item) => {
-            if (item._id === id) {
-                return data;
-            }
-
-            return item;
-        });
-        setCategories(newData);
+        dispatch(updateCurrentAdminCategoryData({ id, data }));
     }
 
     const activeHandle = async (id: string) => {
         if (inProccessing) return;
 
-        setInProccessing(true);
+        dispatch(beginProcess());
         try {
             const response = await api.put(`/categories/${id}/active`);
             const dataRes = response.data;
 
             if (dataRes.success) {
                 // Show success message
-                toast.success(dataRes.message);
+                dispatch(handleMessage(dataRes));
             } else {
-                toast.error("Items deleted Failed");
+                dispatch(handleMessage({ success: false, message: "Failed to update category status" }));
             }
         } catch (err) {
-            toast.error("Failed");
+            dispatch(handleMessage({ success: false, message: "Failed to update category status" }));
             console.log(err);
         } finally {
             // Reset state
             const item = categories.find(item => item._id === id);
 
             if (item && item._id) {
-                resetDataWithoutApi(id, { ...item, active: item.active === 0 ? 1 : 0 });
+                resetDataWithoutApi(id, {
+                    ...item,
+                    active: (item as any).active === 0 ? 1 : 0
+                } as Category);
             }
-            setInProccessing(false);
         }
     }
 
@@ -127,12 +120,7 @@ export default function AdminCategoriesPage() {
     };
 
     const onClickSearch = (searchTerm: string) => {
-        setCurrentPage(1);
-        if (searchTerm !== "") {
-            setParams({ ...params, search: searchTerm });
-        } else {
-            setParams({ limit: LIMIT, skip: 0 });
-        }
+        dispatch(onHanldeSearchData({ search: searchTerm }));
     }
 
     const onRequestDeleteById = async (id: string) => {
@@ -142,16 +130,17 @@ export default function AdminCategoriesPage() {
 
             if (dataRes.success) {
                 // Show success message
-                toast.success(dataRes.message);
+                dispatch(handleMessage(dataRes));
             } else {
-                toast.error("Items deleted Failed");
+                dispatch(handleMessage({ success: false, message: "Failed to delete category" }));
             }
         } catch (err) {
-            toast.error("Failed");
+            dispatch(handleMessage({ success: false, message: "Failed to delete category" }));
             console.log(err);
         } finally {
             // Reset state
-            resetParams();
+            const newData = categories.filter((item) => item._id !== id);
+            dispatch(fetchAllAdminCategories({ success: true, data: { data: newData, total: total - 1 } }));
         }
     }
 
@@ -175,20 +164,7 @@ export default function AdminCategoriesPage() {
     }
 
     const onPageChange = (newPage: number) => {
-        setCurrentPage(newPage);
-        setParams({
-            skip: (newPage - 1) * LIMIT,
-            limit: LIMIT
-        });
-    }
-
-    const resetParams = () => {
-        setShowDeleteBtn(false);
-        setSelectedIds(new Set());
-        setParams({
-            skip: 0,
-            limit: LIMIT
-        });
+        dispatch(onReduxPageChange({ page: newPage }));
     }
 
     return (
@@ -225,7 +201,7 @@ export default function AdminCategoriesPage() {
                     activeHandle={activeHandle}
                     totalRecords={total}
                     currentPage={currentPage}
-                    pageSize={LIMIT}
+                    pageSize={params.limit}
                     onPageChange={onPageChange}
                     loading={loading}
                     onShowDeleteMultipleHandle={toggleShowDeleteBtn}

@@ -8,16 +8,14 @@ import AdminForm from '../../../../components/Admin/AdminForm';
 import { GetListParams, InputEvent, SelectOption } from '../../../../types/Product';
 import api from '../../../../api';
 import { useRouter } from 'next/navigation';
-import { useSettings } from '../../../../context/SettingsContext';
+import { useAppDispatch, useAppSelector } from '../../../../store';
+import { clearMessage, handleMessage, handleSetErrors } from '../../../../store/slices/admin/adminCategories';
 
 const LIMIT = 50;
 
 export default function AddCategoryPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [errors, setErrors] = useState<Record<string, string>>({});
-    const [success, setSuccess] = useState<string | null>(null);
     const initialData = {
         name: '',
         description: '',
@@ -25,7 +23,11 @@ export default function AddCategoryPage() {
         parent: '',
         active: 1,
     };
-    const { settings } = useSettings();
+    const [formData, setFormData] = useState(initialData);
+    const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
+    const { settings } = useAppSelector(state => state.settings);
+    const { error, success, message, errors } = useAppSelector(state => state.adminCategories);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         if (settings?.shopName) {
@@ -33,11 +35,22 @@ export default function AddCategoryPage() {
         }
     }, [settings]);
 
-    const [formData, setFormData] = useState(initialData);
-    const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
+    useEffect(() => {
+        if (error && message) {
+            toast.error(message);
+            dispatch(clearMessage());
+        } else if (success && message) {
+            toast.success(message);
+            dispatch(clearMessage())
+        }
+    }, [error, success, message]);
 
     useEffect(() => {
-        return () => setFormData(initialData);
+        return () => {
+            setFormData(initialData);
+            dispatch(handleSetErrors({ errors: {} }));
+            setCategoryOptions([]);
+        }
     }, []);
 
     const getListCategories = async (search: string, page: number = 0) => {
@@ -68,8 +81,8 @@ export default function AddCategoryPage() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
-        setError(null);
-        setSuccess(null);
+
+        dispatch(clearMessage());
         try {
             // Simulate API call
             let data: any = formData;
@@ -84,19 +97,16 @@ export default function AddCategoryPage() {
             const dataRes = res.data;
 
             if (dataRes.success) {
-                setSuccess('Category added successfully!');
-                toast.success('Category added successfully!');
+                dispatch(handleMessage(dataRes));
 
                 setTimeout(() => {
                     router.push('/admin/categories');
                 }, 2000);
             } else {
-                setError('Failed to add category. Please try again.');
-                toast.error('Failed to add category. Please try again.');
+                dispatch(handleMessage({ success: false, message: "Failed to add category" }));
             }
         } catch (err) {
-            setError('Failed to add category. Please try again.');
-            toast.error('Failed to add category. Please try again.');
+            dispatch(handleMessage({ success: false, message: "Failed to add category" }));
 
             if ((err as any)?.response?.data?.errors) {
                 const errors = (err as any)?.response?.data?.errors;
@@ -107,6 +117,10 @@ export default function AddCategoryPage() {
             setFormData(initialData);
         }
     };
+
+    const setErrors = (err: Record<string, string>) => {
+        dispatch(handleSetErrors({ errors: err }));
+    }
 
     return (
         <AdminLayout>
@@ -170,7 +184,7 @@ export default function AddCategoryPage() {
                         onChange: handleInputChange,
                         error: errors.description ?? ''
                     },
-                ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl={'/admin/categories'} isShowButton={true}></AdminForm>
+                ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} cancelUrl={'/admin/categories'} isShowButton={true}></AdminForm>
             </div>
         </AdminLayout>
     );

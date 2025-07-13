@@ -107,7 +107,7 @@ export const updateProductController: RequestHandler<
 
     model = await getProductById(id); // refresh
 
-    res.json({ success: true, data: model });
+    res.json({ success: true, data: model, message: "Updated Product Successfully" });
   } catch (err) {
     next(err);
   }

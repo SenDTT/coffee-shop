@@ -5,10 +5,11 @@ import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import Title from '../../../../components/Admin/Title';
 import AdminForm from '../../../../components/Admin/AdminForm';
-import { Category, CategoryParams, InputEvent, SelectOption } from '../../../../types/Product';
+import { CategoryParams, InputEvent, SelectOption } from '../../../../types/Product';
 import api from '../../../../api';
 import { useParams, useRouter } from 'next/navigation';
-import { useSettings } from '../../../../context/SettingsContext';
+import { useAppDispatch, useAppSelector } from '../../../../store';
+import { clearCurrentAdminCategory, clearMessage, fetchAdminCategory, handleMessage, handleSetErrors } from '../../../../store/slices/admin/adminCategories';
 
 const LIMIT = 50;
 
@@ -17,9 +18,6 @@ export default function EditCategoryPage() {
     const params = useParams();
     const id = params.id;
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [errors, setErrors] = useState<Record<string, string>>({});
-    const [success, setSuccess] = useState<string | null>(null);
     const initialData = {
         name: '',
         description: '',
@@ -27,25 +25,37 @@ export default function EditCategoryPage() {
         parent: '',
         active: 1,
     };
-    const [model, setModel] = useState<Category | undefined>(undefined);
-
     const [formData, setFormData] = useState(initialData);
     const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
-    const { settings } = useSettings();
+    const { settings } = useAppSelector(state => state.settings);
+    const { error, success, message, errors, selectedCategory } = useAppSelector(state => state.adminCategories);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         if (settings?.shopName) {
             document.title = settings.shopName + " - Admin | Edit Category";
         }
     }, [settings]);
-    
+
+    useEffect(() => {
+        if (error && message) {
+            toast.error(message);
+            dispatch(clearMessage());
+        } else if (success && message) {
+            toast.success(message);
+            dispatch(clearMessage())
+        }
+    }, [error, success, message]);
+
     useEffect(() => {
         if (id && typeof id === 'string') {
             getCategoryById(id)
         }
         return () => {
             setFormData(initialData);
-            setModel(undefined);
+            dispatch(clearCurrentAdminCategory());
+            dispatch(handleSetErrors({ errors: {} }));
+            setCategoryOptions([]);
         }
     }, [id]);
 
@@ -55,7 +65,7 @@ export default function EditCategoryPage() {
             const dataRes = response.data;
 
             if (dataRes.success && dataRes.data) {
-                setModel(dataRes.data);
+                dispatch(fetchAdminCategory(dataRes));
                 if (dataRes.data.parent) {
                     setCategoryOptions([{ value: dataRes.data.parent._id, label: dataRes.data.parent.name }]);
                 }
@@ -68,14 +78,17 @@ export default function EditCategoryPage() {
                 });
             }
         } catch (err) {
-            setError('Failed to get category. Please try again.');
-            toast.error('Failed to get category. Please try again.');
+            dispatch(handleMessage({ success: false, message: "Failed to fetch category. Please try again." }));
 
             if ((err as any)?.response?.data?.errors) {
                 const errors = (err as any)?.response?.data?.errors;
                 setErrors(errors);
             }
         }
+    }
+
+    const setErrors = (err: Record<string, string>) => {
+        dispatch(handleSetErrors({ errors: err }));
     }
 
     const getListCategories = async (search: string, page: number = 0) => {
@@ -106,8 +119,8 @@ export default function EditCategoryPage() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
-        setError(null);
-        setSuccess(null);
+
+        dispatch(clearMessage());
         try {
             // Simulate API call
             let data: any = formData;
@@ -122,19 +135,16 @@ export default function EditCategoryPage() {
             const dataRes = res.data;
 
             if (dataRes.success) {
-                setSuccess('Category updated successfully!');
-                toast.success('Category updated successfully!');
+                dispatch(handleMessage(dataRes));
 
                 setTimeout(() => {
                     router.push(`/admin/categories`);
                 }, 2000);
             } else {
-                setError('Failed to update category. Please try again.');
-                toast.error('Failed to update category. Please try again.');
+                dispatch(handleMessage({ success: false, message: "Failed to update category" }));
             }
         } catch (err) {
-            setError('Failed to update category. Please try again.');
-            toast.error('Failed to update category. Please try again.');
+            dispatch(handleMessage({ success: false, message: "Failed to update category" }));
 
             if ((err as any)?.response?.data?.errors) {
                 const errors = (err as any)?.response?.data?.errors;
@@ -207,7 +217,7 @@ export default function EditCategoryPage() {
                         onChange: handleInputChange,
                         error: errors.description ?? ''
                     },
-                ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl={'/admin/categories'} isShowButton={true}></AdminForm>
+                ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} cancelUrl={'/admin/categories'} isShowButton={true}></AdminForm>
             </div>
         </AdminLayout>
     );
