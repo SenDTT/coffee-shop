@@ -6,27 +6,49 @@ import api from "../../../api";
 import { IGeneralSettings, ISetting } from "../../../types/Admin";
 import AdminForm from "../../../components/Admin/AdminForm";
 import { InputEvent } from "../../../types/Product";
+import { useAppDispatch, useAppSelector } from "../../../store";
+import { clearMessage, fetchGeneralSetting, handleMessage, handleSetErrors } from "../../../store/slices/setting";
 
 export default function GeneralSettings() {
-    const [errors, setErrors] = useState<Record<string, string>>({});
-    const [success, setSuccess] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [data, setData] = useState();
     const initial: IGeneralSettings = {
-        shopName: "Cloud Brew",
-        shopDescription: "Coffee and Blog",
-        shopEmail: "coffee.contact@gmail.com",
-        shopPhone: "+1 (123) 234-xxxx",
-        shopAddress: "Irving, Texas"
+        shopName: "",
+        shopDescription: "",
+        shopEmail: "",
+        shopPhone: "",
+        shopAddress: ""
     }
     const [formData, setFormData] = useState<IGeneralSettings>(initial);
+    const { settings, error, success, message, errors } = useAppSelector(state => state.settings);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         // fetch data - general
         fetchData();
-
     }, []);
+
+    useEffect(() => {
+        if (settings) {
+            setFormData(settings);
+        }
+        if (settings?.shopName) {
+            document.title = settings.shopName + " - Admin | General Settings";
+        }
+    }, [settings]);
+
+    useEffect(() => {
+        if (error && message) {
+            toast.error(message);
+            dispatch(clearMessage());
+        } else if (success && message) {
+            toast.success(message);
+            dispatch(clearMessage())
+        }
+    }, [error, success, message]);
+
+    const setErrors = (err: Record<string, string>) => {
+        dispatch(handleSetErrors({ errors: err }));
+    }
 
     const fetchData = async () => {
         try {
@@ -34,7 +56,6 @@ export default function GeneralSettings() {
             const res = response.data;
 
             if (res.success && res.data && Array.isArray(res.data)) {
-                setData(res.data);
                 const settingsArray: ISetting[] = res.data;
 
                 const settingsRecord: Record<string, string> = settingsArray.reduce((acc, setting) => {
@@ -42,13 +63,14 @@ export default function GeneralSettings() {
                     return acc;
                 }, {} as Record<string, string>);
 
-                setFormData({
-                    shopName: settingsRecord.shopName || initial.shopName,
-                    shopDescription: settingsRecord.shopDescription || initial.shopDescription,
-                    shopEmail: settingsRecord.shopEmail || initial.shopEmail,
-                    shopPhone: settingsRecord.shopPhone || initial.shopPhone,
-                    shopAddress: settingsRecord.shopAddress || initial.shopAddress,
-                });
+                const generalSettings: IGeneralSettings = {
+                    shopName: settingsRecord.shopName ?? initial.shopName,
+                    shopDescription: settingsRecord.shopDescription ?? initial.shopDescription,
+                    shopEmail: settingsRecord.shopEmail ?? initial.shopEmail,
+                    shopPhone: settingsRecord.shopPhone ?? initial.shopPhone,
+                    shopAddress: settingsRecord.shopAddress ?? initial.shopAddress,
+                };
+                dispatch(fetchGeneralSetting({ data: generalSettings, success: true }));
             }
 
         } catch (err) {
@@ -69,8 +91,8 @@ export default function GeneralSettings() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
-        setError(null);
-        setSuccess(null);
+
+        dispatch(clearMessage());
         try {
             // Simulate API call
             const res = await api.put("/admin/settings", { group: 'general', data: formData });
@@ -78,15 +100,12 @@ export default function GeneralSettings() {
             const dataRes = res.data;
 
             if (dataRes.success) {
-                setSuccess('Updated successfully!');
-                toast.success('Updated successfully!');
+                dispatch(handleMessage({ success: true, message: "Settings updated successfully." }));
             } else {
-                setError('Failed to update settings. Please try again.');
-                toast.error('Failed to update settings. Please try again.');
+                dispatch(handleMessage({ success: false, message: 'Failed to update settings. Please try again.' }));
             }
         } catch (err) {
-            setError('Failed to update settings. Please try again.');
-            toast.error('Failed to update settings. Please try again.');
+            dispatch(handleMessage({ success: false, message: 'Failed to update settings. Please try again.' }));
 
             if ((err as any)?.response?.data?.errors) {
                 const errors = (err as any)?.response?.data?.errors;
@@ -94,6 +113,7 @@ export default function GeneralSettings() {
             }
         } finally {
             setLoading(false);
+            fetchData();
         }
     };
 
@@ -152,7 +172,7 @@ export default function GeneralSettings() {
                     onChange: handleInputChange,
                     error: errors.shopDescription ?? ''
                 },
-            ]} className="sm:-mx-2" setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl={'/admin/settings'} isShowButton={true}></AdminForm>
+            ]} className="sm:-mx-2" setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} cancelUrl={'/admin/settings'} isShowButton={true}></AdminForm>
         </div>
     );
 }

@@ -6,7 +6,7 @@ import GeneralSettings from './GeneralSettings';
 import HomepageSettings from './HomepageSettings';
 import AdminLayout from '../../../components/Layouts/AdminLayout';
 import Title from '../../../components/Admin/Title';
-import { useSettings } from '../../../context/SettingsContext';
+import { useAppSelector } from '@/store';
 // import ThemeAppearance from '@/components/admin/settings/ThemeAppearance';
 // import DeliveryPickupSettings from '@/components/admin/settings/DeliveryPickupSettings';
 // import PaymentSettings from '@/components/admin/settings/PaymentSettings';
@@ -31,7 +31,7 @@ const tabs = [
 
 export default function SettingsPage() {
     const [activeTab, setActiveTab] = useState('general');
-    const { settings } = useSettings();
+    const { settings } = useAppSelector(state => state.settings);
 
     useEffect(() => {
         if (settings?.shopName) {

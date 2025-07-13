@@ -6,26 +6,44 @@ import api from "../../../api";
 import { IHompageSettings, ISetting } from "../../../types/Admin";
 import AdminForm from "../../../components/Admin/AdminForm";
 import { InputEvent } from "../../../types/Product";
+import { useAppDispatch, useAppSelector } from "../../../store";
+import { clearMessage, fetchCurrentSetting, handleMessage, handleSetErrors } from "../../../store/slices/setting";
 
 const groupName: string = 'homepage';
 
 export default function HomepageSettings() {
-    const [errors, setErrors] = useState<Record<string, string>>({});
-    const [success, setSuccess] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [data, setData] = useState();
     const initial: IHompageSettings = {
         bannerText: '',
         heroImage: '',
     }
     const [formData, setFormData] = useState<IHompageSettings>(initial);
+    const { currentSettingData, error, success, message, errors } = useAppSelector(state => state.settings);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         // fetch data - homepage
         fetchData();
-
     }, []);
+
+    useEffect(() => {
+        if (currentSettingData) {
+            setFormData({
+                bannerText: currentSettingData.bannerText ?? '',
+                heroImage: currentSettingData.heroImage ?? '',
+            });
+        }
+    }, [currentSettingData]);
+
+    useEffect(() => {
+        if (error && message) {
+            toast.error(message);
+            dispatch(clearMessage());
+        } else if (success && message) {
+            toast.success(message);
+            dispatch(clearMessage())
+        }
+    }, [error, success, message]);
 
     const fetchData = async () => {
         try {
@@ -33,7 +51,6 @@ export default function HomepageSettings() {
             const res = response.data;
 
             if (res.success && res.data && Array.isArray(res.data)) {
-                setData(res.data);
                 const settingsArray: ISetting[] = res.data;
 
                 const settingsRecord: Record<string, string> = settingsArray.reduce((acc, setting) => {
@@ -41,14 +58,11 @@ export default function HomepageSettings() {
                     return acc;
                 }, {} as Record<string, string>);
 
-                setFormData({
-                    bannerText: settingsRecord.bannerText ?? '',
-                    heroImage: settingsRecord.bannerText ?? '',
-                });
+                dispatch(fetchCurrentSetting({ data: settingsRecord, success: true }));
             }
 
         } catch (err) {
-            toast.error("Fetch General Settings failed.");
+            dispatch(handleMessage({ success: false, message: "Failed to fetch homepage settings. Please try again." }));
             console.log(err);
         }
     }
@@ -65,8 +79,8 @@ export default function HomepageSettings() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
-        setError(null);
-        setSuccess(null);
+
+        dispatch(clearMessage());
         try {
             // Simulate API call
             const formPayload = new FormData();
@@ -82,15 +96,12 @@ export default function HomepageSettings() {
             const dataRes = res.data;
 
             if (dataRes.success) {
-                setSuccess('Updated successfully!');
-                toast.success('Updated successfully!');
+                dispatch(handleMessage({ success: true, message: "Homepage settings updated successfully." }));
             } else {
-                setError('Failed to update settings. Please try again.');
-                toast.error('Failed to update settings. Please try again.');
+                dispatch(handleMessage({ success: false, message: 'Failed to update homepage settings. Please try again.' }));
             }
         } catch (err) {
-            setError('Failed to update settings. Please try again.');
-            toast.error('Failed to update settings. Please try again.');
+            dispatch(handleMessage({ success: false, message: 'Failed to update homepage settings. Please try again.' }));
 
             if ((err as any)?.response?.data?.errors) {
                 const errors = (err as any)?.response?.data?.errors;
@@ -98,8 +109,13 @@ export default function HomepageSettings() {
             }
         } finally {
             setLoading(false);
+            fetchData();
         }
     };
+
+    const setErrors = (err: Record<string, string>) => {
+        dispatch(handleSetErrors({ errors: err }));
+    }
 
     return (
         <div className="gap-4 justify-end items-end">
@@ -129,7 +145,7 @@ export default function HomepageSettings() {
                     error: errors.heroImage ?? '',
                     isBannerImage: true,
                 },
-            ]} className="sm:-mx-2" setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} error={error ?? undefined} success={success ?? undefined} cancelUrl={'/admin/settings'} isShowButton={true}></AdminForm>
+            ]} className="sm:-mx-2" setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} cancelUrl={'/admin/settings'} isShowButton={true}></AdminForm>
         </div>
     );
 }
