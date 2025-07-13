@@ -6,7 +6,9 @@
     "dev": "ts-node src/server.ts",
     "seed:settings": "ts-node src/scripts/seedSettings.ts",
     "seed:account": "ts-node src/scripts/seedAdminAccount.ts",
-    "seed:app": "ts-node src/scripts/seeds.ts"
+    "seed:app": "ts-node src/scripts/seeds.ts",
+    "seed:blogs": "ts-node src/scripts/seedBlog.ts",
+    "seed:orders": "ts-node src/scripts/seedOrders.ts"
   },
   "keywords": [],
   "author": "",
