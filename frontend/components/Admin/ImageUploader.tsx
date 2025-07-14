@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { IoMdRemove } from "react-icons/io";
 import { FaPlus } from "react-icons/fa";
-import { AdminFormFieldWithValue } from "@/types/Product";
+import { AdminFormFieldWithValue } from "../../types/Product";
 
 export default function ImageUploader(props: AdminFormFieldWithValue) {
     const [files, setFiles] = useState<File[]>([]);
@@ -78,6 +78,8 @@ export default function ImageUploader(props: AdminFormFieldWithValue) {
                         <img
                             src={process.env.NEXT_PUBLIC_DOMAIN + path}
                             alt={`Preview ${index}`}
+                            width={props.isBannerImage ? "100%" : "48px"}
+                            height={props.isBannerImage ? "100%" : "48px"}
                             className={`${props.isBannerImage ? 'w-full' : 'w-12 sm:w-28'} h-12 sm:h-28 object-cover border rounded`}
                         />
                         <button
@@ -94,6 +96,8 @@ export default function ImageUploader(props: AdminFormFieldWithValue) {
                     <div key={index} className="relative group">
                         <img
                             src={src}
+                            width={props.isBannerImage ? "100%" : "48px"}
+                            height={props.isBannerImage ? "100%" : "48px"}
                             alt={`Preview ${index}`}
                             className={`${props.isBannerImage ? 'w-full' : 'w-12 sm:w-28'} h-12 sm:h-28 object-cover border rounded`}
                         />

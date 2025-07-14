@@ -1,21 +1,39 @@
 'use client';
 
-import AdminLayout from '../../../components/Layouts/AdminLayout';
-import DeleteButton from '../../../components/Admin/DeleteButton';
+import React from 'react';
 import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
-import AddButton from '../../../components/Admin/AddButton';
-import SearchItem from '../../../components/Admin/SearchItem';
-import Title from '../../../components/Admin/Title';
 import { Product } from '../../../types/Product';
 import api from '../../../api';
-import AdminTable from '../../../components/Admin/AdminTable';
 import { confirmThemeSwal } from '../../../utils/sweetalert';
-import Sidebar from '../../../components/Admin/SideBar';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FaPen, FaTrash } from 'react-icons/fa';
 import { useAppDispatch, useAppSelector } from '../../../store';
 import { beginLoading, beginProcess, clearMessage, fetchAllProducts, fetchAProduct, handleMessage, onHanldeSearchData, onReduxPageChange, unSelectProduct, updateCurrentProductData } from '../../../store/slices/admin/adminMenu';
+
+// Lazy load the components
+import dynamic from 'next/dynamic';
+const Sidebar = dynamic(() => import('../../../components/Admin/SideBar'), {
+    ssr: false,
+});
+const Title = dynamic(() => import('../../../components/Admin/Title'), {
+    ssr: false,
+});
+const AddButton = dynamic(() => import('../../../components/Admin/AddButton'), {
+    ssr: false,
+});
+const SearchItem = dynamic(() => import('../../../components/Admin/SearchItem'), {
+    ssr: false,
+});
+const DeleteButton = dynamic(() => import('../../../components/Admin/DeleteButton'), {
+    ssr: false,
+});
+const AdminTable = dynamic(() => import('../../../components/Admin/AdminTable'), {
+    ssr: false,
+});
+const AdminLayout = dynamic(() => import('../../../components/Layouts/AdminLayout'), {
+    ssr: false,
+});
 
 export default function MenuPage() {
     const [showDeleteBtn, setShowDeleteBtn] = useState(false);

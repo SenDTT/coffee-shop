@@ -6,7 +6,7 @@ import Link from 'next/link';
 import AuthNav from '../AuthNav';
 import { FaBars } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
-import { useAppSelector } from '@/store';
+import { useAppSelector } from '../../store';
 
 export default function Navbar() {
     const { user } = useAppSelector(state => state.auth);

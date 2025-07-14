@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { AdminFormFieldWithValue } from "@/types/Product";
-import { selectOptionStyles } from "@/utils/reactSelect";
+import { AdminFormFieldWithValue } from "../../types/Product";
+import { selectOptionStyles } from "../../utils/reactSelect";
 import ReactSelect from "react-select";
 import { AsyncPaginate } from "react-select-async-paginate";
 

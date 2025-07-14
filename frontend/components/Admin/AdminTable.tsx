@@ -3,7 +3,10 @@ import React, { useEffect } from "react";
 import { getNestedValue } from "../../utils/stringUtil";
 import { FaEye, FaPen, FaTrash } from "react-icons/fa";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import Pagination from "./Pagination";
+
+// lazy load the components
+import dynamic from "next/dynamic";
+const Pagination = dynamic(() => import("./Pagination"), { ssr: false });
 
 const AdminTable = <T extends { _id: string }>({
     columns,

@@ -1,7 +1,7 @@
 'use client'
 
-import api from "@/api";
-import { Product } from "@/types/Product";
+import api from "../../api";
+import { Product } from "../../types/Product";
 import { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 import Slider, { Settings } from "react-slick";

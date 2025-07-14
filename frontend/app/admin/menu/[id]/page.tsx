@@ -1,15 +1,24 @@
 'use client';
 
-import AdminLayout from '../../../../components/Layouts/AdminLayout';
 import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
-import Title from '../../../../components/Admin/Title';
-import AdminForm from '../../../../components/Admin/AdminForm';
 import { CategoryParams, InputEvent, SelectOption } from '../../../../types/Product';
 import api from '../../../../api';
 import { useParams, useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '../../../../store';
 import { clearCurrentProduct, clearMessage, fetchAProduct, handleMessage, handleSetErrors } from '../../../../store/slices/admin/adminMenu';
+
+// lazy load the components
+import dynamic from 'next/dynamic';
+const AdminForm = dynamic(() => import('../../../../components/Admin/AdminForm'), {
+    ssr: false,
+});
+const Title = dynamic(() => import('../../../../components/Admin/Title'), {
+    ssr: false,
+});
+const AdminLayout = dynamic(() => import('../../../../components/Layouts/AdminLayout'), {
+    ssr: false,
+});
 
 const LIMIT = 50;
 
@@ -19,7 +28,19 @@ export default function EditProductPage() {
     const id = params.id;
     const [loading, setLoading] = useState(false);
     const [skuPrefix, setSkuPrefix] = useState("");
-    const initialData = {
+    type FormDataType = {
+        name: string;
+        sku: string;
+        material: string;
+        price: string;
+        description: string;
+        category: string;
+        stock: string;
+        images: (File | string)[];
+        active: number;
+    };
+
+    const initialData: FormDataType = {
         name: '',
         sku: '',
         material: '',
@@ -31,7 +52,7 @@ export default function EditProductPage() {
         active: 1,
     };
     const [deletedImages, setDeletedImages] = useState<string[]>([]);
-    const [formData, setFormData] = useState(initialData);
+    const [formData, setFormData] = useState<FormDataType>(initialData);
     const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
     const { settings } = useAppSelector(state => state.settings);
     const { error, success, message, selectedProduct, errors } = useAppSelector(state => state.adminProducts);
@@ -113,15 +134,19 @@ export default function EditProductPage() {
     }
 
     const handleInputChange = (e: InputEvent) => {
-        const { name, value } = e.target;
+        const { name, value, files } = e.target as HTMLInputElement;
 
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: name === 'images'
-                ? Array.isArray(value)
-                    ? value
-                    : []
-                : value,
+        if (name === 'images' && files) {
+            setFormData((prev) => ({
+                ...prev,
+                images: Array.from(files), // cast FileList to File[]
+            }));
+            return;
+        }
+
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
         }));
     };
 
@@ -159,8 +184,10 @@ export default function EditProductPage() {
                 deletedImages.forEach(path => formPayload.append("deletedImages", path));
             }
 
-            formData.images.forEach((file: File) => {
-                formPayload.append("images", file);
+            formData.images.forEach((img) => {
+                if (img instanceof File) {
+                    formPayload.append("images", img);
+                }
             });
 
             const res = await api.put(`/products/${id}`, formPayload);
@@ -177,11 +204,13 @@ export default function EditProductPage() {
                 dispatch(handleMessage({ success: false, message: 'Failed to update product. Please try again.' }))
             }
         } catch (err) {
-            dispatch(handleMessage({ success: false, message: 'Failed to update product. Please try again.' }))
+            const backendErrors = err?.response?.data?.errors;
 
-            if ((err as any)?.response?.data?.errors) {
-                const errors = (err as any)?.response?.data?.errors;
-                setErrors(errors);
+            if (backendErrors && typeof backendErrors === 'object') {
+                setErrors(backendErrors);
+            } else {
+                console.error("Unexpected error:", err);
+                dispatch(handleMessage({ success: false, message: 'Unexpected error. Please try again.' }));
             }
         } finally {
             setLoading(false);
@@ -233,7 +262,7 @@ export default function EditProductPage() {
                         value: formData.price,
                         onChange: handleInputChange,
                         error: errors.price ?? '',
-                        validate: (value) => Number.isNaN(Number(value)) ? 'Price must be a number' : ''
+                        validate: (value) => value === '' || Number.isNaN(Number(value)) ? 'Price must be a number' : ''
                     },
                     {
                         name: 'category',
@@ -245,7 +274,7 @@ export default function EditProductPage() {
                         onChange: handleInputChange,
                         fetchOptionsAPI: getListCategories,
                         onSelect: selectCategoryCallBack,
-                        error: errors.category ?? errors.categoryId ?? ''
+                        error: errors.category ?? errors.categoryId ?? '',
                     },
                     {
                         name: 'stock',
@@ -257,7 +286,7 @@ export default function EditProductPage() {
                         value: formData.stock,
                         onChange: handleInputChange,
                         error: errors.stock ?? '',
-                        validate: (value) => Number.isNaN(Number(value)) ? 'Stock must be a number' : ''
+                        validate: (value) => value === '' || Number.isNaN(Number(value)) ? 'Stock must be a number' : ''
                     },
                     {
                         name: 'active',

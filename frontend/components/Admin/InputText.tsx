@@ -1,4 +1,4 @@
-import { AdminFormFieldWithValue } from "@/types/Product";
+import { AdminFormFieldWithValue } from "../../types/Product";
 
 export default function InputText(props: AdminFormFieldWithValue) {
     return (

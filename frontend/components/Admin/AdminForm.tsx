@@ -1,14 +1,15 @@
 'use client';
 import React from "react";
 
-import { AdminFormProps } from "@/types/Product";
+import { AdminFormProps } from "../../types/Product";
 import Link from "next/link";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import ImageUploader from "./ImageUploader";
-import InputText from "./InputText";
 import dynamic from "next/dynamic";
 import { FaSpinner } from "react-icons/fa";
 
+// lazy load the components
+const InputText = dynamic(() => import('./InputText'), { ssr: false, loading: () => <p><FaSpinner className='size-4 animate-spin' /></p>, });
+const ImageUploader = dynamic(() => import('./ImageUploader'), { ssr: false, loading: () => <p><FaSpinner className='size-4 animate-spin' /></p>, });
 const BlogEditor = dynamic(() => import('./BlogEditor'), { ssr: false, loading: () => <p><FaSpinner className='size-4 animate-spin' /></p>, });
 const CustomReactSelect = dynamic(() => import('./ReactSelect'), { ssr: false });
 

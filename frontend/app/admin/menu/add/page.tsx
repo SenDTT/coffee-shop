@@ -1,15 +1,24 @@
 'use client';
 
-import AdminLayout from '../../../../components/Layouts/AdminLayout';
 import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
-import Title from '../../../../components/Admin/Title';
-import AdminForm from '../../../../components/Admin/AdminForm';
 import { CategoryParams, InputEvent, SelectOption } from '../../../../types/Product';
 import api from '../../../../api';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '../../../../store';
 import { clearMessage, handleMessage, handleSetErrors } from '../../../../store/slices/admin/adminMenu';
+
+// lazy load the components
+import dynamic from 'next/dynamic';
+const AdminForm = dynamic(() => import('../../../../components/Admin/AdminForm'), {
+    ssr: false,
+});
+const Title = dynamic(() => import('../../../../components/Admin/Title'), {
+    ssr: false,
+});
+const AdminLayout = dynamic(() => import('../../../../components/Layouts/AdminLayout'), {
+    ssr: false,
+});
 
 const LIMIT = 50;
 
@@ -56,7 +65,7 @@ export default function AddProductPage() {
             setFormData(initialData);
             dispatch(handleSetErrors({ errors: {} }));
         }
-    }, [dispatch]);
+    }, []);
 
     const getListCategories = async (search: string, page: number = 0) => {
         let params: CategoryParams = { limit: LIMIT, skip: page * LIMIT, type: 'product' };
@@ -126,8 +135,8 @@ export default function AddProductPage() {
             const dataRes = res.data;
 
             if (dataRes.success) {
+                setFormData(initialData);
                 dispatch(handleMessage({ success: true, message: 'Product added successfully!' }))
-
                 setTimeout(() => {
                     router.push('/admin/menu');
                 }, 2000);
@@ -137,9 +146,9 @@ export default function AddProductPage() {
         } catch (err) {
             dispatch(handleMessage({ success: false, message: 'Failed to add product. Please try again.' }))
 
-            if ((err as any)?.response?.data?.errors) {
-                const errors = (err as any)?.response?.data?.errors;
-                setErrors(errors);
+            const backendErrors = (err as any)?.response?.data?.errors;
+            if (backendErrors && typeof backendErrors === 'object') {
+                setErrors(backendErrors);
             }
         } finally {
             setLoading(false);
@@ -191,7 +200,7 @@ export default function AddProductPage() {
                         value: formData.price,
                         onChange: handleInputChange,
                         error: errors.price ?? '',
-                        validate: (value) => Number.isNaN(Number(value)) ? 'Price must be a number' : ''
+                        validate: (value) => value === '' || Number.isNaN(Number(value)) ? 'Price must be a number' : ''
                     },
                     {
                         name: 'category',
@@ -203,7 +212,7 @@ export default function AddProductPage() {
                         onChange: handleInputChange,
                         fetchOptionsAPI: getListCategories,
                         onSelect: selectCategoryCallBack,
-                        error: errors.category ?? errors.categoryId ?? ''
+                        error: errors.category ?? errors.categoryId ?? '',
                     },
                     {
                         name: 'stock',
@@ -215,7 +224,7 @@ export default function AddProductPage() {
                         value: formData.stock,
                         onChange: handleInputChange,
                         error: errors.stock ?? '',
-                        validate: (value) => Number.isNaN(Number(value)) ? 'Stock must be a number' : ''
+                        validate: (value) => value === '' || Number.isNaN(Number(value)) ? 'Stock must be a number' : ''
                     },
                     {
                         name: 'active',
