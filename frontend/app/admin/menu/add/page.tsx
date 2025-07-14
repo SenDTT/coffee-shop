@@ -10,15 +10,9 @@ import { clearMessage, handleMessage, handleSetErrors } from '../../../../store/
 
 // lazy load the components
 import dynamic from 'next/dynamic';
-const AdminForm = dynamic(() => import('../../../../components/Admin/AdminForm'), {
-    ssr: false,
-});
-const Title = dynamic(() => import('../../../../components/Admin/Title'), {
-    ssr: false,
-});
-const AdminLayout = dynamic(() => import('../../../../components/Layouts/AdminLayout'), {
-    ssr: false,
-});
+const AdminForm = dynamic(() => import('../../../../components/Admin/AdminForm'), { ssr: false });
+const Title = dynamic(() => import('../../../../components/Admin/Title'), { ssr: true });
+const AdminLayout = dynamic(() => import('../../../../components/Layouts/AdminLayout'), { ssr: false });
 
 const LIMIT = 50;
 
@@ -63,7 +57,7 @@ export default function AddProductPage() {
     useEffect(() => {
         return () => {
             setFormData(initialData);
-            dispatch(handleSetErrors({ errors: {} }));
+            setErrors({});
         }
     }, []);
 

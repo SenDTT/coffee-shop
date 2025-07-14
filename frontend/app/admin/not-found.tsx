@@ -3,11 +3,11 @@
 import Link from 'next/link';
 import { TbAlertTriangle } from 'react-icons/tb';
 import AdminLayout from '../../components/Layouts/AdminLayout';
-import { useSettings } from '../../context/SettingsContext';
 import { useEffect } from 'react';
+import { useAppSelector } from '../../store';
 
 export default function Admin404() {
-    const { settings } = useSettings();
+    const { settings } = useAppSelector(state => state.settings);
 
     useEffect(() => {
         if (settings?.shopName) {

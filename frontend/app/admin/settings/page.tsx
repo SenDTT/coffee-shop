@@ -2,10 +2,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import GeneralSettings from './GeneralSettings';
-import HomepageSettings from './HomepageSettings';
-import AdminLayout from '../../../components/Layouts/AdminLayout';
-import Title from '../../../components/Admin/Title';
 import { useAppSelector } from '../../../store';
 // import ThemeAppearance from '@/components/admin/settings/ThemeAppearance';
 // import DeliveryPickupSettings from '@/components/admin/settings/DeliveryPickupSettings';
@@ -15,6 +11,13 @@ import { useAppSelector } from '../../../store';
 // import SecurityAccessSettings from '@/components/admin/settings/SecurityAccessSettings';
 // import SeoSocialMediaSettings from '@/components/admin/settings/SeoSocialMediaSettings';
 // import CustomPagesSettings from '@/components/admin/settings/CustomPagesSettings';
+
+// lazy load components
+import dynamic from 'next/dynamic';
+const GeneralSettings = dynamic(() => import('./GeneralSettings'), { ssr: false });
+const HomepageSettings = dynamic(() => import('./HomepageSettings'), { ssr: false });
+const AdminLayout = dynamic(() => import('../../../components/Layouts/AdminLayout'), { ssr: false });
+const Title = dynamic(() => import('../../../components/Admin/Title'), { ssr: true });
 
 const tabs = [
     { id: 'general', label: 'General' },

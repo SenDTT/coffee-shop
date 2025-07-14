@@ -13,27 +13,13 @@ import { beginLoading, beginProcess, clearMessage, fetchAllProducts, fetchAProdu
 
 // Lazy load the components
 import dynamic from 'next/dynamic';
-const Sidebar = dynamic(() => import('../../../components/Admin/SideBar'), {
-    ssr: false,
-});
-const Title = dynamic(() => import('../../../components/Admin/Title'), {
-    ssr: false,
-});
-const AddButton = dynamic(() => import('../../../components/Admin/AddButton'), {
-    ssr: false,
-});
-const SearchItem = dynamic(() => import('../../../components/Admin/SearchItem'), {
-    ssr: false,
-});
-const DeleteButton = dynamic(() => import('../../../components/Admin/DeleteButton'), {
-    ssr: false,
-});
-const AdminTable = dynamic(() => import('../../../components/Admin/AdminTable'), {
-    ssr: false,
-});
-const AdminLayout = dynamic(() => import('../../../components/Layouts/AdminLayout'), {
-    ssr: false,
-});
+const Sidebar = dynamic(() => import('../../../components/Admin/SideBar'), { ssr: true });
+const Title = dynamic(() => import('../../../components/Admin/Title'), { ssr: true });
+const AddButton = dynamic(() => import('../../../components/Admin/AddButton'), { ssr: true });
+const SearchItem = dynamic(() => import('../../../components/Admin/SearchItem'), { ssr: false });
+const DeleteButton = dynamic(() => import('../../../components/Admin/DeleteButton'), { ssr: true });
+const AdminTable = dynamic(() => import('../../../components/Admin/AdminTable'), { ssr: false });
+const AdminLayout = dynamic(() => import('../../../components/Layouts/AdminLayout'), { ssr: false });
 
 export default function MenuPage() {
     const [showDeleteBtn, setShowDeleteBtn] = useState(false);
@@ -62,13 +48,13 @@ export default function MenuPage() {
     }, [error, success, message]);
 
     useEffect(() => {
-        const id = searchParams.get('id') ?? null;
-        const view = searchParams.get('view') ?? null;
+        const id = searchParams.get('id');
+        const view = searchParams.get('view');
 
-        if (id && view === 'true') {
-            getProductById(id);
+        if (!(id && view === 'true')) {
+            fetchProducts();
         }
-    }, [searchParams]);
+    }, [params, searchParams]);
 
     useEffect(() => {
         fetchProducts();
@@ -273,7 +259,7 @@ export default function MenuPage() {
                 onClose={closeSideBar}
                 className="w-1/3"
             >
-                {selectedProduct ? (
+                {isSidebarOpen && selectedProduct ? (
                     <div className="flex flex-col gap-4 p-4">
                         {/* Product Images */}
                         {selectedProduct.images.length > 0 && (

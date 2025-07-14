@@ -10,15 +10,9 @@ import { clearCurrentProduct, clearMessage, fetchAProduct, handleMessage, handle
 
 // lazy load the components
 import dynamic from 'next/dynamic';
-const AdminForm = dynamic(() => import('../../../../components/Admin/AdminForm'), {
-    ssr: false,
-});
-const Title = dynamic(() => import('../../../../components/Admin/Title'), {
-    ssr: false,
-});
-const AdminLayout = dynamic(() => import('../../../../components/Layouts/AdminLayout'), {
-    ssr: false,
-});
+const AdminForm = dynamic(() => import('../../../../components/Admin/AdminForm'), { ssr: false });
+const Title = dynamic(() => import('../../../../components/Admin/Title'), { ssr: true });
+const AdminLayout = dynamic(() => import('../../../../components/Layouts/AdminLayout'), { ssr: false });
 
 const LIMIT = 50;
 
@@ -203,7 +197,7 @@ export default function EditProductPage() {
             } else {
                 dispatch(handleMessage({ success: false, message: 'Failed to update product. Please try again.' }))
             }
-        } catch (err) {
+        } catch (err: any) {
             const backendErrors = err?.response?.data?.errors;
 
             if (backendErrors && typeof backendErrors === 'object') {

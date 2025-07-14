@@ -1,21 +1,24 @@
 'use client';
 
-import AdminLayout from '../../../components/Layouts/AdminLayout';
-import DeleteButton from '../../../components/Admin/DeleteButton';
 import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
-import AddButton from '../../../components/Admin/AddButton';
-import SearchItem from '../../../components/Admin/SearchItem';
-import Title from '../../../components/Admin/Title';
 import api from '../../../api';
-import AdminTable from '../../../components/Admin/AdminTable';
 import { confirmThemeSwal } from '../../../utils/sweetalert';
-import Sidebar from '../../../components/Admin/SideBar';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FaPen, FaTrash } from 'react-icons/fa';
 import { Ingredient } from '../../../types/Ingredient';
 import { useAppDispatch, useAppSelector } from '../../../store';
 import { beginLoading, beginProcess, clearMessage, fetchAllIngredients, fetchAnIngredient, handleMessage, onHanldeSearchData, onReduxPageChange, unSelectIngredient, updateCurrentIngredientData } from '../../../store/slices/admin/adminIngredients';
+
+// lazy load the components
+import dynamic from 'next/dynamic';
+const DeleteButton = dynamic(() => import('../../../components/Admin/DeleteButton'), { ssr: true });
+const AddButton = dynamic(() => import('../../../components/Admin/AddButton'), { ssr: true });
+const AdminLayout = dynamic(() => import('../../../components/Layouts/AdminLayout'), { ssr: false });
+const SearchItem = dynamic(() => import('../../../components/Admin/SearchItem'), { ssr: false });
+const Title = dynamic(() => import('../../../components/Admin/Title'), { ssr: true });
+const AdminTable = dynamic(() => import('../../../components/Admin/AdminTable'), { ssr: false });
+const Sidebar = dynamic(() => import('../../../components/Admin/SideBar'), { ssr: false });
 
 export default function AdminIngredientsPage() {
     const [showDeleteBtn, setShowDeleteBtn] = useState(false);

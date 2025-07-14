@@ -1,16 +1,19 @@
 'use client';
 
-import AdminLayout from '../../../components/Layouts/AdminLayout';
 import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
-import SearchItem from '../../../components/Admin/SearchItem';
-import Title from '../../../components/Admin/Title';
 import api from '../../../api';
-import AdminTable from '../../../components/Admin/AdminTable';
-import Sidebar from '../../../components/Admin/SideBar';
 import { useSearchParams } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '../../../store';
 import { beginLoading, clearMessage, fetchAdminOrder, fetchAllAdminOrders, handleMessage, onHanldeSearchData, onReduxPageChange, unSelectAdminOrder } from '../../../store/slices/admin/adminOrders';
+
+// lazy load components
+import dynamic from 'next/dynamic';
+const Sidebar = dynamic(() => import('../../../components/Admin/SideBar'), { ssr: true });
+const AdminTable = dynamic(() => import('../../../components/Admin/AdminTable'), { ssr: false });
+const SearchItem = dynamic(() => import('../../../components/Admin/SearchItem'), { ssr: false });
+const Title = dynamic(() => import('../../../components/Admin/Title'), { ssr: true });
+const AdminLayout = dynamic(() => import('../../../components/Layouts/AdminLayout'), { ssr: false });
 
 export default function OrdersPage() {
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());

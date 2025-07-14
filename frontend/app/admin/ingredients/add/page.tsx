@@ -1,15 +1,18 @@
 'use client';
 
-import AdminLayout from '../../../../components/Layouts/AdminLayout';
 import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
-import Title from '../../../../components/Admin/Title';
-import AdminForm from '../../../../components/Admin/AdminForm';
 import { CategoryParams, InputEvent, SelectOption } from '../../../../types/Product';
 import api from '../../../../api';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '../../../../store';
 import { clearMessage, handleSetErrors, handleMessage } from '../../../../store/slices/admin/adminIngredients';
+
+// lazy load components
+import dynamic from 'next/dynamic';
+const AdminLayout = dynamic(() => import('../../../../components/Layouts/AdminLayout'), { ssr: false });
+const Title = dynamic(() => import('../../../../components/Admin/Title'), { ssr: true });
+const AdminForm = dynamic(() => import('../../../../components/Admin/AdminForm'), { ssr: false });
 
 const LIMIT = 50;
 

@@ -1,18 +1,21 @@
 'use client';
 
-import AdminLayout from '../../../components/Layouts/AdminLayout';
 import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
-import AddButton from '../../../components/Admin/AddButton';
-import SearchItem from '../../../components/Admin/SearchItem';
-import Title from '../../../components/Admin/Title';
 import api from '../../../api';
-import AdminTable from '../../../components/Admin/AdminTable';
 import Sidebar from '../../../components/Admin/SideBar';
 import { useSearchParams } from 'next/navigation';
 import { User } from '../../../types/User';
 import { useAppDispatch, useAppSelector } from '../../../store';
 import { beginLoading, beginProcess, clearCurrentAdminUser, clearMessage, fetchAdminUser, fetchAllAdminUsers, handleMessage, onHanldeSearchData, onReduxPageChange, updateCurrentAdminUsersData } from '../../../store/slices/admin/adminUsers';
+
+// lazy load components
+import dynamic from 'next/dynamic';
+const AddButton = dynamic(() => import('../../../components/Admin/AddButton'), { ssr: true });
+const AdminLayout = dynamic(() => import('../../../components/Layouts/AdminLayout'), { ssr: false });
+const SearchItem = dynamic(() => import('../../../components/Admin/SearchItem'), { ssr: false });
+const Title = dynamic(() => import('../../../components/Admin/Title'), { ssr: true });
+const AdminTable = dynamic(() => import('../../../components/Admin/AdminTable'), { ssr: false });
 
 export default function UserPage() {
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -175,7 +178,7 @@ export default function UserPage() {
                 onClose={closeSideBar}
                 className="w-1/3"
             >
-                {selectedUser ? (
+                {isSidebarOpen && selectedUser ? (
                     <div className="flex flex-col gap-4 p-4">
                         {/* Product Images */}
                         {selectedUser.profileImage && (
