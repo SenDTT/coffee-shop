@@ -123,8 +123,8 @@ export default function OrdersPage() {
                     showCheckbox
                     selectedIds={selectedIds}
                     setSelectedIds={setSelectedIds}
-                    headers={["ID", "User", "Products", "Price", "Amount", "Date", "Status"]}
-                    columns={["id", "user.name", "totalItems", "totalPrice", "totalAmount", "orderDate", "status"]}
+                    headers={["Tracking No.", "User", "Products", "Price", "Amount", "Date", "Status"]}
+                    columns={["trackingNumber", "user.name", "totalItems", "totalPrice", "totalAmount", "orderDate", "status"]}
                     rows={orders}
                     hasActionsCol={true}
                     viewHandle={viewHandle}
