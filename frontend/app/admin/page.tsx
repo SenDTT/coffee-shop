@@ -1,10 +1,15 @@
-import AdminLayout from "../../components/Layouts/AdminLayout";
+'use client';
+
+// lazy load components
+import dynamic from "next/dynamic";
+const Title = dynamic(() => import("../../components/Admin/Title"), { ssr: true });
+const AdminLayout = dynamic(() => import("../../components/Layouts/AdminLayout"), { ssr: false });
 
 export default function AdminDashboard() {
   return (
     <AdminLayout>
-          <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-          {/* Add your admin dashboard components here */}
+      <Title title="Dashboard" />
+      {/* Add your admin dashboard components here */}
     </AdminLayout>
   );
 }
