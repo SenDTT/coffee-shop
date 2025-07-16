@@ -136,3 +136,7 @@ body {
 .swal2-icon-content {
   @apply text-xl;
 }
+
+.line-chart-container {
+  @apply w-full h-72;
+}

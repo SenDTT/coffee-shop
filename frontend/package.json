@@ -28,11 +28,13 @@
     "next": "15.2.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-is": "^19.1.0",
     "react-redux": "^9.2.0",
     "react-select": "^5.10.1",
     "react-select-async-paginate": "^0.7.10",
     "react-slick": "^0.30.3",
     "react-toastify": "^11.0.5",
+    "recharts": "^3.1.0",
     "slick-carousel": "^1.8.1",
     "sweetalert2": "^11.21.2"
   },
