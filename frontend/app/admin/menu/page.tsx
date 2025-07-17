@@ -51,8 +51,8 @@ export default function MenuPage() {
         const id = searchParams.get('id');
         const view = searchParams.get('view');
 
-        if (!(id && view === 'true')) {
-            fetchProducts();
+        if (id && view === 'true') {
+            getProductById(id);
         }
     }, [params, searchParams]);
 

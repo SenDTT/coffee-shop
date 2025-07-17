@@ -23,7 +23,7 @@ export default function AdminCategoriesPage() {
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const router = useRouter();
     const { settings } = useAppSelector(state => state.settings);
-    const { error, success, message, categories, selectedCategory, params, loading, total, currentPage, inProccessing } = useAppSelector(state => state.adminCategories);
+    const { error, success, message, categories, params, loading, total, currentPage, inProccessing } = useAppSelector(state => state.adminCategories);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -112,7 +112,7 @@ export default function AdminCategoriesPage() {
             if (item && item._id) {
                 resetDataWithoutApi(id, {
                     ...item,
-                    active: (item as any).active === 0 ? 1 : 0
+                    active: (item as Category).active === 0 ? 1 : 0
                 } as Category);
             }
         }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AdminFormFieldWithValue } from "../../types/Product";
+import { AdminFormFieldWithValue, SelectOption } from "../../types/Product";
 import { selectOptionStyles } from "../../utils/reactSelect";
 import ReactSelect from "react-select";
 import { AsyncPaginate } from "react-select-async-paginate";
@@ -16,7 +16,7 @@ export default function CustomReactSelect(props: AdminFormFieldWithValue) {
                     setSelectedOption(existing);
                 } else if (props.fetchOptionsAPI) {
                     const result = await props.fetchOptionsAPI(props.value, 0);
-                    const matched = result.data.find((o: any) => o.value === props.value);
+                    const matched = result.data.find((o: SelectOption) => o.value === props.value);
                     if (matched) setSelectedOption(matched);
                     else setSelectedOption({ value: props.value, label: props.value }); // fallback
                 }

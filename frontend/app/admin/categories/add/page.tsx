@@ -10,6 +10,8 @@ import { clearMessage, handleMessage, handleSetErrors } from '../../../../store/
 
 // lazy load components
 import dynamic from 'next/dynamic';
+import { CategoryData } from '../[id]/page';
+import { Category } from '../../../../types/Category';
 const AdminLayout = dynamic(() => import('../../../../components/Layouts/AdminLayout'), { ssr: false });
 const Title = dynamic(() => import('../../../../components/Admin/Title'), { ssr: true });
 const AdminForm = dynamic(() => import('../../../../components/Admin/AdminForm'), { ssr: false });
@@ -19,14 +21,14 @@ const LIMIT = 50;
 export default function AddCategoryPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-    const initialData = {
+    const initialData: CategoryData = {
         name: '',
         description: '',
         type: 'ingredient',
         parent: '',
         active: 1,
     };
-    const [formData, setFormData] = useState(initialData);
+    const [formData, setFormData] = useState<CategoryData>(initialData);
     const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
     const { settings } = useAppSelector(state => state.settings);
     const { error, success, message, errors } = useAppSelector(state => state.adminCategories);
@@ -63,7 +65,7 @@ export default function AddCategoryPage() {
         }
         const res = await api.get('/categories', { params });
         const response = res.status === 200 ? res.data.data : { data: [] };
-        const data = response.data.map((item: any) => ({ value: item._id, label: item.name }));
+        const data = response.data.map((item: Category) => ({ value: item._id, label: item.name }));
 
         setCategoryOptions(data);
         return {
@@ -88,7 +90,7 @@ export default function AddCategoryPage() {
         dispatch(clearMessage());
         try {
             // Simulate API call
-            let data: any = formData;
+            let data: CategoryData = formData;
 
             if (formData.parent) {
                 data = { ...formData, parentId: formData.parent };
@@ -162,7 +164,7 @@ export default function AddCategoryPage() {
                         type: 'async-select',
                         options: categoryOptions,
                         required: false,
-                        value: formData.parent,
+                        value: formData.parent ?? '',
                         onChange: handleInputChange,
                         fetchOptionsAPI: getListCategories,
                         error: errors.parent ?? errors.parentId ?? ''

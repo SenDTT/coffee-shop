@@ -133,7 +133,7 @@ export default function BlogEditor(props: AdminFormFieldWithValue) {
         if (content && props.onBeforeSubmitHanlde) {
             props.onBeforeSubmitHanlde(content as string)
         }
-    }, [content]);
+    }, [content, props.onBeforeSubmitHanlde]);
 
     useEffect(() => {
         if (editor && props.value !== editor.getHTML()) {

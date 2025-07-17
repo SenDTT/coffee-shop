@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { User } from '../types/User';
 
 const getGreeting = () => {
     const hour = new Date().getHours();
@@ -12,7 +13,7 @@ const getGreeting = () => {
 };
 
 export default function AuthNav({ user, mobile = false }: {
-    user: any;
+    user: User;
     mobile?: boolean;
 }) {
     const router = useRouter();

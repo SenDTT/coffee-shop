@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import api from '../../../api';
+import Image from 'next/image';
 import Sidebar from '../../../components/Admin/SideBar';
 import { useSearchParams } from 'next/navigation';
 import { User } from '../../../types/User';
@@ -11,6 +12,7 @@ import { beginLoading, beginProcess, clearCurrentAdminUser, clearMessage, fetchA
 
 // lazy load components
 import dynamic from 'next/dynamic';
+import { get } from 'http';
 const AddButton = dynamic(() => import('../../../components/Admin/AddButton'), { ssr: true });
 const AdminLayout = dynamic(() => import('../../../components/Layouts/AdminLayout'), { ssr: false });
 const SearchItem = dynamic(() => import('../../../components/Admin/SearchItem'), { ssr: false });
@@ -39,7 +41,7 @@ export default function UserPage() {
             toast.success(message);
             dispatch(clearMessage())
         }
-    }, [error, success, message]);
+    }, [error, success, message, dispatch]);
 
     useEffect(() => {
         const id = searchParams.get('id') ?? null;
@@ -64,6 +66,7 @@ export default function UserPage() {
                 setIsSidebarOpen(true);
             }
         } catch (err) {
+            console.error(err);
             toast.error('Failed to get product. Please try again.');
         }
     }
@@ -185,7 +188,9 @@ export default function UserPage() {
                             <div
                                 className="flex-shrink-0 h-40 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center"
                             >
-                                <img
+                                <Image
+                                    loading="lazy"
+                                    unoptimized
                                     src={process.env.NEXT_PUBLIC_DOMAIN + selectedUser.profileImage}
                                     alt={`Product Image`}
                                     className="h-full object-contain"

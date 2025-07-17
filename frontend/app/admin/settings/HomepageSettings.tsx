@@ -43,7 +43,7 @@ export default function HomepageSettings() {
             toast.success(message);
             dispatch(clearMessage())
         }
-    }, [error, success, message]);
+    }, [error, success, message, dispatch]);
 
     const fetchData = async () => {
         try {

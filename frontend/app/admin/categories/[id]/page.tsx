@@ -10,28 +10,38 @@ import { clearCurrentAdminCategory, clearMessage, fetchAdminCategory, handleMess
 
 // lazy load components
 import dynamic from 'next/dynamic';
+import { Category } from '../../../../types/Category';
 const AdminLayout = dynamic(() => import('../../../../components/Layouts/AdminLayout'), { ssr: false });
 const Title = dynamic(() => import('../../../../components/Admin/Title'), { ssr: true });
 const AdminForm = dynamic(() => import('../../../../components/Admin/AdminForm'), { ssr: false });
 
 const LIMIT = 50;
 
+export interface CategoryData {
+    name: string;
+    description: string;
+    type: string;
+    parent?: string;
+    active: number;
+    parentId?: string;
+}
+
 export default function EditCategoryPage() {
     const router = useRouter();
     const params = useParams();
     const id = params.id;
     const [loading, setLoading] = useState(false);
-    const initialData = {
+    const initialData: CategoryData = {
         name: '',
         description: '',
         type: 'ingredient',
         parent: '',
         active: 1,
     };
-    const [formData, setFormData] = useState(initialData);
+    const [formData, setFormData] = useState<CategoryData>(initialData);
     const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
     const { settings } = useAppSelector(state => state.settings);
-    const { error, success, message, errors, selectedCategory } = useAppSelector(state => state.adminCategories);
+    const { error, success, message, errors } = useAppSelector(state => state.adminCategories);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -101,7 +111,7 @@ export default function EditCategoryPage() {
         }
         const res = await api.get('/categories', { params });
         const response = res.status === 200 ? res.data.data : { data: [] };
-        const data = response.data.map((item: any) => ({ value: item._id, label: item.name }));
+        const data = response.data.map((item: Category) => ({ value: item._id, label: item.name }));
 
         setCategoryOptions(data);
         return {
@@ -126,7 +136,7 @@ export default function EditCategoryPage() {
         dispatch(clearMessage());
         try {
             // Simulate API call
-            let data: any = formData;
+            let data: CategoryData = formData;
 
             if (formData.parent) {
                 data = { ...formData, parentId: formData.parent };
@@ -195,7 +205,7 @@ export default function EditCategoryPage() {
                         type: 'async-select',
                         options: categoryOptions,
                         required: false,
-                        value: formData.parent,
+                        value: formData.parent ?? '',
                         onChange: handleInputChange,
                         fetchOptionsAPI: getListCategories,
                         error: errors.parent ?? errors.parentId ?? ''

@@ -44,7 +44,7 @@ export default function GeneralSettings() {
             toast.success(message);
             dispatch(clearMessage())
         }
-    }, [error, success, message]);
+    }, [error, success, message, dispatch]);
 
     const setErrors = (err: Record<string, string>) => {
         dispatch(handleSetErrors({ errors: err }));

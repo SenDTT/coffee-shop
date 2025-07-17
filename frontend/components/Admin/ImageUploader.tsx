@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { IoMdRemove } from "react-icons/io";
 import { FaPlus } from "react-icons/fa";
 import { AdminFormFieldWithValue } from "../../types/Product";
+import Image from "next/image";
 
 export default function ImageUploader(props: AdminFormFieldWithValue) {
     const [files, setFiles] = useState<File[]>([]);
@@ -34,7 +35,7 @@ export default function ImageUploader(props: AdminFormFieldWithValue) {
     };
 
     useEffect(() => {
-        let urls = files.map((file) => URL.createObjectURL(file));
+        const urls = files.map((file) => URL.createObjectURL(file));
         setPreviews(urls);
 
         return () => {
@@ -75,11 +76,12 @@ export default function ImageUploader(props: AdminFormFieldWithValue) {
             <div className="flex flex-wrap gap-4">
                 {currentImages.map((path, index) => (
                     <div key={'currentImages-' + index} className="relative group">
-                        <img
+                        <Image
                             src={process.env.NEXT_PUBLIC_DOMAIN + path}
                             alt={`Preview ${index}`}
-                            width={props.isBannerImage ? "100%" : "48px"}
-                            height={props.isBannerImage ? "100%" : "48px"}
+                            loading="lazy"
+                            width={props.isBannerImage ? 400 : 48}
+                            height={props.isBannerImage ? 100 : 48}
                             className={`${props.isBannerImage ? 'w-full' : 'w-12 sm:w-28'} h-12 sm:h-28 object-cover border rounded`}
                         />
                         <button
@@ -94,10 +96,11 @@ export default function ImageUploader(props: AdminFormFieldWithValue) {
                 ))}
                 {previews.map((src, index) => (
                     <div key={index} className="relative group">
-                        <img
+                        <Image
                             src={src}
-                            width={props.isBannerImage ? "100%" : "48px"}
-                            height={props.isBannerImage ? "100%" : "48px"}
+                            loading="lazy"
+                            width={props.isBannerImage ? 400 : 48}
+                            height={props.isBannerImage ? 100 : 48}
                             alt={`Preview ${index}`}
                             className={`${props.isBannerImage ? 'w-full' : 'w-12 sm:w-28'} h-12 sm:h-28 object-cover border rounded`}
                         />

@@ -10,6 +10,7 @@ import { clearMessage, handleSetErrors, handleMessage } from '../../../../store/
 
 // lazy load components
 import dynamic from 'next/dynamic';
+import { Category } from '../../../../types/Category';
 const AdminLayout = dynamic(() => import('../../../../components/Layouts/AdminLayout'), { ssr: false });
 const Title = dynamic(() => import('../../../../components/Admin/Title'), { ssr: true });
 const AdminForm = dynamic(() => import('../../../../components/Admin/AdminForm'), { ssr: false });
@@ -67,7 +68,7 @@ export default function AddIngrdientPage() {
         }
         const res = await api.get('/categories', { params });
         const response = res.status === 200 ? res.data.data : { data: [] };
-        const data = response.data.map((item: any) => ({ value: item._id, label: item.name }));
+        const data = response.data.map((item: Category) => ({ value: item._id, label: item.name }));
 
         setCategoryOptions(data);
         return {

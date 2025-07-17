@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import { CategoryParams, InputEvent, SelectOption } from '../../../../types/Product';
+import { Category } from '../../../../types/Category';
 import api from '../../../../api';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '../../../../store';
@@ -68,7 +69,7 @@ export default function AddProductPage() {
         }
         const res = await api.get('/categories', { params });
         const response = res.status === 200 ? res.data.data : { data: [] };
-        const data = response.data.map((item: any) => ({ value: item._id, label: item.name }));
+        const data = response.data.map((item: Category) => ({ value: item._id, label: item.name }));
 
         setCategoryOptions(data);
         return {

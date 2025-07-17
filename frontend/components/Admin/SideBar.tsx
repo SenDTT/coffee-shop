@@ -1,7 +1,7 @@
 import { FaTimes } from "react-icons/fa";
 import { SidebarProps } from "../../types/Admin";
 
-const Sidebar = ({ title, isOpen, onClose, children, className }: SidebarProps) => {
+const Sidebar = ({ title, isOpen, onClose, children }: SidebarProps) => {
     return (
         <div className="relative">
             {/* Overlay */}
