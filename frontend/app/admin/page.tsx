@@ -15,9 +15,11 @@ export default function AdminDashboard() {
       <div className="grid grid-rows-2 gap-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="w-full h-full text-xs sm:text-base bg-white/50 rounded-lg p-4 shadow-md mb-4">
+            <h2 className="text-lg font-semibold mb-4">Simple Line Chart</h2>
             <SimpleLineChart />
           </div>
           <div className="w-full h-full text-xs sm:text-base bg-white/50 rounded-lg p-4 shadow-md mb-4">
+            <h2 className="text-lg font-semibold mb-4">Donut Chart</h2>
             <DonutChart />
           </div>
         </div>

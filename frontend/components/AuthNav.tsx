@@ -13,7 +13,7 @@ const getGreeting = () => {
 };
 
 export default function AuthNav({ user, mobile = false }: {
-    user: User;
+    user: User | null;
     mobile?: boolean;
 }) {
     const router = useRouter();

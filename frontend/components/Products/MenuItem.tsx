@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Product } from "../../types/Product";
 
 export default function MenuItem(props: { item: Product }) {
@@ -8,7 +7,7 @@ export default function MenuItem(props: { item: Product }) {
         <div className="menu-item px-2">
             <div className="bg-gray-100 p-4 rounded-lg shadow hover:shadow-lg transition h-full flex flex-col items-center justify-between">
                 <div className="aspect-w-4 aspect-h-3 w-full max-w-[200px] mx-auto mb-4 hover:animate-pop">
-                    <Image
+                    <img
                         loading="lazy"
                         src={process.env.NEXT_PUBLIC_DOMAIN + item.images[0]}
                         alt={item.name}

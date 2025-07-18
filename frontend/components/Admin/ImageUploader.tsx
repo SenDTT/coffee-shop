@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { IoMdRemove } from "react-icons/io";
 import { FaPlus } from "react-icons/fa";
 import { AdminFormFieldWithValue } from "../../types/Product";
-import Image from "next/image";
 
 export default function ImageUploader(props: AdminFormFieldWithValue) {
     const [files, setFiles] = useState<File[]>([]);
@@ -76,7 +75,7 @@ export default function ImageUploader(props: AdminFormFieldWithValue) {
             <div className="flex flex-wrap gap-4">
                 {currentImages.map((path, index) => (
                     <div key={'currentImages-' + index} className="relative group">
-                        <Image
+                        <img
                             src={process.env.NEXT_PUBLIC_DOMAIN + path}
                             alt={`Preview ${index}`}
                             loading="lazy"
@@ -96,7 +95,7 @@ export default function ImageUploader(props: AdminFormFieldWithValue) {
                 ))}
                 {previews.map((src, index) => (
                     <div key={index} className="relative group">
-                        <Image
+                        <img
                             src={src}
                             loading="lazy"
                             width={props.isBannerImage ? 400 : 48}

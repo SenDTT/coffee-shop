@@ -6,6 +6,7 @@ import { Provider } from 'react-redux'
 import { store, useAppDispatch, useAppSelector } from '../../store'
 import { useEffect } from "react";
 import { hydrateFromStorage } from "../../store/slices/auth";
+import { fetchSettings } from "../../store/slices/setting";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     const dispatch = useAppDispatch();
@@ -16,6 +17,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             dispatch(hydrateFromStorage());
         }
     }, [user, dispatch]);
+
+    useEffect(() => {
+        dispatch(fetchSettings())
+    }, [dispatch])
 
     return (
         <Provider store={store}>

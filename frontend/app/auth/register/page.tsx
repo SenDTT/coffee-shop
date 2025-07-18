@@ -35,7 +35,6 @@ export default function RegisterPage() {
                 password,
             });
 
-            console.log('Registration response:', response);
             if (response.status === 200 && response.data.success) {
                 toast.success('Registration successful! Please log in.');
                 router.push('/auth/login');

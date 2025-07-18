@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import api from '../../../api';
-import Image from 'next/image';
 import Sidebar from '../../../components/Admin/SideBar';
 import { useSearchParams } from 'next/navigation';
 import { User } from '../../../types/User';
@@ -188,9 +187,8 @@ export default function UserPage() {
                             <div
                                 className="flex-shrink-0 h-40 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center"
                             >
-                                <Image
+                                <img
                                     loading="lazy"
-                                    unoptimized
                                     src={process.env.NEXT_PUBLIC_DOMAIN + selectedUser.profileImage}
                                     alt={`Product Image`}
                                     className="h-full object-contain"

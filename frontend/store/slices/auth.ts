@@ -1,16 +1,7 @@
 // store/slices/auth.ts
+import { User } from "../../types/User";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
-
-interface User {
-  id: string;
-  email: string;
-  name: string;
-  username: string;
-  role: string;
-  profileImage: string;
-  subcribedEmail: number;
-}
 
 interface AuthState {
   user: User | null;

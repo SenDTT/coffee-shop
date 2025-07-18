@@ -3,10 +3,13 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import AuthNav from '../AuthNav';
 import { FaBars } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
 import { useAppSelector } from '../../store';
+
+// lazy load components
+import dynamic from 'next/dynamic';
+const AuthNav = dynamic(() => import('../AuthNav'), { ssr: false });
 
 export default function Navbar() {
     const { user } = useAppSelector(state => state.auth);
