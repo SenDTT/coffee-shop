@@ -117,3 +117,4 @@ Password: Admin1234
 
 🌐 Visit the App
 http://localhost:3000/
+# Swagger API: http://localhost:5002/api-docs/
