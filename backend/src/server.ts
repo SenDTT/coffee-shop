@@ -10,6 +10,8 @@ import account_routes from "./routes/accountRoute";
 import blog_routes from "./routes/blogRoute";
 import ingredient_routes from "./routes/ingredientRoute";
 import path from "path";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./docs/swagger";
 
 // MongoDB Connection
 connectDB();
@@ -21,6 +23,9 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
 const prefix = "/api/" + process.env.API_VERSION;
+
+// Swagger setup
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // auth api
 app.use(prefix + "/auth", auth_routes);
