@@ -95,50 +95,51 @@
  * @swagger
  * components:
  *   schemas:
- * ProductRequest:
-      type: object
-      required:
-        - name
-        - price
-        - description
-        - categoryId
-        - stock
-        - material
-        - sku
-        - images
-      properties:
-        name:
-          type: string
-          example: "Cappuccino"
-        price:
-          type: number
-          example: 5.25
-        description:
-          type: string
-          example: "Rich espresso topped with frothy milk foam"
-        categoryId:
-          type: string
-          example: "683488102a826ae82a1d5691"
-        stock:
-          type: integer
-          example: 10
-        material:
-          type: string
-          example: "Coffee, Milk, Foam, Cup"
-        sku:
-          type: string
-          example: "COFFEE-001"
-        images:
-          type: array
-          items:
-            type: string
-            format: binary
-          description: "Array of image files to upload"
-        deletedImages:
-          type: array
-          items:
-            type: string
-          description: "Optional list of image URLs or filenames to delete"
+ *     ProductRequest:
+ *       type: object
+ *       required:
+ *         - name
+ *         - price
+ *         - description
+ *         - categoryId
+ *         - stock
+ *         - material
+ *         - sku
+ *         - images
+ *       properties:
+ *         name:
+ *           type: string
+ *           example: "Cappuccino"
+ *         price:
+ *           type: number
+ *           example: 5.25
+ *         description:
+ *           type: string
+ *           example: "Rich espresso topped with frothy milk foam"
+ *         categoryId:
+ *           type: string
+ *           example: "683488102a826ae82a1d5691"
+ *         stock:
+ *           type: integer
+ *           example: 10
+ *         material:
+ *           type: string
+ *           example: "Coffee, Milk, Foam, Cup"
+ *         sku:
+ *           type: string
+ *           example: "COFFEE-001"
+ *         images:
+ *           type: array
+ *           items:
+ *             type: string
+ *             format: binary
+ *           description: "Array of image files to upload"
+ *         deletedImages:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: "Optional list of image URLs or filenames to delete"
+ *
  *     ProductListResponse:
  *       type: object
  *       properties:
