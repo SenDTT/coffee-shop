@@ -1,11 +1,14 @@
 'use client';
 
-import AdminLayout from '../../../components/Layouts/AdminLayout';
 import { notFound, useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { FaSpinner } from 'react-icons/fa';
 
 const validAdminRoutes = ["dashboard", "products", "orders", "users"];
+
+// lazy load components
+import dynamic from 'next/dynamic';
+const AdminLayout = dynamic(() => import('../../../components/Layouts/AdminLayout'), { ssr: true });
 
 export default function AdminCatchAll() {
     const router = useRouter();

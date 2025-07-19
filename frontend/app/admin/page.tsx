@@ -3,7 +3,7 @@
 // lazy load components
 import dynamic from "next/dynamic";
 const Title = dynamic(() => import("../../components/Admin/Title"), { ssr: true });
-const AdminLayout = dynamic(() => import("../../components/Layouts/AdminLayout"), { ssr: false });
+const AdminLayout = dynamic(() => import("../../components/Layouts/AdminLayout"), { ssr: true });
 const SimpleLineChart = dynamic(() => import("../../components/Admin/Charts/LineChart"), { ssr: false });
 const DonutChart = dynamic(() => import("../../components/Admin/Charts/DonutChart"), { ssr: false });
 

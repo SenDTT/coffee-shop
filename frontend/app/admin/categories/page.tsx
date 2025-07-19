@@ -11,7 +11,7 @@ import { beginLoading, beginProcess, clearMessage, fetchAllAdminCategories, hand
 
 // lazy load components
 import dynamic from 'next/dynamic';
-const AdminLayout = dynamic(() => import('../../../components/Layouts/AdminLayout'), { ssr: false });
+const AdminLayout = dynamic(() => import('../../../components/Layouts/AdminLayout'), { ssr: true });
 const DeleteButton = dynamic(() => import('../../../components/Admin/DeleteButton'), { ssr: true });
 const AddButton = dynamic(() => import('../../../components/Admin/AddButton'), { ssr: true });
 const SearchItem = dynamic(() => import('../../../components/Admin/SearchItem'), { ssr: false });

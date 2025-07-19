@@ -19,7 +19,7 @@ const AddButton = dynamic(() => import('../../../components/Admin/AddButton'), {
 const SearchItem = dynamic(() => import('../../../components/Admin/SearchItem'), { ssr: false });
 const DeleteButton = dynamic(() => import('../../../components/Admin/DeleteButton'), { ssr: true });
 const AdminTable = dynamic(() => import('../../../components/Admin/AdminTable'), { ssr: false });
-const AdminLayout = dynamic(() => import('../../../components/Layouts/AdminLayout'), { ssr: false });
+const AdminLayout = dynamic(() => import('../../../components/Layouts/AdminLayout'), { ssr: true });
 
 export default function MenuPage() {
     const [showDeleteBtn, setShowDeleteBtn] = useState(false);

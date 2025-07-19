@@ -16,7 +16,7 @@ import { useAppSelector } from '../../../store';
 import dynamic from 'next/dynamic';
 const GeneralSettings = dynamic(() => import('./GeneralSettings'), { ssr: false });
 const HomepageSettings = dynamic(() => import('./HomepageSettings'), { ssr: false });
-const AdminLayout = dynamic(() => import('../../../components/Layouts/AdminLayout'), { ssr: false });
+const AdminLayout = dynamic(() => import('../../../components/Layouts/AdminLayout'), { ssr: true });
 const Title = dynamic(() => import('../../../components/Admin/Title'), { ssr: true });
 
 const tabs = [

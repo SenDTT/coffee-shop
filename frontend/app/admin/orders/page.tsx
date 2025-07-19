@@ -13,7 +13,7 @@ const Sidebar = dynamic(() => import('../../../components/Admin/SideBar'), { ssr
 const AdminTable = dynamic(() => import('../../../components/Admin/AdminTable'), { ssr: false });
 const SearchItem = dynamic(() => import('../../../components/Admin/SearchItem'), { ssr: false });
 const Title = dynamic(() => import('../../../components/Admin/Title'), { ssr: true });
-const AdminLayout = dynamic(() => import('../../../components/Layouts/AdminLayout'), { ssr: false });
+const AdminLayout = dynamic(() => import('../../../components/Layouts/AdminLayout'), { ssr: true });
 
 export default function OrdersPage() {
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());

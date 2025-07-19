@@ -11,7 +11,7 @@ import { clearMessage, handleSetErrors, handleMessage } from '../../../../store/
 // lazy load components
 import dynamic from 'next/dynamic';
 import { Category } from '../../../../types/Category';
-const AdminLayout = dynamic(() => import('../../../../components/Layouts/AdminLayout'), { ssr: false });
+const AdminLayout = dynamic(() => import('../../../../components/Layouts/AdminLayout'), { ssr: true });
 const Title = dynamic(() => import('../../../../components/Admin/Title'), { ssr: true });
 const AdminForm = dynamic(() => import('../../../../components/Admin/AdminForm'), { ssr: false });
 

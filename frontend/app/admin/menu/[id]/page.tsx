@@ -11,7 +11,7 @@ import { clearCurrentProduct, clearMessage, fetchAProduct, handleMessage, handle
 // lazy load the components
 import dynamic from 'next/dynamic';
 import { Category } from '../../../../types/Category';
-const AdminForm = dynamic(() => import('../../../../components/Admin/AdminForm'), { ssr: false });
+const AdminForm = dynamic(() => import('../../../../components/Admin/AdminForm'), { ssr: true });
 const Title = dynamic(() => import('../../../../components/Admin/Title'), { ssr: true });
 const AdminLayout = dynamic(() => import('../../../../components/Layouts/AdminLayout'), { ssr: false });
 

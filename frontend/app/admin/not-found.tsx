@@ -2,9 +2,12 @@
 
 import Link from 'next/link';
 import { TbAlertTriangle } from 'react-icons/tb';
-import AdminLayout from '../../components/Layouts/AdminLayout';
 import { useEffect } from 'react';
 import { useAppSelector } from '../../store';
+
+// lazy load components
+import dynamic from 'next/dynamic';
+const AdminLayout = dynamic(() => import('../../components/Layouts/AdminLayout'), { ssr: true });
 
 export default function Admin404() {
     const { settings } = useAppSelector(state => state.settings);

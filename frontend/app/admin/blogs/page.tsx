@@ -12,7 +12,7 @@ import { beginLoading, beginProcess, clearMessage, fetchAllAdminBlogs, onHanldeS
 import dynamic from 'next/dynamic';
 const DeleteButton = dynamic(() => import('../../../components/Admin/DeleteButton'), { ssr: true });
 const AddButton = dynamic(() => import('../../../components/Admin/AddButton'), { ssr: true });
-const AdminLayout = dynamic(() => import('../../../components/Layouts/AdminLayout'), { ssr: false });
+const AdminLayout = dynamic(() => import('../../../components/Layouts/AdminLayout'), { ssr: true });
 const SearchItem = dynamic(() => import('../../../components/Admin/SearchItem'), { ssr: false });
 const Title = dynamic(() => import('../../../components/Admin/Title'), { ssr: true });
 const AdminTable = dynamic(() => import('../../../components/Admin/AdminTable'), { ssr: false });
