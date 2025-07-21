@@ -17,6 +17,55 @@ import {
 } from "../services/OrderService";
 import { IOrderRequest } from "../types/OrderTypes";
 import { getProductById } from "../services/ProductService";
+import jwt from "jsonwebtoken";
+
+export const getUserMeController: RequestHandler<
+  unknown,
+  IResponseData | IErrorResponse
+> = async (req, res, next) => {
+  const user = (req as any).user;
+  try {
+    if (!user) {
+      res.status(401).json({ success: false, message: "Unauthorized" });
+      return;
+    }
+
+    const userData = await getUserById(user.id);
+    if (!userData) {
+      res.status(404).json({ success: false, message: "User not found" });
+      return;
+    }
+
+    const resUser = {
+      id: user?._id.toString(),
+      email: user?.email,
+      name: user?.name,
+      username: user?.username,
+      role: user?.role,
+      profileImage: user?.profileImage || null,
+      subcribedEmail: user?.subcribedEmail,
+    };
+
+    const accessToken = jwt.sign(resUser, process.env.JWT_SECRET as string, {
+      expiresIn: "1d",
+    });
+
+    const refreshToken = jwt.sign(
+      { id: resUser.id },
+      process.env.JWT_REFRESH_SECRET as string,
+      {
+        expiresIn: "7d",
+      }
+    );
+
+    res.json({
+      success: true,
+      data: { user: resUser, accessToken, refreshToken },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
 export const updateUserInfoController: RequestHandler<
   unknown,

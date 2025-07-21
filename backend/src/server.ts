@@ -12,6 +12,7 @@ import ingredient_routes from "./routes/ingredientRoute";
 import path from "path";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./docs/swagger";
+import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 
 // MongoDB Connection
 connectDB();
@@ -19,7 +20,12 @@ connectDB();
 const app = express();
 app.use(express.json());
 app.use(morgan("dev"));
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.APP_FRONTEND_URL, // frontend URL
+    credentials: true, // if you're using cookies or Authorization header
+  })
+);
 app.use(express.urlencoded({ extended: true }));
 
 const prefix = "/api/" + process.env.API_VERSION;
@@ -50,7 +56,11 @@ app.use(prefix + "/ingredients", ingredient_routes);
 app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 const error_handler: ErrorRequestHandler = (err, req, res, next) => {
-  if (err instanceof Error) {
+  if (err instanceof TokenExpiredError) {
+    res.status(401).json({ error: "jwt expired" });
+  } else if (err instanceof JsonWebTokenError) {
+    res.status(401).json({ error: "jwt malformed" });
+  } else if (err instanceof Error) {
     res.status(500).json({ error: err.message });
   } else {
     res.status(500).json({ error: "An unknown error occurred" });

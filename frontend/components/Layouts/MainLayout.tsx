@@ -5,8 +5,7 @@ import Navbar from "./Navbar";
 import { Provider } from 'react-redux'
 import { store, useAppDispatch, useAppSelector } from '../../store'
 import { useEffect } from "react";
-import { hydrateFromStorage } from "../../store/slices/auth";
-import { fetchSettings } from "../../store/slices/setting";
+import { fetchUserMe, hydrateFromStorage } from "../../store/slices/auth";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     const dispatch = useAppDispatch();
@@ -19,7 +18,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     }, [user, dispatch]);
 
     useEffect(() => {
-        dispatch(fetchSettings())
+        dispatch(fetchUserMe())
     }, [dispatch])
 
     return (

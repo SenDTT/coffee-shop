@@ -1,6 +1,7 @@
 // store/slices/auth.ts
+import api from "../../api";
 import { User } from "../../types/User";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 
 interface AuthState {
@@ -14,6 +15,20 @@ const initialState: AuthState = {
   accessToken: null,
   refreshToken: null,
 };
+
+export const fetchUserMe = createAsyncThunk("account/me", async () => {
+  const response = await api.get("/account/me");
+
+  if (response.status !== 200) {
+    throw new Error("Failed to fetch user data");
+  }
+
+  if (!response.data.success) {
+    throw new Error(response.data.message || "Failed to fetch user data");
+  }
+
+  return response.data.data;
+});
 
 export const authSlice = createSlice({
   name: "auth",
@@ -69,6 +84,23 @@ export const authSlice = createSlice({
         state.refreshToken = parsed.refreshToken;
       }
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchUserMe.pending, (state) => {
+        // Optionally handle loading state
+      })
+      .addCase(fetchUserMe.fulfilled, (state, action) => {
+        setAuth({
+          userData: action.payload.user,
+          accToken: action.payload.accessToken,
+          refToken: action.payload.refreshToken,
+        });
+      })
+      .addCase(fetchUserMe.rejected, (state) => {
+        logout();
+        console.error("Failed to fetch user data");
+      });
   },
 });
 

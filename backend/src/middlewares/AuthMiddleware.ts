@@ -5,7 +5,7 @@ import validator from "validator";
 import { getUserByEmail, getUserById } from "../services/UserService";
 import { User } from "../models/User";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import jwt, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 import { UserRoles } from "../constants/Enum";
 
 // Validate Auth
