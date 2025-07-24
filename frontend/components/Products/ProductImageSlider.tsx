@@ -40,7 +40,7 @@ const ProductImageSlider: React.FC<ProductImageSliderProps> = ({ images }) => {
                         <img
                             src={process.env.NEXT_PUBLIC_DOMAIN + img}
                             alt={`Slide ${i}`}
-                            className="w-full h-2/3 rounded-xl object-cover"
+                            className="w-full h-full rounded-xl object-cover"
                             onError={(e) => {
                                 e.currentTarget.src = `${process.env.NEXT_PUBLIC_DOMAIN}uploads/default_coffee.png`;
                             }}

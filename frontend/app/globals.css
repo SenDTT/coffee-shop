@@ -261,6 +261,17 @@ main section:not(.section-full-width) {
   @apply !w-20 !h-20;
 }
 
+.product-image-slider,
+.product-image-slider .slick-slider,
+.product-image-slider .slick-slider .slick-list, 
+.product-image-slider .slick-slider .slick-track {
+  @apply h-[70vh];
+}
+
+.product-image-slider .slick-initialized .slick-slide {
+  height: 80%;
+}
+
 .customer-reviews .slick-dots li button:before,
 .customer-reviews .slick-dots li.slick-active button:before {
   @apply text-latte-200;

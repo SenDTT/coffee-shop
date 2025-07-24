@@ -48,7 +48,7 @@ export default function ProductDetailPage() {
                 {/* Section 1: Overview */}
                 {selectedProduct && (
                     <>
-                        <div className="flex flex-col md:flex-row gap-6">
+                        <div className="h-[70vh] flex flex-col md:flex-row gap-6">
                             {selectedProduct.images ? (<ProductSliderImage images={selectedProduct.images} />) : (
                                 <img
                                     loading="lazy"
