@@ -9,6 +9,7 @@ import adminBlogsReducer from "./slices/admin/adminBlogs";
 import adminUsersReducer from "./slices/admin/adminUsers";
 import adminCategoriesReducer from "./slices/admin/adminCategories";
 import seasonReducer from "./slices/seasonSlide";
+import productReducer from "./slices/productSlide";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 export const store = configureStore({
@@ -22,6 +23,7 @@ export const store = configureStore({
     adminUsers: adminUsersReducer,
     adminCategories: adminCategoriesReducer,
     season: seasonReducer,
+    product: productReducer,
   },
 });
 

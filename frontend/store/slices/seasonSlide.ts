@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export type Season = "spring" | "summer" | "autumn" | "winter";
 
 interface SeasonState {
-  currentSeason: Season;
+  currentSeason: Season | "";
 }
 
 const initialState: SeasonState = {
@@ -14,7 +14,7 @@ const seasonSlice = createSlice({
   name: "season",
   initialState,
   reducers: {
-    setSeason: (state, action: PayloadAction<Season>) => {
+    setSeason: (state, action: PayloadAction<Season | "">) => {
       state.currentSeason = action.payload;
     },
   },

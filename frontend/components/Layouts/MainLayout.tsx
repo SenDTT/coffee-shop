@@ -4,7 +4,7 @@ import Footer from "./Footer";
 import Navbar from "./Navbar";
 import { Provider } from 'react-redux'
 import { store, useAppDispatch, useAppSelector } from '../../store'
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useMemo, useRef } from "react";
 import { fetchUserMe, hydrateFromStorage } from "../../store/slices/auth";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -12,6 +12,10 @@ import { useGSAP } from "@gsap/react";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import TransitionContext from '../../context/TransitionContext';
+import FallingRain from "../../components/Layouts/Seasons/FallingRain";
+import AutumnLeaves from "../../components/Layouts/Seasons/AutumnLeaves";
+import WinterSnow from "../../components/Layouts/Seasons/WinterSnow";
+import SpringBlossoms from "../../components/Layouts/Seasons/SpringBlossoms";
 
 gsap.registerPlugin(ScrollSmoother, ScrollTrigger, ScrollToPlugin, useGSAP);
 
@@ -22,6 +26,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     const { completed } = useContext(TransitionContext);
     const scrollTween = useRef<any>(null);
     const snapTriggers = useRef<ScrollTrigger[]>([]);
+    const season = useAppSelector((state) => state.season.currentSeason);
     const { contextSafe } = useGSAP(
         () => {
             if (!completed) return;
@@ -83,8 +88,24 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         dispatch(fetchUserMe())
     }, [dispatch]);
 
+    const seasonLayout = useMemo(() => {
+        switch (season) {
+            case 'summer':
+                return <FallingRain count={80} />;
+            case 'autumn':
+                return <AutumnLeaves />;
+            case 'winter':
+                return <WinterSnow />;
+            case 'spring':
+                return <SpringBlossoms />;
+            default:
+        }
+    }, [season]);
+
     return (
         <Provider store={store}>
+            {/* Season Layout */}
+            {seasonLayout}
             <Navbar />
             <div className="bg-coffee/10">
                 <main ref={main}>{children}</main>

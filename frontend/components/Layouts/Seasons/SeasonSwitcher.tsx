@@ -4,7 +4,7 @@ import { JSX, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { Season, setSeason } from '../../../store/slices/seasonSlide';
 
-import { Leaf, Snowflake, Flower, Cloud, CloudRainWind } from 'lucide-react';
+import { Leaf, Snowflake, Flower, Coffee } from 'lucide-react';
 import { FaCloudRain } from 'react-icons/fa';
 
 export const seasonIcons: Record<Season, JSX.Element> = {
@@ -28,11 +28,20 @@ export default function SeasonSwitcher() {
                 onClick={() => setIsOpen((prev) => !prev)}
                 aria-label="Toggle season menu"
             >
-                {seasonIcons[currentSeason]}
+                {currentSeason ? seasonIcons[currentSeason] : (<Coffee className="w-5 h-5 text-latte-300" />)}
             </button>
 
             {isOpen && (
                 <ul className="absolute mt-2 bg-cabin-800 border rounded-xl shadow z-10">
+                    <li
+                        onClick={() => {
+                            dispatch(setSeason(""));
+                            setIsOpen(false);
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 cursor-pointer hover:bg-cabin-700 rounded-xl"
+                    >
+                        <Coffee className="w-5 h-5 text-latte-300" />
+                    </li>
                     {seasons.map((season) => (
                         <li
                             key={season}
