@@ -92,7 +92,7 @@ export default function MenuPreview() {
     };
 
     return (
-        <section className="our-signature-menu section-panel homepage-sections min-h-lvh py-10 bg-inherit">
+        <section className="our-signature-menu section-panel sm:min-h-lvh py-10 bg-latte-100 section-full-width">
             <div className="container mx-auto">
                 <h2 className="text-xl sm:text-4xl font-bold text-center mb-4 font-serif text-espresso-800">Our Signature Menu</h2>
                 <p className="text-center mb-8 text-espresso-700 font-serif leading-10">

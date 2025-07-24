@@ -42,16 +42,16 @@ export default function OurStorySection() {
     }, []);
 
     return (
-        <section ref={sectionRef} className="py-24 px-4 bg-inherit">
+        <section ref={sectionRef} className="section-panel section-full-width bg-latte-200 py-24 px-4">
             <div className="container mx-auto flex flex-col md:flex-row items-center gap-12">
                 {/* Image on the left, square frame */}
-                <div className="story-img w-full max-w-sm aspect-square rounded-xl overflow-hidden shadow-lg">
+                <div className="story-img max-w-sm aspect-square rounded-xl overflow-hidden shadow-lg">
                     <Image
                         src={ourStoryImage}
                         alt="Coffee beans and cup"
                         width={500}
                         height={500}
-                        className="w-[500px] h-[500px] object-cover"
+                        className="w-full h-[300px] sm:w-[500px] sm:h-[500px] object-contain sm:object-cover"
                     />
                 </div>
 

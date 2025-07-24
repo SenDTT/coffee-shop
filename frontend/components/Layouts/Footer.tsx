@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { FaEnvelope, FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
 
 export default function Footer() {
     return (
-        <footer className="main-footer space-y-4 py-5 sm:py-10 px-5 sm:px-32">
+        <footer className="main-footer space-y-4 py-10 px-5 sm:px-32 mt-10 sm:mt-0">
             <div className="bg-black/30 shadow-md rounded-3xl flex flex-col space-y-4 py-6 px-2 sm:p-4">
                 <div className="container mx-auto sm:px-4 sm:py-6 flex flex-col sm:flex-row justify-between items-center sm:items-baseline gap-6">
                     <div className="text-latte-200 font-bold text-3xl font-serif">
@@ -37,15 +37,15 @@ export default function Footer() {
                     </div>
                 </div>
                 <div className="flex justify-center">
-                    <Link href="/privacy" className="text-latte-200 hover:text-mocha-300 transition-colors duration-200 text-sm px-2 sm:border-r border-latte-200">
+                    <Link href="/privacy" className="text-latte-200 hover:text-mocha-300 transition-colors duration-200 text-sm px-2 sm:border-r border-latte-200 underline">
                         Privacy Policy
                     </Link>
-                    <Link href="/terms" className="text-latte-200 hover:text-mocha-300 transition-colors duration-200 text-sm px-2">
+                    <Link href="/terms" className="text-latte-200 hover:text-mocha-300 transition-colors duration-200 text-sm px-2 underline">
                         Terms of Service
                     </Link>
                 </div>
                 <hr className="border-t border-latte-200 mt-4" />
-                <div className="container mx-auto px-4 py-2 sm:py-6 text-center text-sm text-latte-200">
+                <div className="container mx-auto px-4 py-2 sm:py-4 text-center text-sm text-latte-200">
                     &copy; {new Date("05/05/2025").getFullYear()} Coffee Shop. All rights reserved.
                 </div>
             </div>

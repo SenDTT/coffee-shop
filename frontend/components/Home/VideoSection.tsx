@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 export default function VideoSection() {
     return (
-        <section className="section-full-width w-full py-16 text-espresso-800 bg-light_latte">
+        <section className="section-panel section-full-width w-full py-16 text-espresso-800 bg-light_latte">
             <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                 {/* Left Text */}
                 <motion.div

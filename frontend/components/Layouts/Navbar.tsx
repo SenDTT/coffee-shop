@@ -9,6 +9,7 @@ import { useAppSelector } from '../../store';
 
 // lazy load components
 import dynamic from 'next/dynamic';
+import SeasonSwitcher from './Seasons/SeasonSwitcher';
 const AuthNav = dynamic(() => import('../AuthNav'), { ssr: false });
 
 export default function Navbar() {
@@ -43,6 +44,7 @@ export default function Navbar() {
                             </Link>
                         ))}
                         <AuthNav user={user} />
+                        <SeasonSwitcher />
                     </nav>
                 </div>
             </header>
@@ -63,6 +65,7 @@ export default function Navbar() {
                         </Link>
                     ))}
                     <AuthNav user={user} mobile={true} />
+                    <SeasonSwitcher />
                 </div>
             </div>
         </>

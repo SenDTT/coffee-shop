@@ -2,13 +2,17 @@
 
 import type { NextPage } from "next";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../store";
 import { logout } from "../store/slices/auth";
 
 // lazy load components
 import dynamic from "next/dynamic";
-import OurStorySection from "@/components/Home/OurStorySection";
+import OurStorySection from "../components/Home/OurStorySection";
+import FallingRain from "../components/Layouts/Seasons/FallingRain";
+import AutumnLeaves from "@/components/Layouts/Seasons/AutumnLeaves";
+import WinterSnow from "@/components/Layouts/Seasons/WinterSnow";
+import SpringBlossoms from "@/components/Layouts/Seasons/SpringBlossoms";
 const MenuPreview = dynamic(() => import("../components/Home/MenuPreview"), { ssr: false });
 const Layout = dynamic(() => import("../components/Layouts/MainLayout"), { ssr: true });
 const Hero = dynamic(() => import("../components/Hero"), { ssr: true });
@@ -20,6 +24,7 @@ const Home: NextPage = () => {
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
   const { settings } = useAppSelector(state => state.settings);
+  const season = useAppSelector((state) => state.season.currentSeason);
 
   useEffect(() => {
     if (settings?.shopName) {
@@ -34,8 +39,24 @@ const Home: NextPage = () => {
     }
   }, [searchParams, dispatch]);
 
+  const seasonLayout = useMemo(() => {
+    switch (season) {
+      case 'summer':
+        return <FallingRain count={80} />;
+      case 'autumn':
+        return <AutumnLeaves />;
+      case 'winter':
+        return <WinterSnow />;
+      case 'spring':
+      default:
+        return <SpringBlossoms />;
+    }
+  }, [season]);
+
   return (
     <Layout>
+      {/* Season Layout */}
+      {seasonLayout}
       {/* Hero section */}
       <Hero />
       {/* About Us section */}

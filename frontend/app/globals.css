@@ -22,7 +22,7 @@
 }
 
 body {
-  background: var(--background);
+  @apply bg-light_latte;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -152,6 +152,10 @@ body {
   @apply w-full h-72;
 }
 
+.slide-section {
+  height: 90vh;
+}
+
 .main-footer {
   background-image: url('/banner.webp');
   background-repeat: no-repeat;
@@ -210,4 +214,100 @@ main section:not(.section-full-width) {
 .slide-section .slick-list .slick-slide,
 .slide-section .slick-list .slick-slide > div {
   @apply !rounded-3xl;
+}
+
+.section-panel {
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.customer-reviews .slick-slider {
+  height: 320px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.customer-reviews .slick-track {
+  @apply rounded-lg;
+}
+
+.customer-reviews .slick-slide {
+  height: auto;
+}
+
+.customer-reviews .slick-list {
+  /* overflow: visible; */
+  /* Quan trọng: Cho slide giữa tràn ra 2 bên */
+}
+
+.customer-reviews .slick-slide {
+  @apply transition-all duration-300 ease-in-out;
+  position: relative;
+  transform: scale(0.7);
+  z-index: 1;
+}
+
+.slick-dots li button::before {
+  transform: scale(1.5);
+}
+
+.customer-reviews .slick-dots li button:before,
+.customer-reviews .slick-dots li.slick-active button:before {
+  @apply text-latte-200;
+}
+
+/* Slide ở giữa */
+.customer-reviews .slick-center {
+  width: 30vw !important;
+  transform: scale(1);
+  z-index: 10;
+}
+
+@media screen and (max-width: 768px) {
+  .slide-section {
+    height: auto;
+  }
+  
+  .slide-section .hero-section-2,
+  .slide-section .hero-section {
+    min-height: unset;
+    height: 100%;
+  }
+
+  .slide-section .hero-section-2 {
+    background-position: center;
+  }
+
+  .slide-section .hero-section {
+    background-position: 74% center;
+  }
+
+  .slick-slide, .slick-slide div {
+    height: auto;
+  }
+  
+  .section-panel {
+    height: auto;
+    position: unset;
+  }
+
+  .menu-item > div {
+    width: 100%;
+  }
+
+  /* Slide ở giữa */
+  .customer-reviews .slick-center {
+    width: 70vw !important;
+    margin: 0 -40px
+  }
+
+  .slide-section, .our-signature-menu {
+    @apply py-20;
+  }
 }
