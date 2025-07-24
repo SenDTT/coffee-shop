@@ -44,7 +44,7 @@ export default function MenuPreview() {
 
     if (loading) {
         return (
-            <section className="py-10 bg-white">
+            <section className="section-panel homepage-sections py-10 bg-inherit">
                 <div className="container mx-auto text-center">
                     <h2 className="text-3xl font-bold mb-6">
                         <FaSpinner className="inline-block mr-2 animate-spin" />
@@ -57,7 +57,7 @@ export default function MenuPreview() {
 
     if (error) {
         return (
-            <section className="py-10 bg-white">
+            <section className="section-panel homepage-sections py-10 bg-inherit">
                 <div className="container mx-auto text-center">
                     <h2 className="text-3xl font-bold mb-6 text-red-600">
                         Error: {error}
@@ -73,11 +73,12 @@ export default function MenuPreview() {
     const sliderSettings: Settings = {
         dots: true,
         infinite: true,
-        slidesToShow: 6,
+        slidesToShow: 5,
         slidesToScroll: 1,
         autoplay: true,
         autoplaySpeed: 2500,
         pauseOnHover: true,
+        arrows: true,
         responsive: [
             {
                 breakpoint: 1024,
@@ -91,10 +92,10 @@ export default function MenuPreview() {
     };
 
     return (
-        <section className="py-10 bg-white">
+        <section className="our-signature-menu section-panel homepage-sections min-h-lvh py-10 bg-inherit">
             <div className="container mx-auto">
-                <h2 className="text-3xl font-bold text-center mb-6">Menu Preview</h2>
-                <p className="text-center mb-8">
+                <h2 className="text-xl sm:text-4xl font-bold text-center mb-4 font-serif text-espresso-800">Our Signature Menu</h2>
+                <p className="text-center mb-8 text-espresso-700 font-serif leading-10">
                     Discover our delicious offerings, crafted with care and passion.
                 </p>
 

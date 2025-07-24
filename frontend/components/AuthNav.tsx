@@ -7,9 +7,9 @@ import { User } from '../types/User';
 
 const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return { greeting: 'Good morning', color: 'bg-amber-600' };
-    if (hour < 18) return { greeting: 'Good afternoon', color: 'bg-blue-600' };
-    return { greeting: 'Good evening', color: 'bg-purple-600' };
+    if (hour < 12) return { greeting: 'Good morning', class: 'bg-white/20 text-light_latte' };
+    if (hour < 18) return { greeting: 'Good afternoon', class: 'bg-white/20 text-light_latte' };
+    return { greeting: 'Good evening', class: 'bg-white/20 text-light_latte' };
 };
 
 export default function AuthNav({ user, mobile = false }: {
@@ -17,7 +17,7 @@ export default function AuthNav({ user, mobile = false }: {
     mobile?: boolean;
 }) {
     const router = useRouter();
-    const [greetingData, setGreetingData] = useState({ greeting: 'Hello', color: '' });
+    const [greetingData, setGreetingData] = useState({ greeting: 'Hello', class: '' });
     const [openDropdown, setOpenDropdown] = useState(false);
 
     useEffect(() => {
@@ -33,7 +33,7 @@ export default function AuthNav({ user, mobile = false }: {
             <div className={`${mobile ? 'w-full flex flex-col gap-2' : 'flex items-center gap-3 ml-4'}`}>
                 <Link
                     href="/auth/login"
-                    className="text-sm text-latte-600 hover:text-cabin-600 transition font-bold"
+                    className="text-sm text-latte-200 hover:text-latte-300 transition font-bold"
                 >
                     Login
                 </Link>
@@ -88,7 +88,7 @@ export default function AuthNav({ user, mobile = false }: {
     // desktop version unchanged...
     return (
         <div className="relative hidden md:flex items-center group ml-4">
-            <button className={`flex items-center gap-2 text-sm font-medium text-white ${greetingData.color} px-4 py-2 rounded-full transition`}>
+            <button className={`flex items-center gap-2 text-sm font-medium ${greetingData.class} px-4 py-2 rounded-full transition`}>
                 {greetingData.greeting}, <span className="font-semibold">{user.name.split(" ")[0]}</span>
                 <svg
                     className="ml-1 w-4 h-4"

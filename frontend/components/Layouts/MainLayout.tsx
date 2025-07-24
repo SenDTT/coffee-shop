@@ -6,6 +6,13 @@ import { Provider } from 'react-redux'
 import { store, useAppDispatch, useAppSelector } from '../../store'
 import { useEffect } from "react";
 import { fetchUserMe, hydrateFromStorage } from "../../store/slices/auth";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+import { ScrollSmoother } from "gsap/ScrollSmoother";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+
+gsap.registerPlugin(ScrollSmoother, ScrollTrigger, ScrollToPlugin, useGSAP);
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     const dispatch = useAppDispatch();
@@ -24,7 +31,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     return (
         <Provider store={store}>
             <Navbar />
-            <main className="container mx-auto">{children}</main>
+            <div className="bg-coffee/10">
+                <main>{children}</main>
+            </div>
             <Footer />
         </Provider>
     );

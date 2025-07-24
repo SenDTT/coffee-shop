@@ -27,9 +27,20 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.menu-item > div {
+  min-height: 320px;
+  width: 232px;
+}
+
 .menu-item {
-  width: 200px;
+  width: 100%;
+  min-height: 350px;
   @apply h-full;
+}
+
+.our-signature-menu .slick-prev:before, 
+.our-signature-menu .slick-next:before {
+  @apply text-cabin-800;
 }
 
 .slick-slide, 
@@ -139,4 +150,64 @@ body {
 
 .line-chart-container {
   @apply w-full h-72;
+}
+
+.main-footer {
+  background-image: url('/banner.webp');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: bottom;
+}
+
+.main-navbar {
+  background-image: url('/banner.webp');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: top;
+}
+
+.hero-section {
+  background-image: url('/banner_2.webp');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 0 -5rem;
+  min-height: 73vh;
+}
+
+.bg-matcha-latte {
+  background-image: url('/Macha_latte.webp');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+.bg-esspresso {
+  background-image: url('/esspresso.webp');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+.hero-section-2 {
+  background-image: url('/banner_4.webp');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 0 -3rem;
+  min-height: 73vh;
+}
+
+main section:not(.section-full-width) {
+  @apply container mx-auto py-8;
+}
+
+.homepage-sections {
+  min-height: 80vh;
+  align-content: center;
+  @apply my-10;
+}
+
+.slide-section .slick-slider,
+.slide-section .slick-slider div,
+.slide-section .slick-list .slick-slide,
+.slide-section .slick-list .slick-slide > div {
+  @apply !rounded-3xl;
 }

@@ -1,5 +1,8 @@
 'use client';
 
+import { useAppSelector } from "../../store";
+import { useEffect } from "react";
+
 // lazy load components
 import dynamic from "next/dynamic";
 const Title = dynamic(() => import("../../components/Admin/Title"), { ssr: true });
@@ -8,6 +11,14 @@ const SimpleLineChart = dynamic(() => import("../../components/Admin/Charts/Line
 const DonutChart = dynamic(() => import("../../components/Admin/Charts/DonutChart"), { ssr: false });
 
 export default function AdminDashboard() {
+  const { settings } = useAppSelector(state => state.settings);
+
+  useEffect(() => {
+    if (settings?.shopName) {
+      document.title = settings.shopName + " - Admin | Dashboard";
+    }
+  }, [settings]);
+
   return (
     <AdminLayout>
       <Title title="Dashboard" />
