@@ -257,6 +257,10 @@ main section:not(.section-full-width) {
   transform: scale(1.5);
 }
 
+.product-image-slider .slick-dots li {
+  @apply !w-20 !h-20;
+}
+
 .customer-reviews .slick-dots li button:before,
 .customer-reviews .slick-dots li.slick-active button:before {
   @apply text-latte-200;
