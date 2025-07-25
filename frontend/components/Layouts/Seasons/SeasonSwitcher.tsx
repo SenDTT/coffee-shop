@@ -16,10 +16,38 @@ export const seasonIcons: Record<Season, JSX.Element> = {
 
 const seasons: Season[] = ['spring', 'summer', 'autumn', 'winter'];
 
-export default function SeasonSwitcher() {
+export default function SeasonSwitcher({ mobile = false }: { mobile?: boolean }) {
     const dispatch = useAppDispatch();
     const currentSeason = useAppSelector((state) => state.season.currentSeason);
     const [isOpen, setIsOpen] = useState(false);
+
+    if (mobile) {
+        return (
+            <ul className="relative inline-flex mt-2 bg-cabin-800 border rounded-xl shadow z-10">
+                <li
+                    onClick={() => {
+                        dispatch(setSeason(""));
+                        setIsOpen(false);
+                    }}
+                    className={`${currentSeason === "" ? 'bg-cabin-700' : ''} w-10 h-10 flex items-center justify-center gap-2 cursor-pointer hover:bg-cabin-700 rounded-full`}
+                >
+                    <Coffee className="w-5 h-5 text-latte-300" />
+                </li>
+                {seasons.map((season) => (
+                    <li
+                        key={season}
+                        onClick={() => {
+                            dispatch(setSeason(season));
+                            setIsOpen(false);
+                        }}
+                        className={`${currentSeason === season ? 'bg-cabin-700' : ''} w-10 h-10 flex items-center justify-center gap-2 cursor-pointer hover:bg-cabin-700 rounded-full`}
+                    >
+                        {seasonIcons[season]}
+                    </li>
+                ))}
+            </ul>
+        )
+    }
 
     return (
         <div className="relative inline-block">

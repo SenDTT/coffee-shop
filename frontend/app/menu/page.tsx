@@ -8,9 +8,11 @@ import { useAppDispatch, useAppSelector } from "../../store";
 import { clearMessage, fetchAllProducts, handleMessage, onHanldeSearchData, onReduxPageChange } from "../../store/slices/productSlide";
 import { toast, ToastContainer } from 'react-toastify';
 
-import dynamic from "next/dynamic"; import { Product } from "@/types/Product";
-import { beginLoading } from "@/store/slices/admin/adminMenu";
+import dynamic from "next/dynamic";
+import { Product } from "../../types/Product";
+import { beginLoading } from "../../store/slices/admin/adminMenu";
 import { useRouter, useSearchParams } from "next/navigation";
+import { beginProcess } from "@/store/slices/admin/adminIngredients";
 ;
 const Layout = dynamic(() => import("../../components/Layouts/MainLayout"), { ssr: true });
 
@@ -27,16 +29,23 @@ export default function ProductListPage() {
 
     useEffect(() => {
         handleSearch();
+        return () => {
+            setAllProducts([]);
+            setHasMore(true);
+            loadingRef.current = true;
+            dispatch(beginProcess());
+            dispatch(fetchAllProducts({ data: { data: [], total: 0 }, success: true }));
+            dispatch(onReduxPageChange({ page: 1 }));
+        };
     }, []);
 
     useEffect(() => {
-        console.log("fetchMenuItems", params, currentPage, loadingRef.current, hasMore);
         fetchMenuItems();
     }, [currentPage]);
 
     const handleSearch = () => {
         const currentSearch = new URLSearchParams(searchParams.toString());
-        if (searchKeyword) {
+        if (searchKeyword !== "") {
             onClickSearch(searchKeyword);
             currentSearch.set('search', searchKeyword);
         } else {
@@ -47,15 +56,14 @@ export default function ProductListPage() {
     };
 
     useEffect(() => {
+        console.log(products, currentPage);
         if (products.length > 0) {
-            setAllProducts(prev => [...prev, ...products]);
+            setAllProducts(prev => {
+                const existingIds = new Set(prev.map(p => p._id));
+                const newUnique = products.filter(p => !existingIds.has(p._id));
+                return [...prev, ...newUnique];
+            });
         }
-
-        if (products.length === 0 || products.length < params.limit) {
-            setHasMore(false);
-        }
-
-        loadingRef.current = false;
     }, [products]);
 
     useEffect(() => {
@@ -69,6 +77,7 @@ export default function ProductListPage() {
     }, [error, success, message]);
 
     const fetchMenuItems = useCallback(async () => {
+        console.log(currentPage, hasMore, "fetchMenuItems");
         if (loadingRef.current || !hasMore) return;
 
         loadingRef.current = true;
@@ -94,15 +103,13 @@ export default function ProductListPage() {
             } else {
                 dispatch(handleMessage({ success: false, message: "An unknown error occurred" }));
             }
-        } finally {
-            loadingRef.current = false;
         }
     }, [currentPage, params]);
 
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
-                if (entries[0].isIntersecting && hasMore) {
+                if (entries[0].isIntersecting && hasMore && loadingRef.current) {
                     loadingRef.current = false;
                     console.log(currentPage);
                     dispatch(onReduxPageChange({ page: currentPage + 1 }));
@@ -129,9 +136,11 @@ export default function ProductListPage() {
         loadingRef.current = false;
         dispatch(onHanldeSearchData({ search: searchTerm }));
 
-        const currentSearch = new URLSearchParams();
-        currentSearch.set('search', searchTerm);
-        router.push(`?${currentSearch.toString()}`);
+        if (searchTerm !== "") {
+            const currentSearch = new URLSearchParams();
+            currentSearch.set('search', searchTerm);
+            router.push(`?${currentSearch.toString()}`);
+        }
     }
 
     return (
@@ -176,14 +185,10 @@ export default function ProductListPage() {
 
                     {/* Load more trigger element */}
                     <div ref={observerRef} className="h-10 mt-10 flex justify-center items-center">
-                        {loading ? null : (
-                            <>
-                                {hasMore ? (
-                                    <span className="text-gray-500 text-sm">Loading more...</span>
-                                ) : (
-                                    <span className="text-gray-400 text-sm">No more products</span>
-                                )}
-                            </>
+                        {loading ? null : hasMore ? (
+                            <span className="text-gray-500 text-sm">Loading more...</span>
+                        ) : (
+                            <span className="text-gray-400 text-sm">No more products</span>
                         )}
                     </div>
                 </div>

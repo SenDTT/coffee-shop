@@ -51,7 +51,7 @@ export default function AuthNav({ user, mobile = false }: {
         return (
             <div className="w-full">
                 <button
-                    className="w-full text-right py-2 text-cabin-800 font-bold flex justify-end items-center gap-2"
+                    className="w-full text-right py-2 text-latte-300 font-bold flex justify-end items-center gap-2"
                     onClick={() => setOpenDropdown(!openDropdown)}
                 >
                     {greetingData.greeting}, {user.name.split(" ")[0]}
@@ -67,15 +67,15 @@ export default function AuthNav({ user, mobile = false }: {
 
                 {openDropdown && (
                     <div className="ml-4 mt-1 space-y-1 text-right">
-                        <Link href="/profile" className="block text-sm py-1 text-cabin-700">
+                        <Link href="/profile" className="block text-sm py-1 text-latte-300">
                             Profile
                         </Link>
-                        <Link href="/admin" className="block text-sm py-1 text-cabin-700">
+                        <Link href="/admin" className="block text-sm py-1 text-latte-300">
                             Admin Dashboard
                         </Link>
                         <button
                             onClick={handleLogout}
-                            className="block text-right w-full text-sm py-1 text-red-600"
+                            className="block text-right w-full text-sm py-1 text-red-300"
                         >
                             Logout
                         </button>

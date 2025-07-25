@@ -3,11 +3,13 @@ import { FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
 
 export default function Footer() {
     return (
-        <footer className="main-footer space-y-4 py-10 px-5 sm:px-32 mt-10 sm:mt-0">
+        <footer className="main-footer space-y-4 py-10 px-5 sm:px-32 sm:mt-0">
             <div className="bg-black/30 shadow-md rounded-3xl flex flex-col space-y-4 py-6 px-2 sm:p-4">
                 <div className="container mx-auto sm:px-4 sm:py-6 flex flex-col sm:flex-row justify-between items-center sm:items-baseline gap-6">
-                    <div className="text-latte-200 font-bold text-3xl font-serif">
-                        Coffee Shop
+                    <div>
+                        <Link href="/" className="text-latte-200 font-bold text-3xl font-serif">
+                            Coffee Shop
+                        </Link>
                     </div>
                     <nav className="space-x-6">
                         {['Menu', 'Blogs', 'About', 'Contact'].map((page) => (
