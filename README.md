@@ -12,6 +12,11 @@ It also serves as a full-stack portfolio project to demonstrate practical skills
 
 ---
 
+### Video Demo
+
+- First Video: [Coffee Shop Web App – Homepage & Admin Dashboard Done!](https://www.youtube.com/watch?v=8oW5HHJpi-U)
+
+---
 ## 🛠️ Technologies Used
 
 ### Frontend
