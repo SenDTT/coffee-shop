@@ -41,17 +41,17 @@ It also serves as a full-stack portfolio project to demonstrate practical skills
 
 ### 🛍️ User Side
 - [x] 👤 JWT-based user authentication
-- [ ] 📦 Browse and filter coffee products
+- [x] 📦 Browse and filter coffee products
 - [ ] 🛒 Shopping cart and checkout
 - [ ] 🔍 Search with instant results
 - [ ] 📰 Blog article viewer
-- [ ] 🌞 Seasonal UI theme 
+- [x] 🌞 Seasonal UI theme 
 
 ### 🛠️ Admin Side
 - [x] 📊 Admin dashboard
 - [x] 🧾 Manage products, categories, and orders
-- [ ] ✍️ Create/edit/delete blog posts
-- [ ] 📁 Image upload and content management
+- [x] ✍️ Create/edit/delete blog posts
+- [x] 📁 Image upload and content management
 
 ---
 
@@ -61,16 +61,6 @@ It also serves as a full-stack portfolio project to demonstrate practical skills
 - Designing a MongoDB schema that supports both products and blog posts
 - Enforcing role-based access for content creation
 - Safely rendering Markdown in React with security in mind
-
----
-
-## 📌 TODO / Roadmap
-
-- [ ] 🧾 Stripe integration
-- [ ] 🔒 Role-based access control (RBAC)
-- [ ] ✍️ Draft mode and preview for blog posts
-- [ ] 📈 Admin analytics (orders, product views, revenue)
-- [ ] 🔔 Email notifications on new posts
 
 ---
 
