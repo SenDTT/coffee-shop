@@ -170,8 +170,6 @@ export default function EditCategoryPage() {
 
     return (
         <AdminLayout>
-            {/* Alert */}
-            <ToastContainer />
 
             {/* heading */}
             <Title title="Edit Category" parentPath={`/admin/categories?id=${id}&view=true`} />
@@ -232,6 +230,8 @@ export default function EditCategoryPage() {
                     },
                 ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} cancelUrl={'/admin/categories'} isShowButton={true}></AdminForm>
             </div>
+            {/* Alert */}
+            <ToastContainer />
         </AdminLayout>
     );
 }

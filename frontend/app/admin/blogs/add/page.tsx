@@ -160,8 +160,6 @@ export default function AddBlogPage() {
 
     return (
         <AdminLayout>
-            {/* Alert */}
-            <ToastContainer />
 
             {/* heading */}
             <Title title="Add Blog" parentPath="/admin/blogs" />
@@ -224,6 +222,8 @@ export default function AddBlogPage() {
                     },
                 ]} buttonDivClassName='w-2/3 mx-auto' formClassName='grid grid-cols-1 gap-4 w-2/3 mx-auto h-full p-6' setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} cancelUrl={'/admin/menu'} isShowButton={true}></AdminForm>
             </div>
+            {/* Alert */}
+            <ToastContainer />
         </AdminLayout>
     );
 }

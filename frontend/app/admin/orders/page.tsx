@@ -105,8 +105,6 @@ export default function OrdersPage() {
 
     return (
         <AdminLayout>
-            {/* Alert */}
-            <ToastContainer />
 
             {/* heading */}
             <Title title="Order Management" />
@@ -179,6 +177,8 @@ export default function OrdersPage() {
                     <p className="p-4 text-gray-500">No order selected</p>
                 )}
             </Sidebar>
+            {/* Alert */}
+            <ToastContainer />
         </AdminLayout>
     );
 }

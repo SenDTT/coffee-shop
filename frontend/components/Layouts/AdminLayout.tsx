@@ -28,7 +28,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <SideBar />
 
                 {/* main content */}
-                <main className="w-full h-screen p-6 overflow-y-auto pt-8">{children}</main>
+                <main className="w-full h-screen p-6 overflow-y-auto pt-8 hide-scrollbar">{children}</main>
             </div>
         </Provider>
     );

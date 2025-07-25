@@ -196,8 +196,6 @@ export default function EditIngredientPage() {
 
     return (
         <AdminLayout>
-            {/* Alert */}
-            <ToastContainer />
 
             {/* heading */}
             <Title title="Edit Ingredient" parentPath={`/admin/ingredients?id=${id}&view=true`} />
@@ -297,6 +295,8 @@ export default function EditIngredientPage() {
                     },
                 ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Save" loading={loading} cancelUrl={`/admin/ingredients?id=${id}&view=true`} isShowButton={true}></AdminForm>
             </div>
+            {/* Alert */}
+            <ToastContainer />
         </AdminLayout>
     );
 }

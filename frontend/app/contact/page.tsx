@@ -3,7 +3,7 @@
 import { Mail, Phone } from 'lucide-react';
 import { useState } from 'react';
 import dynamic from "next/dynamic";
-import { useAppSelector } from '@/store';
+import { useAppSelector } from '../../store';
 import { FaAddressBook } from 'react-icons/fa';
 const Layout = dynamic(() => import("../../components/Layouts/MainLayout"), { ssr: true });
 

@@ -37,6 +37,7 @@ export default function AdminIngredientsPage() {
     }, [settings]);
 
     useEffect(() => {
+        console.log(success, message, error)
         if (error && message) {
             toast.error(message);
             dispatch(clearMessage());
@@ -141,7 +142,6 @@ export default function AdminIngredientsPage() {
             console.log(err);
         } finally {
             // Reset state
-            fetchIngredients();
             resetParams();
         }
     };
@@ -220,8 +220,6 @@ export default function AdminIngredientsPage() {
 
     return (
         <AdminLayout>
-            {/* Alert */}
-            <ToastContainer />
 
             {/* heading */}
             <Title title="Ingredients Management" />
@@ -357,6 +355,8 @@ export default function AdminIngredientsPage() {
                     <p className="p-4 text-gray-500">No ingredient selected</p>
                 )}
             </Sidebar>
+            {/* Alert */}
+            <ToastContainer />
         </AdminLayout>
     );
 }

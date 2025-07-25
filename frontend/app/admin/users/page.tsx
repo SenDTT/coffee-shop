@@ -138,8 +138,6 @@ export default function UserPage() {
 
     return (
         <AdminLayout>
-            {/* Alert */}
-            <ToastContainer />
 
             {/* heading */}
             <Title title="Menu Management" />
@@ -233,6 +231,8 @@ export default function UserPage() {
                     <p className="p-4 text-gray-500">No order selected</p>
                 )}
             </Sidebar>
+            {/* Alert */}
+            <ToastContainer />
         </AdminLayout>
     );
 }

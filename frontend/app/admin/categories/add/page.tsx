@@ -129,8 +129,6 @@ export default function AddCategoryPage() {
 
     return (
         <AdminLayout>
-            {/* Alert */}
-            <ToastContainer />
 
             {/* heading */}
             <Title title="Add Category" parentPath="/admin/categories" />
@@ -191,6 +189,8 @@ export default function AddCategoryPage() {
                     },
                 ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} cancelUrl={'/admin/categories'} isShowButton={true}></AdminForm>
             </div>
+            {/* Alert */}
+            <ToastContainer />
         </AdminLayout>
     );
 }

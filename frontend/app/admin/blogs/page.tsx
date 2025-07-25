@@ -183,8 +183,6 @@ export default function BlogsManagementPage() {
 
     return (
         <AdminLayout>
-            {/* Alert */}
-            <ToastContainer />
 
             {/* heading */}
             <Title title="Blogs Management" />
@@ -223,6 +221,8 @@ export default function BlogsManagementPage() {
                 />
 
             </div>
+            {/* Alert */}
+            <ToastContainer />
         </AdminLayout>
     );
 }

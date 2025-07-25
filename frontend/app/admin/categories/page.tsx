@@ -172,8 +172,6 @@ export default function AdminCategoriesPage() {
 
     return (
         <AdminLayout>
-            {/* Alert */}
-            <ToastContainer />
 
             {/* heading */}
             <Title title="Categories Management" />
@@ -211,6 +209,8 @@ export default function AdminCategoriesPage() {
                 />
 
             </div>
+            {/* Alert */}
+            <ToastContainer />
         </AdminLayout>
     );
 }

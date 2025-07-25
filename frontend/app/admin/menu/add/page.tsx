@@ -156,8 +156,6 @@ export default function AddProductPage() {
 
     return (
         <AdminLayout>
-            {/* Alert */}
-            <ToastContainer />
 
             {/* heading */}
             <Title title="Add Product" parentPath="/admin/menu" />
@@ -265,6 +263,8 @@ export default function AddProductPage() {
                     },
                 ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} cancelUrl={'/admin/menu'} isShowButton={true}></AdminForm>
             </div>
+            {/* Alert */}
+            <ToastContainer />
         </AdminLayout>
     );
 }

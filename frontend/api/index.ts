@@ -38,7 +38,6 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    console.log("API Error:", error.response.status);
     if (
       error.response &&
       (error.response.status === 401 || error.response.status === 500)

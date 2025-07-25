@@ -43,6 +43,18 @@ body {
   @apply text-cabin-800;
 }
 
+.hide-scrollbar {
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE/Edge */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari */
+}
+
 .slick-slide, 
 .slick-slide div {
   @apply h-full;
@@ -218,6 +230,10 @@ main section:not(.section-full-width) {
 .slide-section .slick-list .slick-slide,
 .slide-section .slick-list .slick-slide > div {
   @apply !rounded-3xl;
+}
+
+#__nextjs-overlay {
+  display: none !important;
 }
 
 .section-panel {

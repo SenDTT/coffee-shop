@@ -218,8 +218,6 @@ export default function EditProductPage() {
 
     return (
         <AdminLayout>
-            {/* Alert */}
-            <ToastContainer />
 
             {/* heading */}
             <Title title="Edit Product" parentPath={`/admin/menu?id=${id}&view=true`} />
@@ -329,6 +327,8 @@ export default function EditProductPage() {
                     },
                 ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Save" loading={loading} cancelUrl={`/admin/menu?id=${id}&view=true`} isShowButton={true}></AdminForm>
             </div>
+            {/* Alert */}
+            <ToastContainer />
         </AdminLayout>
     );
 }

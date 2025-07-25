@@ -213,8 +213,6 @@ export default function MenuPage() {
 
     return (
         <AdminLayout>
-            {/* Alert */}
-            <ToastContainer />
 
             {/* heading */}
             <Title title="Menu Management" />
@@ -358,6 +356,8 @@ export default function MenuPage() {
                     <p className="p-4 text-gray-500">No product selected</p>
                 )}
             </Sidebar>
+            {/* Alert */}
+            <ToastContainer />
         </AdminLayout>
     );
 }

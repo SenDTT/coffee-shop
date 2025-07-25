@@ -155,8 +155,6 @@ export default function AddIngrdientPage() {
 
     return (
         <AdminLayout>
-            {/* Alert */}
-            <ToastContainer />
 
             {/* heading */}
             <Title title="Add Ingredient" parentPath="/admin/menu" />
@@ -254,6 +252,8 @@ export default function AddIngrdientPage() {
                     },
                 ]} setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} cancelUrl={'/admin/ingredients'} isShowButton={true}></AdminForm>
             </div>
+            {/* Alert */}
+            <ToastContainer />
         </AdminLayout>
     );
 }
