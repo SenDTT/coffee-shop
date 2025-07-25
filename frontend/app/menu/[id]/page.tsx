@@ -7,6 +7,9 @@ import { clearCurrentProduct, fetchAProduct, handleMessage } from '../../../stor
 import api from '../../../api';
 import ProductSliderImage from "../../../components/Products/ProductImageSlider";
 import Layout from '../../../components/Layouts/MainLayout';
+import ProductStaticSections from '../../../components/Products/ProductStaticSections';
+import WhyChooseUs from '../../../components/Products/WhyChooseUs';
+import { ShoppingCart } from 'lucide-react';
 
 export default function ProductDetailPage() {
     const params = useParams();
@@ -44,11 +47,11 @@ export default function ProductDetailPage() {
 
     return (
         <Layout>
-            <div className="container mx-auto p-6 space-y-12">
+            <div className="container mx-auto p-6 pb-20">
                 {/* Section 1: Overview */}
                 {selectedProduct && (
                     <>
-                        <div className="h-[70vh] flex flex-col md:flex-row gap-6">
+                        <div className="w-full sm:h-[70vh] flex flex-col md:flex-row gap-6">
                             {selectedProduct.images ? (<ProductSliderImage images={selectedProduct.images} />) : (
                                 <img
                                     loading="lazy"
@@ -57,33 +60,26 @@ export default function ProductDetailPage() {
                                     className="object-cover w-full h-full rounded-3xl"
                                 />
                             )}
-                            <div>
+                            <div className='flex-1 flex flex-col gap-4'>
                                 <h1 className="text-3xl font-bold">{selectedProduct.name}</h1>
-                                <p className="text-xl text-green-700 mt-2">${selectedProduct.price}</p>
+                                <p className="text-xl font-bold text-green-700 mt-2">${selectedProduct.price}</p>
                                 <p className="mt-4 text-gray-600">{selectedProduct.description}</p>
-                                <button className="mt-6 px-4 py-2 bg-black text-white rounded hover:bg-gray-800">
-                                    Add to Cart
-                                </button>
+                                <div className='flex'>
+                                    <button className="inline-flex items-center gap-2 mt-6 px-4 py-2 bg-caramel-800 text-latte-100 rounded hover:bg-caramel-700">
+                                        <ShoppingCart className='w-5 h-5 text-latte-200 inline-block' />
+                                        Add to Cart 
+                                    </button>
+                                </div>
+
+                                {/* SECTION: Why Choose Us */}
+                                <WhyChooseUs />
                             </div>
                         </div>
-
-                        {/* Section 2: Details */}
-                        <section>
-                            <h2 className="text-2xl font-semibold mb-2">Details</h2>
-                            <p className="text-gray-700">{selectedProduct.description}</p>
-                        </section>
-
-                        {/* Section 4: Related Items */}
-                        <section>
-                            <h2 className="text-2xl font-semibold mb-2">You may also like</h2>
-                            {/* Replace with a horizontal scroll or grid */}
-                            <div className="grid grid-cols-2 gap-4">
-                                {/* Related items */}
-                            </div>
-                        </section>
                     </>
                 )}
             </div>
+
+            <ProductStaticSections />
         </Layout>
     );
 }

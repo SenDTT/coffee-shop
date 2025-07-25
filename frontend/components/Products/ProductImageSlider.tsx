@@ -33,21 +33,32 @@ const ProductImageSlider: React.FC<ProductImageSliderProps> = ({ images }) => {
     };
 
     return (
-        <div className="product-image-slider w-full md:w-1/2">
-            <Slider {...settings}>
-                {images.map((img, i) => (
-                    <div key={i}>
-                        <img
-                            src={process.env.NEXT_PUBLIC_DOMAIN + img}
-                            alt={`Slide ${i}`}
-                            className="w-full h-full rounded-xl object-cover"
-                            onError={(e) => {
-                                e.currentTarget.src = `${process.env.NEXT_PUBLIC_DOMAIN}uploads/default_coffee.png`;
-                            }}
-                        />
-                    </div>
-                ))}
-            </Slider>
+        <div className="flex-1 product-image-slider w-full md:w-1/2">
+            {images.length === 1 ? (
+                <img
+                    src={process.env.NEXT_PUBLIC_DOMAIN + images[0]}
+                    alt="Product"
+                    className="w-full h-full rounded-xl object-cover"
+                    onError={(e) => {
+                        e.currentTarget.src = `${process.env.NEXT_PUBLIC_DOMAIN}uploads/default_coffee.png`;
+                    }}
+                />
+            ) : (
+                <Slider {...settings}>
+                    {images.map((img, i) => (
+                        <div key={i}>
+                            <img
+                                src={process.env.NEXT_PUBLIC_DOMAIN + img}
+                                alt={`Slide ${i}`}
+                                className="w-full h-full rounded-xl object-cover"
+                                onError={(e) => {
+                                    e.currentTarget.src = `${process.env.NEXT_PUBLIC_DOMAIN}uploads/default_coffee.png`;
+                                }}
+                            />
+                        </div>
+                    ))}
+                </Slider>
+            )}
         </div>
     );
 };

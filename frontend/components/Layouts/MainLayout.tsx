@@ -16,6 +16,7 @@ import FallingRain from "../../components/Layouts/Seasons/FallingRain";
 import AutumnLeaves from "../../components/Layouts/Seasons/AutumnLeaves";
 import WinterSnow from "../../components/Layouts/Seasons/WinterSnow";
 import SpringBlossoms from "../../components/Layouts/Seasons/SpringBlossoms";
+import { fetchSettings } from "../../store/slices/setting";
 
 gsap.registerPlugin(ScrollSmoother, ScrollTrigger, ScrollToPlugin, useGSAP);
 
@@ -86,6 +87,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         dispatch(fetchUserMe())
+        dispatch(fetchSettings())
     }, [dispatch]);
 
     const seasonLayout = useMemo(() => {

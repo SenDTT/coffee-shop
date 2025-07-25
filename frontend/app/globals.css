@@ -199,6 +199,10 @@ body {
   min-height: 73vh;
 }
 
+.faq-left-side {
+  @apply rounded-3xl;
+}
+
 main section:not(.section-full-width) {
   @apply container mx-auto py-8;
 }
@@ -239,11 +243,6 @@ main section:not(.section-full-width) {
 
 .customer-reviews .slick-slide {
   height: auto;
-}
-
-.customer-reviews .slick-list {
-  /* overflow: visible; */
-  /* Quan trọng: Cho slide giữa tràn ra 2 bên */
 }
 
 .customer-reviews .slick-slide {

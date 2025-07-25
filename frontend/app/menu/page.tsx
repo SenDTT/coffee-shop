@@ -12,7 +12,7 @@ import dynamic from "next/dynamic";
 import { Product } from "../../types/Product";
 import { beginLoading } from "../../store/slices/admin/adminMenu";
 import { useRouter, useSearchParams } from "next/navigation";
-import { beginProcess } from "@/store/slices/admin/adminIngredients";
+import { beginProcess } from "../../store/slices/admin/adminIngredients";
 ;
 const Layout = dynamic(() => import("../../components/Layouts/MainLayout"), { ssr: true });
 

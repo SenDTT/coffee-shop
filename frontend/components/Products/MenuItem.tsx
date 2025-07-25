@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { Product } from "../../types/Product";
 
-export default function MenuItem(props: { item: Product }) {
-    const { item } = props;
+export default function MenuItem(props: { item: Product, bgClass?: string }) {
+    const { item, bgClass } = props;
 
     return (
         <Link href={`/menu/${item._id}`}>
             <div className="menu-item px-2">
-                <div className="bg-cabin-200/80 p-4 rounded-xl shadow hover:shadow-lg transition h-full flex flex-col items-center justify-between">
+                <div className={`${bgClass ?? 'bg-cabin-200/80'} p-4 rounded-xl shadow hover:shadow-lg transition h-full flex flex-col items-center justify-between`}>
                     <div className="aspect-w-4 aspect-h-3 bg-light_latte min-h-40 sm:w-32 object-contain max-w-[200px] mx-auto mb-4 hover:animate-pop rounded-3xl">
                         <img
                             loading="lazy"
