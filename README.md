@@ -4,6 +4,12 @@ A full-stack e-commerce web application for coffee lovers, combining a beautiful
 
 ---
 
+## Coffee Shop Wiki
+
+https://github.com/SenDTT/coffee-shop.wiki.git
+
+---
+
 ## 🚀 Motivation
 
 Coffee isn't just a drink—it's a daily ritual and an art. This project aims to recreate the modern coffee shop experience online, allowing users to shop their favorite brews while admins manage content and share stories or updates via a built-in blog system.
