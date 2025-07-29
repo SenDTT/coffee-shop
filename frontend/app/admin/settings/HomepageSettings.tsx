@@ -119,8 +119,6 @@ export default function HomepageSettings() {
 
     return (
         <div className="gap-4 justify-end items-end">
-            <ToastContainer />
-
             <AdminForm fields={[
                 {
                     name: 'bannerText',
@@ -146,6 +144,7 @@ export default function HomepageSettings() {
                     isBannerImage: true,
                 },
             ]} className="sm:-mx-2" setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} cancelUrl={'/admin/settings'} isShowButton={true}></AdminForm>
+            <ToastContainer />
         </div>
     );
 }

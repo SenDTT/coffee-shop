@@ -119,8 +119,6 @@ export default function GeneralSettings() {
 
     return (
         <div className="gap-4 justify-end items-end">
-            <ToastContainer />
-
             <AdminForm fields={[
                 {
                     name: 'shopName',
@@ -173,6 +171,7 @@ export default function GeneralSettings() {
                     error: errors.shopDescription ?? ''
                 },
             ]} className="sm:-mx-2" setErrors={setErrors} onSubmit={handleSubmit} submitText="Submit" loading={loading} cancelUrl={'/admin/settings'} isShowButton={true}></AdminForm>
+            <ToastContainer />
         </div>
     );
 }
