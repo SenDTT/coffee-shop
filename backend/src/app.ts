@@ -57,7 +57,7 @@ app.use(prefix + "/ingredients", ingredient_routes);
 app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 // chatting api
-app.use(prefix + "/chatting", chatting_routes);
+app.use(prefix + "/chat", chatting_routes);
 
 const error_handler: ErrorRequestHandler = (err, req, res, next) => {
   if (err instanceof TokenExpiredError) {

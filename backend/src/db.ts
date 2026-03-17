@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 
 export const connectDB = async () => {
+  if (process.env.NODE_ENV === "test") {
+    console.log("🧪 Skipping MongoDB connection in test");
+    return;
+  }
+  
   try {
     await mongoose.connect(process.env.MONGO_URI || "mongodb://mongodb:27017/coffee_shop");
     console.log("MongoDB connected");

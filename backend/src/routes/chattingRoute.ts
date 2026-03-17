@@ -5,10 +5,10 @@ const router = Router();
 
 // router.use(authenticate);
 
-router.post("/chat", async (req, res) => {
+router.post("/", async (req, res) => {
   const userMessage = req.body.message;
 
-  const response = await fetch("http://localhost:5678/webhook/chat", {
+  const response = await fetch("http://localhost:5678/webhook-test/chat", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -20,7 +20,7 @@ router.post("/chat", async (req, res) => {
 
   const data = await response.json();
 
-  res.json(data);
+  res.json({success: true, data});
 });
 
 /**
