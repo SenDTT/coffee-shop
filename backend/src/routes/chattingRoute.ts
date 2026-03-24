@@ -1,3 +1,4 @@
+import { time } from "console";
 import { Router } from "express";
 // import { authenticate } from "../middlewares/AuthMiddleware";
 
@@ -15,7 +16,7 @@ router.post("/", async (req, res) => {
     },
     body: JSON.stringify({
       message: userMessage
-    })
+    }),
   });
 
   const data = await response.json();
