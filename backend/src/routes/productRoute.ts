@@ -8,18 +8,25 @@ import {
   deleteProductController,
   deleteProductImageController,
   getAllProductsController,
+  getMockRecommendationController,
   getProductController,
   updateProductController,
 } from "../controllers/ProductController";
 import {
   add_product_validator,
   is_existed_validator,
+  mock_recommendation_validator,
 } from "../middlewares/ProductMiddleware";
 import { upload } from "../utils/multerUtil";
 
 const router = Router();
 
 router.get("/", getAllProductsController);
+router.post(
+  "/internal/mock-recommendation",
+  mock_recommendation_validator,
+  getMockRecommendationController
+);
 router.get("/:id", is_existed_validator, getProductController);
 
 router.use(authenticate, isAdminUser);

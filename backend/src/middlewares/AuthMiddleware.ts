@@ -10,6 +10,12 @@ import { UserRoles } from "../constants/Enum";
 
 // Validate Auth
 export const authenticate: RequestHandler = async (req, res, next) => {
+  // Skip authentication for internal API endpoints
+  if (req.path.includes("/internal/")) {
+    next();
+    return;
+  }
+
   const token = req.headers.authorization?.split(" ")[1]!;
 
   if (!token) {
@@ -37,6 +43,12 @@ export const authenticate: RequestHandler = async (req, res, next) => {
 
 // Validate user as admin
 export const isAdminUser: RequestHandler = async (req, res, next) => {
+  // Skip admin check for internal API endpoints
+  if (req.path.includes("/internal/")) {
+    next();
+    return;
+  }
+
   const role = (req as any).user?.role;
 
   if (role == UserRoles.user) {

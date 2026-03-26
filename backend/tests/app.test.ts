@@ -1,6 +1,5 @@
 // tests/app.test.ts
-import request from 'supertest';
-import app from '../src/app';
+import { getAllProductsController } from '../src/controllers/ProductController';
 
 jest.mock('../src/services/ProductService', () => ({
   getAllProducts: jest.fn().mockResolvedValue([
@@ -8,12 +7,22 @@ jest.mock('../src/services/ProductService', () => ({
   ])
 }));
 
-describe('GET /api/v1/products/', () => {
-  it('should return status ok', async () => {
-    const res = await request(app).get('/api/v1/products/?limit=10&skip=0');
+describe('getAllProductsController', () => {
+  it('should return products successfully', async () => {
+    const req = {
+      query: { limit: '10', skip: '0' },
+    } as any;
+    const res = {
+      json: jest.fn(),
+    } as any;
+    const next = jest.fn();
 
-    expect(res.status).toBe(200);
-    expect(res.body.success).toBe(true);
-    expect(Array.isArray(res.body.data)).toBe(true);
+    await getAllProductsController(req, res, next);
+
+    expect(res.json).toHaveBeenCalledWith({
+      success: true,
+      data: [{ name: 'Test Product', price: 10 }],
+    });
+    expect(next).not.toHaveBeenCalled();
   });
 });

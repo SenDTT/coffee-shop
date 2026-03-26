@@ -70,6 +70,38 @@ export const add_product_validator: RequestHandler<
   next();
 };
 
+export const mock_recommendation_validator: RequestHandler<
+  unknown,
+  IErrorResponse,
+  {
+    customerName?: string;
+    mood?: string;
+    temperature?: "hot" | "iced";
+    category?: string;
+  }
+> = (req, res, next) => {
+  const { temperature, category } = req.body;
+  const errors: Record<string, string> = {};
+console.log("Received mock recommendation request with body:", req.body);
+  if (temperature && !validator.isIn(temperature, ["hot", "iced"])) {
+    errors.temperature = "Temperature must be either 'hot' or 'iced'";
+  }
+
+  if (category && !validator.isIn(category, ["coffee", "tea", "dessert"])) {
+    errors.category = "Category must be one of: coffee, tea, dessert";
+  }
+
+  if (Object.keys(errors).length > 0) {
+    res.status(400).json({
+      success: false,
+      errors,
+      message: "Validation failed for mock recommendation",
+    });
+    return;
+  }
+
+  next();
+};
 export const is_existed_validator: RequestHandler<
   { id: string },
   IResponseData | IErrorResponse

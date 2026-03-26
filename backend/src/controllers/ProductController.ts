@@ -138,6 +138,73 @@ export const getAllProductsController: RequestHandler<
   }
 };
 
+export const getMockRecommendationController: RequestHandler<
+  unknown,
+  IResponseData | IErrorResponse,
+  {
+    customerName?: string;
+    mood?: string;
+    temperature?: "hot" | "iced";
+    category?: string;
+  }
+> = async (req, res, next) => {
+  try {
+    const { customerName, mood, temperature, category } = req.body;
+
+    const normalizedTemperature = temperature === "iced" ? "iced" : "hot";
+    const normalizedCategory = (category || "coffee").toLowerCase();
+
+    const recommendationMap: Record<
+      string,
+      { name: string; price: number; size: string; upsell: string }
+    > = {
+      coffee: {
+        name: normalizedTemperature === "iced" ? "Iced Latte" : "Cappuccino",
+        price: normalizedTemperature === "iced" ? 5.5 : 4.75,
+        size: "medium",
+        upsell: "butter croissant",
+      },
+      tea: {
+        name: normalizedTemperature === "iced" ? "Iced Matcha" : "Chai Latte",
+        price: normalizedTemperature === "iced" ? 5.25 : 4.5,
+        size: "medium",
+        upsell: "blueberry muffin",
+      },
+      dessert: {
+        name: "Tiramisu Slice",
+        price: 6.25,
+        size: "single serve",
+        upsell: "espresso shot",
+      },
+    };
+
+    const selected =
+      recommendationMap[normalizedCategory] || recommendationMap.coffee;
+
+    res.json({
+      success: true,
+      data: {
+        requestId: `mock-${Date.now()}`,
+        customerName: customerName || "Guest",
+        mood: mood || "curious",
+        recommendation: {
+          category: normalizedCategory,
+          name: selected.name,
+          size: selected.size,
+          temperature:
+            normalizedCategory === "dessert" ? "n/a" : normalizedTemperature,
+          price: selected.price,
+        },
+        internalNotes:
+          "Mock internal API response for n8n HTTP Request node demos.",
+        suggestedUpsell: selected.upsell,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const activeOrDeactiveProductController: RequestHandler<
   { id: string },
   IResponseData | IErrorResponse
